@@ -499,9 +499,9 @@ class CommonDesignLogic(object):
         self.display.DisableAntiAliasing()
         if bgcolor =="gradient_bg":
 
-            self.display.set_bg_gradient_color(51, 51, 102, 150, 150, 170)
+            self.display.set_bg_gradient_color([51, 51, 102], [150, 150, 170])
         else:
-            self.display.set_bg_gradient_color(255, 255, 255, 255, 255, 255)
+            self.display.set_bg_gradient_color([255, 255, 255], [255, 255, 255])
 
         if self.loc == "Column flange-Beam web" and self.connection == "Finplate":
             self.display.View.SetProj(OCC.V3d.V3d_XnegYnegZpos)

@@ -1118,7 +1118,7 @@ class MainController(QMainWindow):
 
     def openDesign_inputs(self):
 
-        fileName, _ = QFileDialog.getOpenFileName(self, "Open Design", str(self.folder), "(*.osi)")
+        fileName, _ = QFileDialog.getOpenFileName(self, "Open Design", str(self.folder), "osi(*.osi)")
         if not fileName:
             return
         try:
@@ -1489,9 +1489,9 @@ class MainController(QMainWindow):
         display = self.ui.modelTab._display
 
         # background gradient
-        display.set_bg_gradient_color(23, 1, 32, 23, 1, 32)
+        display.set_bg_gradient_color([23, 1, 32], [23, 1, 32])
         # display_2d.set_bg_gradient_color(255,255,255,255,255,255)
-        display.display_trihedron()
+        display.display_triedron()
         display.View.SetProj(1, 1, 1)
 
         def centerOnScreen(self):

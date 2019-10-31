@@ -858,7 +858,7 @@ class Maincontroller(QMainWindow):
         pass
 
     def load_design_inputs(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Open Design", str(self.folder), "(*.osi)")
+        filename, _ = QFileDialog.getOpenFileName(self, "Open Design", str(self.folder), "osi(*.osi)")
         if not filename:
             return
         try:
@@ -1045,7 +1045,7 @@ class Maincontroller(QMainWindow):
         """
         filename = os.path.join("Connections", "Moment", "BCEndPlate", "saveINPUT.txt")
         if os.path.isfile(filename):
-            file_object = open(filename, 'r')
+            file_object = open(filename, 'rb')
             uiObj = pickle.load(file_object)
             return uiObj
         else:
