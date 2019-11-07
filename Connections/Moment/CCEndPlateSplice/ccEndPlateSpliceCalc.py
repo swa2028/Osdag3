@@ -21,273 +21,22 @@ from model import *
 from utilities.is800_2007 import IS800_2007
 from utilities.other_standards import IS1363_part_1_2002, IS1363_part_3_2002, IS1367_Part3_2002
 from utilities.common_calculation import *
-from Connections.connection_calculations import ConnectionCalculations
-from utilities.is800_2007 import IS800_2007
 import math
 import logging
+import numpy
 flag = 1
 logger = None
 
 
 def module_setup():
     global logger
-    logger = logging.getLogger("osdag.bbExtendedEndPlateSpliceCalc")
+    logger = logging.getLogger("osdag.ccEndPlateSpliceCalc")
 
 
 module_setup()
 
 #######################################################################
-# Defining functions
-#######################################################################
-
-
-# Function for net area of bolts at threaded portion of bolts
-# Reference: Design of steel structures by N. Subramanian, page 348 or 358
-
-#
-# def netArea_thread(dia):
-#     """
-#
-#     Args:
-#         dia: (int)- diameter of bolt (Friction Grip Bolt/Bearing bolt)
-#
-#     Returns: (float)- Net area of bolts at threaded portion (Ref. Table 5.11 Subramanian's book, page: 358 )
-#
-#     """
-#     netArea = {12: 84.3, 16: 157, 20: 245, 22: 303, 24: 353, 27: 459, 30: 561, 36: 817}
-#     return netArea[dia]
-#
-# #######################################################################
-#
-# # Function for net area of bolts at threaded portion of bolts
-# # Reference: Design of steel structures by N. Subramanian, page 348 or 358
-#
-#
-# def netarea_shank(dia):
-#     """
-#
-#     Args:
-#         dia: (int) -  diameter of bolt (Friction Grip Bolt/Bearing bolt)
-#
-#     Returns: (int)- Net area of bolts at shank portion (Ref. Table 5.11 Subramanian's book, page: 358 )
-#
-#     """
-#     net_area = {12: 113, 16: 201, 20: 314, 22: 380, 24: 452, 27: 572, 30: 706, 36: 1017}
-#     return net_area[dia]
-#
-# #######################################################################
-#
-# #Function for long joints (beta_lj)
-# #Source: Cl 10.3.3.1
-# #Reference: Genereal Construction in Steel - Code of practice (3rd revision) IS 800:2007
-#
-#
-# def long_joint(dia, l_j):
-#     """
-#
-#     Args:
-#         dia: (int)- diameter of bolt
-#         l_j: (float)- length of joint i.e. distance between first and last bolt in the joint measured in the direction of load transfer
-#
-#     Returns: (float)- reduction factor beta_lj
-#
-#     """
-#     beta_lj = 1.075 - (0.005 * (l_j/dia))
-#     return beta_lj
-#
-#
-# #######################################################################
-#
-# # Function for Shear Capacity of bearing bolt (also known as black bolt)
-# # Reference: Cl 10.3.3 - Genereal Construction in Steel - Code of practice (3rd revision) IS 800:2007
-# # Assumption: The shear planes are assumed to be passing through the threads of the bolt
-#
-# def bolt_shear(dia, n, bolt_fu):
-#     """
-#
-#     Args:
-#         dia: (int)- diameter of bolt
-#         n: (str)- number of shear plane(s) through which bolt is passing
-#         bolt_fu: (float)- Ultimate tensile strength of a bolt
-#
-#     Returns: (float)- Shear capacity of bearing type bolt in kN
-#
-#     """
-#     A = netArea_thread(dia)
-#     V_dsb = bolt_fu * n * A / (math.sqrt(3) * 1.25 * 1000)
-#     V_dsb = round(V_dsb.real, 3)
-#     return V_dsb
-#
-#
-# #######################################################################
-#
-# # Function for Bearing Capacity of bearing bolt (also known as black bolt)
-# # Reference: Cl 10.3.4 - Genereal Construction in Steel - Code of practice (3rd revision) IS 800:2007
-#
-# def bolt_bearing(dia, t, k_b, bolt_fu):
-#     """
-#
-#     Args:
-#         dia: (int)- diameter of bolt
-#         t: (float)- summation of thickneses of the connected plates experencing bearing stress in same direction, or if the bolts are countersunk, the thickness of plate minus 1/2 of the depth of countersunk
-#         k_b: (float)- multiplying factor (Ref: Cl 10.3.4 IS 800:2007)
-#         bolt_fu: (float)- Ultimate tensile strength of a bolt
-#
-#     Returns: (float)- Bearing capacity of bearing type bolt in kN
-#
-#     """
-#     V_dpb = 2.5 * k_b * dia * t * bolt_fu / (1.25 * 1000)
-#     V_dpb  = round(V_dpb.real, 3)
-#     return V_dpb
-#
-#
-# #######################################################################
-#
-# # Function for minimum height of end plate
-# # Reference: Based on reasoning
-#
-# def min_plate_height(beam_D, l_v, n_r, min_pitch, e_1):
-#     """
-#
-#     Args:
-#         beam_D: (float) - Depth of beam
-#         l_v: (float)- Distance between the toe of weld or flange to the centre of the nearer bolt
-#         n_r: (int)- number of row(s) above or below the beam flange
-#         min_pitch: (float)- minimum pitch distance i.e. 2.5*bolt_diameter
-#         e_1: (float)- minimum end distance i.e. 1.7*bolt_hole_diameter
-#
-#     Returns: (float)- Minimum required height of extended end plate as per detailing requirements in mm
-#
-#     """
-#     min_end_plate_height = beam_D + (2 * l_v) + (2 * (n_r-1) * min_pitch) + (2 * e_1)
-#     return min_end_plate_height
-#
-#
-# #######################################################################
-#
-# # Function for minimum width of end plate
-# # Reference: Based on reasoning
-#
-# def min_plate_width(g_1, n, min_gauge, e_2):
-#     """
-#
-#     Args:
-#         g_1: (float)- Cross-centre gauge distance
-#         n: (int)- Number of columns of bolt (assumed to be 2)
-#         min_gauge: (float)- minimum gauge distance i.e. 2.5*bolt_diameter
-#         e_2: (float)- minimum edge distance i.e. 1.7*bolt_hole_diameter
-#
-#     Returns: (float)- Minimum required width of extended end plate as per detailing requirements in mm
-#
-#     """
-#     min_end_plate_width = g_1 + (n - 2) * min_gauge + (2 * e_2)
-#     return min_end_plate_width
-#
-#
-# #######################################################################
-#
-# # Function for calculation of Prying Force in bolts
-# # Reference: Cl 10.4.7 - Genereal Construction in Steel - Code of practice (3rd revision) IS 800:2007
-#
-# def prying_force(T_e, l_v, l_e, beta, eta, f_0, b_e, t_p):
-#     """
-#
-#     Args:
-#         T_e: (float): Tension acting on beam flange
-#         l_v: (float)- Distance between the toe of weld or flange to the centre of the nearer bolt
-#         l_e: (float)- Distance between prying force and bolt centreline
-#         beta: (int)- multiplying factor
-#         eta: (float)- multiplying factor
-#         f_0: (float)- proof stress in consistent units
-#         b_e: (float)- effective width of flange per pair of bolts
-#         t_p: (float)- thickness of end plate
-#
-#     Returns: (float)- Prying force in bolt (in kN)
-#
-#     """
-#     prying_force_bolt = (l_v * (2 * l_e) ** -1) * (T_e - ((beta * eta * f_0 * b_e * t_p ** 4) * (27 * l_e * l_v ** 2) ** -1))
-#     return prying_force_bolt
-#
-# #######################################################################
-#
-# # Function for calculating Tension capacity of Friction Grip Bolt bolt
-# # Reference: Cl 10.4.5 - Genereal Construction in Steel - Code of practice (3rd revision) IS 800:2007
-#
-#
-# def bolt_tension_friction_grip_bolt(bolt_fu, netArea):
-#     """
-#
-#     Args:
-#         bolt_fu: (float)- Ultimate tensile strength of a bolt
-#         netArea: (float)- Net tensile stress area as specified in IS 1367 (area at threads)
-#
-#     Returns: (float)- Tension capacity of Friction Grip Bolt bolt in kN
-#
-#     """
-#     T_df = 0.9 * bolt_fu * netArea * (1.25 * 1000) ** -1
-#     return T_df
-#
-#
-# #######################################################################
-#
-# # Function for calculating Tension capacity of bearing bolt (also known as black bolt)
-# # Reference: Cl 10.3.5 - Genereal Construction in Steel - Code of practice (3rd revision) IS 800:2007
-#
-# def bolt_tension_bearing(bolt_fu, netArea):
-#     """
-#
-#     Args:
-#         bolt_fu: (float)- Ultimate tensile strength of a bolt
-#         netArea: (float)- Net tensile stress area as specified in IS 1367 (area at threads)
-#
-#     Returns: (float)- Tension capacity of Bearing bolt in kN
-#
-#     """
-#
-#     T_db = (0.9 * bolt_fu * netArea) / (1.25 * 1000)
-#     return T_db
-#
-#
-# #######################################################################
-#
-# # Function for calculating Shear yielding capacity of End Plate
-# # Reference: Cl 8.4.1 - Genereal Construction in Steel - Code of practice (3rd revision) IS 800:2007
-#
-# def shear_yielding(A_v, plate_fy):
-#     """
-#
-#     Args:
-#         A_v: (float)- Gross shear area of end plate
-#         plate_fy: (float)- Yield stress of plate material
-#
-#     Returns: (float)- Shear yielding capacity of End Plate in kN
-#
-#     """
-#     V_d = A_v * plate_fy / (math.sqrt(3) * 1.10 * 1000)
-#     return V_d
-#
-#
-# #######################################################################
-#
-# # Function for calculating Shear rupture capacity of End Plate
-# # Reference: Cl 8.4.1 - Genereal Construction in Steel - Code of practice (3rd revision) IS 800:2007
-#
-# def shear_rupture(A_vn, plate_fu):
-#     """
-#
-#     Args:
-#         A_vn: (float)- Net shear area of end plate
-#         plate_fu: (float)- Ultimate stress of plate material
-#
-#     Returns: (float)- Shear rupture capacity of End Plate in kN
-#
-#     """
-#     R_n = 0.6 * A_vn * plate_fu / 1000
-#     return R_n
-#
-
-#######################################################################
-# Function for fetching column parameters from the database
+# Function for fetching column parameters_sqr from the database
 
 def fetchColumnPara(self):
     column_sec = self.ui.combo_columnSec.currentText()
@@ -301,11 +50,9 @@ def fetchColumnPara(self):
 def ccEndPlateSplice(uiObj):
     global logger
     global design_status
-
     design_status = True
 
-    if ['Member']['Connectivity'] == "Flush"
-    column_sec = uiObj['Member']['BeamSection']
+    column_sec = uiObj['Member']['ColumnSection']
     column_fu = float(uiObj['Member']['fu (MPa)'])
     column_fy = float(uiObj['Member']['fy (MPa)'])
     weld_fu = float(uiObj['weld']['fu_overwrite'])
@@ -322,6 +69,8 @@ def ccEndPlateSplice(uiObj):
     bolt_dia = int(uiObj['Bolt']['Diameter (mm)'])
     bolt_type = uiObj["Bolt"]["Type"]
     bolt_grade = float(uiObj['Bolt']['Grade'])
+    bolt_fu = uiObj["bolt"]["bolt_fu"]
+    bolt_fy = (bolt_grade - int(bolt_grade)) * bolt_fu
 
     mu_f = float(uiObj["bolt"]["slip_factor"])
     gamma_mw = float(uiObj["weld"]["safety_factor"])
@@ -332,9 +81,7 @@ def ccEndPlateSplice(uiObj):
         bolt_hole_type = 'standard'
 
     dia_hole = bolt_dia + int(uiObj["bolt"]["bolt_hole_clrnce"])
-
     end_plate_thickness = float(uiObj['Plate']['Thickness (mm)'])
-
 
     # TODO implement after excomm review for different grades of plate
     end_plate_fu = float(uiObj['Member']['fu (MPa)'])
@@ -349,16 +96,25 @@ def ccEndPlateSplice(uiObj):
         weld_thickness_flange = 0
         weld_thickness_web = 0
 
+    if uiObj["detailing"]["typeof_edge"] == "a - Sheared or hand flame cut":
+        edge_type = 'hand_flame_cut'
+    else:   # "b - Rolled, machine-flame cut, sawn and planed"
+        edge_type = 'machine_flame_cut'
+
+    corrosive_influences = False
+    if uiObj['detailing']['is_env_corrosive'] == "Yes":
+        corrosive_influences = True
+
     [bolt_shank_area, bolt_net_area] = IS1367_Part3_2002.bolt_area(bolt_dia)
 
 
     old_column_section = get_oldcolumncombolist()
 
     if column_sec in old_column_section:
-        logger.warning(": You are using a section (in red colour) that is not available in the latest version of IS 808")
+        logger.warning(": You are using a section (in red colour) that is not available in the latest vey_sqrion of IS 808")
 
     if column_fu < 410 or column_fy < 230:
-        logger.warning(" : You are using a section of grade that is not available in latest version of IS 2062")
+        logger.warning(" : You are using a section of grade that is not available in latest vey_sqrion of IS 2062")
 
     #######################################################################
     # Read input values from Column database
@@ -380,6 +136,7 @@ def ccEndPlateSplice(uiObj):
     moment_minimum = 0.5 * (M_d / 1000000)
 
     if float(factored_moment) < float(moment_minimum):
+        design_status = False
         logger.warning(": The input factored moment (%2.2f kN-m) is less that the minimum design action on the connection (Cl. 10.7-6, IS 800:2007)" % factored_moment)
         logger.info(": The connection is designed for %2.2f kN-m" % float(moment_minimum))
 
@@ -393,140 +150,59 @@ def ccEndPlateSplice(uiObj):
     #######################################################################
     # Calculation of Spacing
 
-    # t_thinner is the thickness of the thinner plate(s) being connected
-    t_thinner = end_plate_thickness
-
     # min_pitch & max_pitch = Minimum and Maximum pitch distance (mm) [Cl. 10.2.2, IS 800:2007]
-    min_pitch = int(math.ceil(3 * bolt_dia))
-    # pitch_dist_min = min_pitch + (5 - min_pitch) % 5  # round off to nearest greater multiple of five
-
-    max_pitch = int(min(math.ceil(32 * t_thinner), 300))
-    # pitch_dist_max = max_pitch + (5 - max_pitch) % 5  # round off to nearest greater multiple of five
+    min_pitch = math.floor(column_d - (2 * column_tf) - (2 * min_end_distance)) / (no_bolts_web-1)  # has been changed for detailing purpose
+    max_pitch = IS800_2007.cl_10_2_3_1_max_spacing(end_plate_thickness)
 
     # min_gauge & max_gauge = Minimum and Maximum gauge distance (mm) [Cl. 10.2.3.1, IS 800:2007]
-
     gauge_dist_min = min_pitch
     gauge_dist_max = max_pitch
 
-    # g_1 = Gauge 1 distance (mm) (also known as cross-centre gauge) (Steel designers manual, page 733, 6th edition - 2003)
-    # TODO validate g_1 after excomm review
-
-    if uiObj["detailing"]["typeof_edge"] == "a - Sheared or hand flame cut":
-        end_distance = edge_distance = int(math.ceil(1.7 * dia_hole))
-    else:
-        end_distance = edge_distance = int(float(1.5 * dia_hole))
-
-    g_1 = max(float(90), float(((2 * edge_distance) + column_tw)))
-
-    # min_end_distance & max_end_distance = Minimum and Maximum end distance (mm) [Cl. 10.2.4.2 & Cl. 10.2.4.3, IS 800:2007]
-
-    if uiObj["detailing"]["typeof_edge"] == "a - Sheared or hand flame cut":
-        min_end_distance = min_edge_distance = int(math.ceil(1.7 * dia_hole))
-    else:
-        min_end_distance = min_edge_distance = int(float(1.5 * dia_hole))
-
-    end_dist_mini = min_end_distance + (5 - min_end_distance) % 5  # round off to nearest greater multiple of five
-
-    e = math.sqrt(250 / end_plate_fy)
-    max_end_distance = math.ceil(12 * end_plate_thickness * e)
-
-    end_dist_max = max_end_distance + (5 - max_end_distance) % 5  # round off to nearest greater multiple of five
-
-    # min_edge_distance = Minimum edge distance (mm) [Cl. 10.2.4.2 & Cl. 10.2.4.3, IS 800:2007]
+    # Minimum and maximum end distances (mm) [Cl. 10.2.4.2 & Cl. 10.2.4.3, IS 800:2007]
+    end_dist_min = (column_d - (2 * column_tf) - (2 * min_pitch)) / 2
+    end_dist_max = IS800_2007.cl_10_2_4_3_max_edge_dist(plate_thicknesses=end_plate_thickness, f_y=end_plate_fy, corrosive_influences=corrosive_influences)
+    
+    # Minimum and maximum edge distances (mm) [Cl. 10.2.4.2 & Cl. 10.2.4.3, IS 800:2007]
     edge_dist_mini = end_dist_mini
     edge_dist_max = end_dist_max
 
     #######################################################################
-    # Distance between the toe of weld or the edge of flange to the centre of the nearer bolt (mm) [AISC design guide 16]
-    # TODO: Improvise l_v, p_fi and p_fo after excomm review
-    # l_v = float(50)  # for extended end plate
-    # l_v = 2.5 * bolt_dia  # for extended end plate
+    # End plate detailing
 
-    # for extended both ways, extended one way and flushed end plate
-
-    # if bolt_dia <= 16:
-    #     l_v = p_fi = p_fo = 40
-    # elif 16 < bolt_dia <= 24:
-    #     l_v = p_fi = p_fo = 50
-    # else:
-    #     l_v = p_fi = p_fo = 60
-
-    #######################################################################
-    # Validation of Input Dock
-
-    # End Plate Thickness
-
-    # TODO : Is this condition for the main file?
-    # Validating the user input value of end plate thickness based on the detailing criteria
-    if end_plate_thickness < max(column_tf, column_tw):
-        end_plate_thickness = math.ceil(max(column_tf, column_tw))
-        design_status = False
-        logger.error(": Chosen end plate thickness is not sufficient")
-        logger.warning(": Minimum required thickness of end plate as per the detailing criteria is %2.2f mm " % end_plate_thickness)
-        logger.info(": Increase the thickness of end plate ")
-
-    # End Plate Height [Ref: Based on reasoning]
-
-    # Minimum and Maximum Plate Height
-    # TODO: Validate end_plate_height_mini after excomm review
-    # TODO: Validate end_plate_height_max after excomm review
-
+    # end plate height
     if uiObj["Member"]["Connectivity"] == "Extended both ways":
         end_plate_height = column_d + 30
     elif uiObj["Member"]["Connectivity"] == "Flush":
         end_plate_height = column_d + 4 * end_dist_mini  # TODO 10 mm is the cover provided beyond flange on either sides
 
-    # Check for Minimum and Maximum values of End Plate Height from user input
-
-    # if end_plate_height != 0:
-    #     if end_plate_height <= column_d:
-    #         design_status = False
-    #         logger.error(": Height of End Plate is less than/or equal to the depth of the Beam ")
-    #         logger.warning(": Minimum End Plate height required is %2.2f mm" % end_plate_height)
-    #         logger.info(": Increase the Height of End Plate")
-    #
-    #     elif end_plate_height <= end_plate_height_mini:
-    #     # elif (end_plate_height <= end_plate_height_mini) or (end_plate_height <= (end_plate_height_mini + pitch_dist_min)):
-    #         design_status = False
-    #         logger.error(": Height of End Plate is less than the minimum required height")
-    #         logger.warning(": Minimum End Plate height required is %2.2f mm" % end_plate_height_mini)
-    #         logger.info(": Increase the Height of End Plate")
-    #
-    #     if uiObj["Member"]["Connectivity"] == "Extended both ways":
-    #         if end_plate_height > end_plate_height_max:
-    #             design_status = False
-    #             logger.error(": Height of End Plate exceeds the maximum allowed height")
-    #             logger.warning(": Maximum allowed height of End Plate is %2.2f mm" % end_plate_height_max)
-    #             logger.info(": Decrease the Height of End Plate")
-    #
-    #     elif uiObj["Member"]["Connectivity"] == "Extended one way":
-    #         if end_plate_height > end_plate_height_max:
-    #             design_status = False
-    #             logger.error(": Height of End Plate exceeds the maximum allowed height")
-    #             logger.warning(": Maximum allowed height of End Plate is %2.2f mm" % end_plate_height_max)
-    #             logger.info(": Decrease the Height of End Plate")
-
-    # End Plate Width
-
-    # Minimum and Maximum width of End Plate [Ref: Based on reasoning and AISC Design guide 16]
-    # TODO check for mini width as per AISC after excomm review
-
+    # end plate width
     end_plate_width = column_B + 25
 
+    # end plate thickness
+    if float(min_pitch) >= float(2 * end_dist_min):
+        b_eff = (2 * end_dist_min)
+    else:
+        b_eff = min_pitch
 
+    t_b1 = (factored_axial_load / no_of_bolts) + (factored_moment * y_1 / y_sqr)
+    t_b2,t_b3 = (factored_axial_load / no_of_bolts) + (factored_moment * y_2 / y_sqr)
+    y_1 = column_tf/2 + end_dist_min
+    y_2 = y_1 + min_pitch
 
-    # if end_plate_width != 0:
-    #     if end_plate_width < end_plate_width_mini:
-    #         design_status = False
-    #         logger.error(": Width of the End Plate is less than the minimum required value ")
-    #         logger.warning(": Minimum End Plate width required is %2.2f mm" % end_plate_width_mini)
-    #         logger.info(": Increase the width of End Plate")
-    #     if end_plate_width > end_plate_width_max:
-    #         design_status = False
-    #         logger.error(": Width of the End Plate exceeds the maximum allowed width ")
-    #         logger.warning(": Maximum allowed width of End Plate is %2.2f mm" % end_plate_width_max)
-    #         logger.info(": Decrease the width of End Plate")
-    ##########################################################################
+    if uiObj["Member"]["Connectivity"] == "Flush":
+        m_ep = max(0.5 * t_b1 * end_dist_min, t_b2 * end_dist_min)
+    elif uiObj["Member"]["Connectivity"] == "Extended both ways":
+        m_ep = max(0.5 * t_b1 * end_dist_min, t_b3 * end_dist_min)
+    
+    gamma_m0 = 1.10
+    m_dp = b_eff * end_plate_thickness**2 * column_fy / (4 * gamma_m0)
+    
+    if m_ep > m_dp:
+        design_status = False
+        logger.warning(": The moment acting on plate is more than the moment design capacity of the plate.)
+        logger.info(": Increase the plate thickness.)
+
+    ####################################################################################
     # Calculate bolt capabilities
 
     if bolt_type == "Friction Grip Bolt":
@@ -548,136 +224,11 @@ def ccEndPlateSplice(uiObj):
         bolt_capacity = min(bolt_shear_capacity, bearing_capacity)
         bolt_tension_capacity = IS800_2007.cl_10_3_5_bearing_bolt_tension_resistance(
             f_ub=bolt_fu, f_yb=bolt_fy, A_sb=bolt_shank_area, A_n=bolt_net_area)
-
-    #######################################################################
-    # Check for shear capacity of Friction Grip Bolt bolt (Cl. 10.4.3, IS 800:2007)
-    # Check for shear and bearing capacities of Bearing bolt (Cl. 10.3.3 and Cl. 10.3.4, IS 800:2007)
-    # Here,
-    # Vdsf = nominal shear capacity of Friction Grip Bolt bolt
-    # V_dsf = nominal shear capacity of Friction Grip Bolt bolt after multiplying the correction factor(s)
-    # Vdsb = nominal shear capacity of Bearing bolt
-    # V_dsb = nominal shear capacity of Bearing bolt after multiplying the correction factor(s)
-
-    # n_e = 1  # number of effective interfaces offering resistance to shear
-    # factor = 1
-    # sum_plate_thickness = 2 * end_plate_thickness
-    #
-    # # Calculation of k_b
-    # kb_1 = float(end_dist_mini) / (3 * dia_hole)
-    # kb_2 = (float(pitch_dist_min) / (3 * dia_hole)) - 0.25
-    # kb_3 = bolt_fu / end_plate_fu
-    # kb_4 = 1.0
-    # k_b = min(kb_1, kb_2, kb_3, kb_4)
-    #
-    # plate_fu = int(end_plate_fu)
-    #
-    # # Check for long joints (Cl. 10.3.3.1, IS 800:2007)
-    # l_j = beam_d - (2 * beam_tf) - (2 * weld_thickness_flange) - (2 * l_v)
-    #
-    # if bolt_type == "Friction Grip Bolt":
-    #     Vdsf = ConnectionCalculations.bolt_shear_friction_grip_bolt(bolt_dia, bolt_fu, mu_f, n_e, dp_bolt_hole_type)
-    #
-    #     if l_j > 15 * bolt_dia:
-    #         V_dsf = Vdsf * long_joint(bolt_dia, l_j)
-    #     else:
-    #         V_dsf = Vdsf
-    #     bolt_capacity = V_dsf  # Capacity of Friction Grip Bolt bolt
-    #     bearing_capacity = "N/A"
-    # else:
-    #     Vdsb = ConnectionCalculations.bolt_shear(bolt_dia, n_e, bolt_fu)      # 1. Check for Shear capacity of bearing bolt
-    #
-    #     if l_j > 15 * bolt_dia:
-    #         V_dsb = Vdsb * long_joint(bolt_dia, l_j)
-    #     else:
-    #         V_dsb = Vdsb
-    #
-    #     Vdpb = ConnectionCalculations.bolt_bearing(bolt_dia, factor, sum_plate_thickness, k_b, plate_fu)  # 2. Check for Bearing capacity of bearing bolt
-    #
-    #     V_db = min(V_dsb, Vdpb)   # Capacity of bearing bolt (V_db) is minimum of V_dsb and Vdpb
-    #     bolt_capacity = V_db
-    #     bearing_capacity = Vdpb
-    #
-    # if bolt_type == "Friction Grip Bolt":
-    #     bolt_shear_capacity = V_dsf
-    # else:
-    #     bolt_shear_capacity = V_dsb
-    #
-    # #######################################################################
-    # # Check for tension capacities of bolt
-    #
-    # Tdf_1 = (bolt_fy * netarea_shank(bolt_dia) * (1.25 / 1.10)) / 1000  # Here, Tdf_1 is the maximum allowed tension capacity of bolt (Cl 10.4.5, IS 800:2007 )
-    #
-    # if bolt_type == "Friction Grip Bolt":
-    #     Tdf = bolt_tension_friction_grip_bolt(bolt_fu, netArea_thread(bolt_dia))
-    #     bolt_tension_capacity = min(Tdf, Tdf_1)
-    # else:
-    #     Tdb = bolt_tension_bearing(bolt_fu, netArea_thread(bolt_dia))
-    #     bolt_tension_capacity = min(Tdb, Tdf_1)
-
+    
     #######################################################################
     # Calculation for number of bolts
     #######################################################################
 
-    # M_u = Total bending moment in kNm i.e. (External factored moment + Moment due to axial force )
-    # M_u = factored_moment + ((factored_axial_load * (beam_d / 2 - beam_tf / 2)) / 1000)  # kN-m (TODO: Here the axial load is accounted in calculating the bending moment, make corrections after review)
-    # T_flange = (factored_moment * 1000) / ((beam_d - beam_tf) + (factored_axial_load / 2))  # (kN) calculating axial force (tension) in flange due to the moment
-    #
-    # if uiObj["Member"]["Connectivity"] == "Extended both ways":  # calculating trial number of bolts for extended both way end plate
-    #
-    #     # Number of bolts (N. Subramanian, page 377, equation 5.59)
-    #     # TODO : Here 2 is the number of columns of bolt (Check for implementation with excomm)
-    #     n = math.sqrt((6 * M_u * 10 ** 3) / (2 * pitch_dist_min * bolt_tension_capacity))
-    #     n = math.ceil(n)
-    #
-    # else:
-    #     # calculating trial number of bolts for extended one way and flushed end plate
-    #     # TODO: reducing the bolt capacity by 20% conservatively, check and update the design after the excomm review
-    #
-    #     n_flange = T_flange / (0.80 * bolt_tension_capacity)  # trial number of bolts near the tension flange
-    #     n = n_flange + 2  # add 2 bolts near the compression flange to complete the trial required number of bolts in the configuration
-    #
-    # # number_of_bolts = Total number of bolts in the configuration
-    # number_of_bolts = n
-    #
-    # if number_of_bolts <= 20:
-    #
-    #     if uiObj["Member"]["Connectivity"] == "Extended both ways":
-    #         if number_of_bolts <= 8:
-    #             number_of_bolts = 8
-    #         elif 8 < number_of_bolts <= 12:
-    #             number_of_bolts = 12
-    #         elif 12 < number_of_bolts <= 16:
-    #             number_of_bolts = 16
-    #         elif 16 < number_of_bolts <= 20:
-    #             number_of_bolts = 20
-    #
-    #     elif uiObj["Member"]["Connectivity"] == "Extended one way":
-    #         if number_of_bolts <= 6:
-    #             number_of_bolts = 6
-    #         elif 6 < number_of_bolts <= 8:
-    #             number_of_bolts = 8
-    #         elif 8 < number_of_bolts <= 10:
-    #             number_of_bolts = 10
-    #         else:
-    #             design_status = False
-    #             logger.error(": Number of bolts required exceeds the maximum allowed value ")
-    #             logger.warning(": Maximum number of bolts allowed for the selected configuration is 10 [detailing best practice]")
-    #             logger.info(": Re-design the connection using a bolt of higher diameter/grade")
-    #
-    #     elif uiObj["Member"]["Connectivity"] == "Flush":
-    #         if number_of_bolts <= 4:
-    #             number_of_bolts = 4
-    #         elif 4 < number_of_bolts <= 6:
-    #             number_of_bolts = 6
-    #         else:
-    #             design_status = False
-    #             logger.error(": Number of bolts required exceeds the maximum allowed value ")
-    #             logger.warning(": Maximum number of bolts allowed for the selected configuration is 6 [detailing best practice]")
-    #             logger.info(": Re-design the connection using a bolt of higher diameter/grade")
-
-        # def round_down(n, decimals=0):
-        #     multiplier = 10 ** decimals
-        #     return math.floor(n * multiplier) / multiplier
     no_bolts_web = ((column_d - (2 * column_tf) - (2 * min_edge_distance))/min_pitch) +1
     no_bolts_web = math.floor(no_bolts_web)
 
@@ -686,38 +237,60 @@ def ccEndPlateSplice(uiObj):
 
     no_of_bolts = no_bolts_web + no_bolts_flange
 
-    pitch = (column_d - (2 * column_tf) - (2 * min_end_distance)) / (no_bolts_web-1)
-    pitch = math.floor(pitch)
-
-    end_dist = (column_d - (2 * column_tf) - (2 * pitch)) / 2
-
     if ['Member']['Connectivity'] == "Flush":
         y_max = column_d - column_tf - (column_tf/2) - end_dist
     elif ["Member"]["Connectivity"] == "Extended both ways":
         y_max = column_d - (column_tf/2) + end_dist
 
     if ['Member']['Connectivity'] == "Flush":
-        rs = 0
+        y_sqr = 0
         for i in no_bolts_web:
-            rs = rs + (end_dist + (column_tf / 2) + ((i-1) * pitch)) ** 2
-            return rs
+            y_sqr = y_sqr + (end_dist + (column_tf / 2) + ((i-1) * pitch)) ** 2
+            return y_sqr
     elif ["Member"]["Connectivity"] == "Extended both ways":
-        rs = 0
+        y_sqr = 0
         for i in no_bolts_web:
-            rs = rs + (end_dist + (column_tf / 2) + ((i-1) * pitch)) ** 2
-            rs = rs + 2 * end_dist + column_tf
-            return rs
+            y_sqr = y_sqr + (end_dist + (column_tf / 2) + ((i-1) * pitch)) ** 2
+            y_sqr = y_sqr + 2 * end_dist + column_tf
+            return y_sqr
 
     ###########################################################################
         # Bolt Checks
     ###########################################################################
-    t_b = (factored_axial_load / no_of_bolts) + (factored_moment * y_max / rs)
+    t_b = (factored_axial_load / no_of_bolts) + (factored_moment * y_max / y_sqr)
 
-    if t_b < bolt_tension_capacity:
+    if t_b > bolt_tension_capacity:
         design_status = False
-        logger.error(": The ")
+        logger.error(": The tension capacity of the connection is less than the bolt tension capacity.")
+        logger.warning(": Tension capacity of connection should be more than or equal to bolt tension capacity i.e %s KN." % bolt_tension_capacity)
+        logger.info(": Increase diameter of bolt or class of the bolt.")
 
+    v_sb = factored_shear_load / n_w
+    if uiObj["Member"]["Connectivity"] == "Flush":
+        n_w = no_bolts_web
+    if uiObj["Member"]["Connectivity"] == "Extended both ways":
+        n_w = no_bolts_web
 
+    if v_sb > bolt_capacity:combined_capcitycombined_capcity
+        design_status = False
+        logger.error(": The Shear capacity of the connection is less than the bolt shear capacity.")
+        logger.warning(": Shear capacity of connection should be more than or equal to bolt capacity i.e %s KN." % bolt_capacity)
+        logger.info(": Increase diameter of bolt or class of the bolt.")
+
+    combined_capacity = (v_sb/bolt_capacity)**2 + (t_b/bolt_tension_capacity)**2
+    if float(combined_capacity) > float(1)
+    design_status = False
+        logger.error(": Load due to combined shear and tension on selected bolt exceeds the limiting value")
+        logger.warning(": Higher section is required for the safe design.")
+        logger.info(": Re-design the connection using section of higher dimensions.")
+
+    #########################################################################
+     # Stiffener
+    #########################################################################
+    shear_on_stiff = t_b1
+    moment_on_stiff = t_b1 * end_dist_min
+
+    
     # #######################################################################
     # Calculating pitch, gauge, end and edge distances for different cases
 
@@ -1451,12 +1024,12 @@ def ccEndPlateSplice(uiObj):
     # Validation of calculated cross-centre gauge distance
     if cross_centre_gauge < 90:
         design_status = False
-        logger.error(": The cross-centre gauge is less than the minimum required value (Steel designers manual, page 733, 6th edition - 2003) ")
+        logger.error(": The cross-centre gauge is less than the minimum required value (Steel designey_sqr manual, page 733, 6th edition - 2003) ")
         logger.warning(": The minimum required value of cross centre gauge is %2.2f mm" % g_1)
         logger.info(": Increase the width of the End Plate or decrease the diameter of the bolt")
     if cross_centre_gauge > 160:
         design_status = False
-        logger.error(": The cross-centre gauge is greater than the maximum allowed value (Steel designers manual, page 733, 6th edition - 2003) ")
+        logger.error(": The cross-centre gauge is greater than the maximum allowed value (Steel designey_sqr manual, page 733, 6th edition - 2003) ")
         logger.warning(": The maximum allowed value of cross centre gauge is 140 mm")
         logger.info(": Decrease the width of the End Plate or increase the diameter of the bolt")
 
@@ -2005,7 +1578,7 @@ def ccEndPlateSplice(uiObj):
         l_st = max(l_st_effective, (l_weld_effective / 2))  # taking the maximum length out of the two possibilities
     else:
         # Length of stiffener (l_st) (as per AISC, DG 16 recommendations)
-        cf = math.pi / 180  # conversion factor to convert degree into radian
+        cf = math.pi / 180  # convey_sqrion factor to convert degree into radian
         l_stiffener = math.ceil(((h_st - 25) / math.tan(30 * cf)) + 25)
 
         l_st = max(l_st_effective, (l_weld_effective / 2), l_stiffener)  # taking the maximum length out of the three possibilities
@@ -2256,7 +1829,7 @@ def ccEndPlateSplice(uiObj):
 
         # ===================  CAD ===================
         # if uiObj["Member"]["Connectivity"] == "Extended one way":
-        if uiObj["Member"]["Connectivity"] == "Extended one way" or "Flush":  # TOdo added by darshan
+        if uiObj["Member"]["Connectivity"] == "Extended one way" or "Flush":  # TOdo added by day_sqrhan
             outputobj['Plate']['Projection'] = weld_thickness_flange + 10
         else:
             pass
@@ -2362,7 +1935,7 @@ def ccEndPlateSplice(uiObj):
 
         # ===================  CAD ===================
         # if uiObj["Member"]["Connectivity"] == "Extended one way":
-        if uiObj["Member"]["Connectivity"] == "Extended one way" or "Flush":  # TOdo added by darshan
+        if uiObj["Member"]["Connectivity"] == "Extended one way" or "Flush":  # TOdo added by day_sqrhan
             outputobj['Plate']['Projection'] = 0
         else:
             pass
