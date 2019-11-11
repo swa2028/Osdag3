@@ -713,7 +713,7 @@ class Maincontroller(QMainWindow):
 		# self.ui.btnSide.clicked.connect(lambda: self.call_2D_drawing("Side"))
 		self.ui.combo_diameter.currentIndexChanged[str].connect(self.bolt_hole_clearance)
 		self.ui.txt_rowpitch.editingFinished.connect(lambda: self.row_pitch_validation(self.ui.txt_rowpitch,self.ui.lbl_beam1_6))
-		self.ui.txt_columpitch.editingFinished.connect(lambda: self.pitch_validation(self.ui.txt_columpitch,self.ui.lbl_beam1_8))
+		self.ui.txt_columpitch.editingFinished.connect(lambda: self.column_pitch_validation(self.ui.txt_columpitch,self.ui.lbl_beam1_8))
 		self.ui.txt_Enddistance.editingFinished.connect(
 			lambda: self.enddistance_validation(self.ui.txt_Enddistance, self.ui.lbl_beam1_7))
 		self.ui.txt_Edgedistance.editingFinished.connect(
@@ -882,17 +882,45 @@ class Maincontroller(QMainWindow):
 			QMessageBox.about(self, 'Information', "Select Section Size")
 			clear_widget()
 		else:
-			dict_memb_data = self.fetchMembPara()
-			beam_D = float(dict_beam_data['D'])
-			col_T = float(dict_column_data['T'])
-			col_R1 = float(dict_column_data['R1'])
-			beam_T = float(dict_beam_data['T'])
-			beam_R1 = float(dict_beam_data['R1'])
-			diameter = self.ui.combo_diameter.currentText()
-			min_val = float(diameter) * 2.5
-			plate_thick = self.ui.txt_plate_thk.text()
-			b = 32 * float(plate_thick)
-			max_val = max(b, 300.0)
+			diameter = float(self.ui.combo_diameter.currentText())
+			if self.ui.combo_sectiontype.currentText() != "Angles":
+				dict_memb_data = self.fetchMembPara()
+				member_tw = float(dict_memb_data["tw"])
+				member_tf = float(dict_memb_data["T"])
+				member_d = float(dict_memb_data["D"])
+				member_B = float(dict_memb_data["B"])
+				if self.ui.combo_conn_loc.currentText() == "Flange":
+					c = member_B/2 - (member_tw) - (2 * 1.5 * diameter)
+				else:
+					c = member_d - (2 * 1.5 * diameter)
+				min_val = float(diameter) * 2.5
+				plate_thick = self.ui.txt_plate_thk.text()
+				b = 32 * float(plate_thick)
+				max_val_int = max(b, 300.0)
+				max_val = min(max_val_int, c)
+			else:
+				dict_memb_data = self.fetchMembPara()
+				member_leg = dict_memb_data["AXB"]
+				leg = member_leg.split("x")
+				leg1 = leg[0]
+				leg2 = leg[1]
+				min_leg = min(leg1,leg2)
+				max_leg = max(leg1,leg2)
+				t = float(dict_memb_data["t"])
+				if min_leg == max_leg:
+					min_val = float(diameter) * 2.5
+					c = min_leg - (2 * 1.5 * diameter)
+					plate_thick = self.ui.txt_plate_thk.text()
+					b = 32 * float(plate_thick)
+					max_val_int = max(b, 300.0)
+					max_val = min(max_val_int, c)
+				else:
+					min_val = float(diameter) * 2.5
+					c = max_leg - (2 * 1.5 * diameter)
+					plate_thick = self.ui.txt_plate_thk.text()
+					b = 32 * float(plate_thick)
+					max_val_int = max(b, 300.0)
+					max_val = min(max_val_int, c)
 			text_str = widget.text()
 			text_str = float(text_str)
 			if (text_str < min_val or text_str > max_val or text_str == ''):
