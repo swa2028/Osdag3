@@ -210,14 +210,14 @@ def ccEndPlateSplice(uiObj):
             f_ub=bolt_fu, A_nb=bolt_net_area, n_e=1, mu_f=mu_f, bolt_hole_type=bolt_hole_type)
         bolt_tension_capacity = IS800_2007.cl_10_4_5_friction_bolt_tension_resistance(
             f_ub=bolt_fu, f_yb=bolt_fy, A_sb=bolt_shank_area, A_n=bolt_net_area)
-        bearing_capacity = 0.0
+        bolt_bearing_capacity = 0.0
         bolt_shear_capacity = 0.0
         bolt_capacity = bolt_slip_capacity
 
     else:
         bolt_shear_capacity = IS800_2007.cl_10_3_3_bolt_shear_capacity(
             f_u=bolt_fu, A_nb=bolt_net_area, A_sb=bolt_shank_area, n_n=1, n_s=0)
-        bearing_capacity = IS800_2007.cl_10_3_4_bolt_bearing_capacity(
+        bolt_bearing_capacity = IS800_2007.cl_10_3_4_bolt_bearing_capacity(
             f_u=min(column_fu, end_plate_fu), f_ub=bolt_fu, t=(2 * end_plate_thickness), d=bolt_dia, e=end_dist_mini,
             p=min_pitch, bolt_hole_type=bolt_hole_type)
         bolt_slip_capacity = 0.0
@@ -235,7 +235,7 @@ def ccEndPlateSplice(uiObj):
     no_bolts_flange = ((column_B - (column_tw/2) - (2 * min_edge_distance)) / min_pitch) + 1
     no_bolts_flange = math.floor(no_bolts_flange)
 
-    no_of_bolts = no_bolts_web + no_bolts_flange
+    no_of_bolts = int(no_bolts_web + no_bolts_flange)
 
     if ['Member']['Connectivity'] == "Flush":
         y_max = column_d - column_tf - (column_tf/2) - end_dist
@@ -289,8 +289,107 @@ def ccEndPlateSplice(uiObj):
     #########################################################################
     shear_on_stiff = t_b1
     moment_on_stiff = t_b1 * end_dist_min
+    if uiObj['Weld']['Flange (mm)'] == "Fillet Weld":
+        if weld_thickness_flange <= 10:
+            n = 15
+        elif weld_thickness_flange >10 and <= 14:
+            n = 20
+        elif weld_thickness_flange > 14:
+            n = 25
+    a = 196
+    b = -28 * n
+    c = n ** 2
+    d = t_b1 * end_dist_min * 4 * 1.1 / 250
 
+    coeff = [a, b, c, d]
+
+    ans = np.roots(coef)
+    for i in range(len(ans)):
+        if np.isreal(ans[i]):
+            t_s = (np.real(ans[i]))
+            return t_s
+
+    h_s = 14 * t_s
+    if h_s < 100:
+        design_status = False
+        logger.warning(": Stiffener height is not sufficient for the practical purpose")
+        logger.info(": Re-design the connection by increasing the thickness of the stiffener")
+
+    extension = column_d - end_plate_height
+    if extension < 50:
+        stiffener_width = 50
+    else:
+        stiffener_width = extension
+
+    stiff_moment = t_b1 * end_dist_min
+    stiff_moment_capacity = ((t_s * (14 * t_s - n)**2) / 4) * (column_fy/gamma_m0)
+
+    if stiff_moment > stiff_moment_capacity:
+        design_status = False
+        logger.error(": Moment due to stiffener is greater than the stiffener moment capacity ")
+        logger.info(": Re-design the connection by reducing diameter of bolt or using the higher section")
     
+    stiff_shear = t_b1
+    stiff_shear_capacity = t_s * (h_s - n) * (column_fy / gamma_m0)
+    
+    if stiff_shear > stiff_shear_capacity:
+        design_status = False
+        logger.error(": The shear force due to stiffener is greater than the stiffener's shear capacity ")
+        logger.info(": Re-design the connection by reducing diameter of bolt or using the higher section")
+
+    if t_s < 6:
+        design_status = False
+        logger.error(": The minimum thickness of stiffener required is 6mm")
+        logger.info(": Re-design the connection by increasing the thickness of stiffener")
+
+    ###########################################################################
+    # End of calculation, sample output dictionary
+    ###########################################################################
+
+    outputobj = dict()
+
+    outputobj['Bolt'] = {}
+    #outputobj["Weld"] = {}
+    outputobj['Plate'] = {}
+    outputobj['Stiffener'] = {}
+
+    ##########   Bolts   #############
+    outputobj['Bolt']['status'] = design_status
+    outputobj['Bolt']['NumberOfBolts'] = int(no_of_bolts)
+    outputobj["Bolt"]["ShearBolt"] = float(round(v_sb,3))
+    outputobj["Bolt"]["TensionBolt"] = float(round(t_b1,3))
+
+    outputobj["Bolt"]["ShearCapacity"] = float(round(bolt_shear_capacity,3))
+    outputobj["Bolt"]["BearingCapacity"] = float(round(bolt_bearing_capacity,3))
+    outputobj["Bolt"]["BoltCapacity"] = float(round(bolt_capacity,3))
+    outputobj["Bolt"]["SlipCapacity"] = float(round(bolt_slip_capacity,3))
+    outputobj["Bolt"]["TensionCapacity"] = float(round(bolt_tension_capacity,3))
+    outputobj["Bolt"]["CombinedCapacity"] = float(round(combined_capacity,3))
+
+    outputobj['Bolt']['End'] = float(round(end_dist_min, 3))
+    outputobj['Bolt']['Edge'] = float(round(edge_dist_mini, 3))
+    outputobj['Bolt']['Pitch'] = float(round(min_pitch, 3))
+    outputobj['Bolt']['EndMax'] = float(round(end_dist_max, 3))
+    outputobj['Bolt']['PitchMax'] = float(round(max_pitch, 3))
+
+    ############   Plate    #########################
+    outputobj['Plate']['Height'] = float(round(end_plate_height,3))
+    outputobj['Plate']['Width'] = float(round(end_plate_width,3))
+    outputobj['Plate']['Thickness'] = float(round(end_plate_thickness,3))
+    outputobj['Plate']['Moment'] = float(round(m_ep,3))
+    outputobj['Plate']['MomentCapacity'] = float(round(m_dp,3))
+
+    #############   Stiffener    ##################
+    outputobj['Stiffener']['ShearForce'] = float(round(stiff_shear,3))
+    outputobj['Stiffener']['Moment'] = float(round(stiff_moment,3))
+    outputobj['Stiffener']['ShearForceCapity'] = float(round(stiff_shear_capacity,3))
+    outputobj['Stiffener']['MomentCapacity'] = float(round(stiff_moment_capacity,3))
+    outputobj['Stiffener']['Height'] = float(round(h_s,3))
+    outputobj['Stiffener']['Width'] = float(round(stiffener_width,3))
+    outputobj['Stiffener']['Thickness'] = float(round(t_s,3))
+    outputobj['Stiffener']['GrooveWeldSize'] = float(round(n,3))
+
+
     # #######################################################################
     # Calculating pitch, gauge, end and edge distances for different cases
 
