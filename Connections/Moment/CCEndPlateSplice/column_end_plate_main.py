@@ -1,7 +1,7 @@
 """
-Created on 24-Aug-2017
+Created on Nov 2019
 
-@author: Reshma
+@author: Yash
 """
 
 from Connections.Moment.CCEndPlateSplice.ui_column_endplate import Ui_MainWindow
