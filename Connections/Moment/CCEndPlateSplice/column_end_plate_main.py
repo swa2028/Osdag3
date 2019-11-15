@@ -32,7 +32,7 @@ import os
 import pickle
 import pdfkit
 import json
-import ConfigParser
+# import ConfigParser
 import cairosvg
 import shutil
 import subprocess
@@ -329,7 +329,6 @@ class Maincontroller(QMainWindow):
 
 
     def __init__(self, folder):
-        vvv
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -585,31 +584,31 @@ class Maincontroller(QMainWindow):
         self.call_designreport(file_name, report_summary)
 
         # Creates PDF
-        config = ConfigParser.ConfigParser()
-        config.readfp(open(r'Osdag.config'))
-        wkhtmltopdf_path = config.get('wkhtml_path', 'path1')
-
-        config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path )
-
-        options = {
-           'margin-bottom': '10mm',
-           'footer-right': '[page]'
-        }
-        file_type = "PDF(*.pdf)"
-        fname, _ = QFileDialog.getSaveFileName(self, "Save File As", self.folder + "/", file_type)
-        fname = str(fname)
-        flag = True
-        if fname == '':
-           flag = False
-           return flag
-        else:
-           pdfkit.from_file(filename, fname, configuration=config, options=options)
-           QMessageBox.about(self, 'Information', "Report Saved")
+        # config = ConfigParser.ConfigParser()
+        # config.readfp(open(r'Osdag.config'))
+        # wkhtmltopdf_path = config.get('wkhtml_path', 'path1')
+        #
+        # config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path )
+        #
+        # options = {
+        #    'margin-bottom': '10mm',
+        #    'footer-right': '[page]'
+        # }
+        # file_type = "PDF(*.pdf)"
+        # fname, _ = QFileDialog.getSaveFileName(self, "Save File As", self.folder + "/", file_type)
+        # fname = str(fname)
+        # flag = True
+        # if fname == '':
+        #    flag = False
+        #    return flag
+        # else:
+        #    pdfkit.from_file(filename, fname, configuration=config, options=options)
+        #    QMessageBox.about(self, 'Information', "Report Saved")
 
     def call_designreport(self, fileName, report_summary):
         self.alist = self.designParameters()
         self.result = ccEndPlateSplice(self.alist)
-        print "resultobj", self.result
+        print ("resultobj", self.result)
         self.beam_data = self.fetchBeamPara()
         save_html(self.result, self.alist, self.beam_data, fileName, report_summary, self.folder)
 
@@ -894,7 +893,7 @@ class Maincontroller(QMainWindow):
             return
         self.alist = self.designParameters()
         self.outputs = ccEndPlateSplice(self.alist)
-        print "output list ", self.outputs
+        print ("output list ", self.outputs)
 
         self.ui.outputDock.setFixedSize(310, 710)
         self.enable_buttons()
@@ -927,7 +926,7 @@ class Maincontroller(QMainWindow):
                     resultObj = outputObj
                 else:
                     resultObj = outputObj
-        print resultObj
+        print (resultObj)
 
         tension_capacity = resultObj["Bolt"]["TensionCapacity"]
         self.ui.txt_tensionCapacity.setText(str(tension_capacity))
@@ -1165,9 +1164,9 @@ class Maincontroller(QMainWindow):
         Returns: The list of weld thickness in Gui
 
         """
-        if str(self.ui.combo_beamSec.currentText()) == "Select section":
+        if str(self.ui.combo_columnSec.currentText()) == "Select section":
             self.ui.combo_plateThick.setCurrentIndex(0)
-            self.ui.combo_flangeSize.setCurrentIndex(0)
+            self.ui.combo_weldSize_flange.setCurrentIndex(0)
             return
 
         else:
@@ -1182,8 +1181,8 @@ class Maincontroller(QMainWindow):
                 plate_thick = float(plate_thickness)
 
                 if str(self.ui.combo_connLoc.currentText()) == "Extended both ways" or "Flush" or "Extended one way":
-                    if str(self.ui.combo_beamSec.currentText()) == "Select section":
-                        self.ui.combo_flangeSize.clear()
+                    if str(self.ui.combo_columnSecSec.currentText()) == "Select section":
+                        self.ui.combo_weldSize_flange.clear()
                         return
                     else:
                         beam_tf = float(dictbeamdata["T"])
@@ -1204,9 +1203,9 @@ class Maincontroller(QMainWindow):
                     weld_index = weldlist.index(8)
                     newlist.extend(weldlist[weld_index:])
 
-                self.ui.combo_flangeSize.clear()
+                self.ui.combo_weldSize_flange.clear()
                 for element in newlist[:]:
-                    self.ui.combo_flangeSize.addItem(str(element))
+                    self.ui.combo_weldSize_flange.addItem(str(element))
             else:
                 pass
 
@@ -1221,12 +1220,12 @@ class Maincontroller(QMainWindow):
         """
         items = self.gradeType[str(index)]
         if items != 0:
-            self.ui.combo_grade.clear()
+            self.ui.combo_bolt_grade.clear()
             stritems = []
             for val in items:
                 stritems.append(str(val))
 
-            self.ui.combo_grade.addItems(stritems)
+            self.ui.combo_bolt_grade.addItems(stritems)
         else:
             pass
 
@@ -2135,23 +2134,23 @@ if __name__ == "__main__":
     set_osdaglogger()
     rawLogger = logging.getLogger("raw")
     rawLogger.setLevel(logging.INFO)
-    # fh = logging.FileHandler(os.path.join('Connections','Moment','ExtendedEndPlate','extnd.log'), mode="w")
-    fh = logging.FileHandler("Connections/Moment/ExtendedEndPlate/extnd.log", mode='w')
+    # fh = logging.FileHandler(os.path.join('Connections','Moment','CCEndPlateSplice','end.log'), mode="w")
+    fh = logging.FileHandler("Connections/Moment/CCEndPlateSplice/end.log", mode='w')
 
     formatter = logging.Formatter('''%(message)s''')
     fh.setFormatter(formatter)
     rawLogger.addHandler(fh)
-    rawLogger.info('''<link rel="stylesheet" type="text/css" href="Connections/Moment/ExtendedEndPlate/log.css"/>''')
+    rawLogger.info('''<link rel="stylesheet" type="text/css" href="Connections/Moment/CCEndPlateSplice/log.css"/>''')
     # ----------------------------------------------------------------------------
     # folder_path = "D:\Osdag_Workspace\extendedendplate"
     app = QApplication(sys.argv)
     module_setup()
     folder_path = ""
     if not os.path.exists(folder_path):
-        os.mkdir(folder_path, 0755)
+        os.mkdir(folder_path, 0o755)
     image_folder_path = os.path.join(folder_path, 'images_html')
     if not os.path.exists(image_folder_path):
-        os.mkdir(image_folder_path, 0755)
+        os.mkdir(image_folder_path, 0o755)
 
     window = Maincontroller(folder_path)
     window.show()
