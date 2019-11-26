@@ -32,8 +32,9 @@ def tension_bolted_design(uiObj):
     #     conn_type = "Flange"
     # else:
     #     conn_type = "Leg"
-    conn = uiObj['Member']['Location']
     Member_type = uiObj['Member']['SectionType']
+    Conn_type = uiObj['Member']['ConnType']
+    conn = uiObj['Member']['Location']
     # Member_type = "Angles"
     Member_size = uiObj['Member']['SectionSize']
     # Member_size = "40 40 x 4"
