@@ -2015,4 +2015,4 @@ class Ui_MainWindow(object):
         self.actio_load_input.setShortcut(_translate("MainWindow", "Ctrl+L"))
         self.actionShow_column_2.setText(_translate("MainWindow", "Show column"))
         self.actionShow_column_2.setShortcut(_translate("MainWindow", "Alt+Shift+C"))
-import icons_rc
+from .import icons_rc

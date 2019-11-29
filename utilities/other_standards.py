@@ -140,7 +140,7 @@ class IS1367_Part3_2002(object):
         Note:
             Reference:
             IS 1367 (Part 3) :2002 cl. 3
-
+ no_of_bolts = (member_d/(end_distance*2))
         """
         try:
             bolt_grade = float(bolt_grade)

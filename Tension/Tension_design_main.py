@@ -10,7 +10,7 @@ from .svg_window import SvgWindow
 from ui_tutorial import Ui_Tutorial
 from ui_aboutosdag import Ui_AboutOsdag
 from ui_ask_question import Ui_AskQuestion
-from .Tension_calc import tension_welded_design
+from .Tension_calc import tension_design
 from .drawing2D_tension_weld import Tension_drawing
 # import bc_endplate_calc as db_value
 # from ui_weld_details_1 import Ui_Weld_Details_1
@@ -152,22 +152,22 @@ class DesignPreference(QDialog):
 
 	def save_default_para(self):
 		uiObj = self.maincontroller.get_user_inputs()
-		# if uiObj["Bolt"]["Grade"] == '':
-		# 	pass
-		# else:
-		# 	bolt_grade = float(uiObj["Bolt"]["Grade"])
-		# 	bolt_fu = str(self.get_boltFu(bolt_grade))
-		# 	self.ui.txt_boltFu.setText(bolt_fu)
+		if uiObj["Bolt"]["Grade"] == '' or uiObj["Bolt"]["Grade"] == 'Please Select Type':
+			pass
+		else:
+			bolt_grade = float(uiObj["Bolt"]["Grade"])
+			bolt_fu = str(self.get_boltFu(bolt_grade))
+			self.ui.txt_boltFu.setText(bolt_fu)
 		self.ui.combo_boltType.setCurrentIndex(1)
 		self.ui.combo_boltHoleType.setCurrentIndex(0)
 		designPref = {}
-		# designPref["bolt"] = {}
-		# designPref["bolt"]["bolt_type"] = str(self.ui.combo_boltType.currentText())
-		# designPref["bolt"]["bolt_hole_type"] = str(self.ui.combo_boltHoleType.currentText())
-		# designPref["bolt"]["bolt_hole_clrnce"] = self.get_clearance()
-		# designPref["bolt"]["bolt_fu"] = float(self.ui.txt_boltFu.text())
-		# self.ui.combo_slipfactor.setCurrentIndex(4)
-		# designPref["bolt"]["slip_factor"] = float(str(self.ui.combo_slipfactor.currentText()))
+		designPref["bolt"] = {}
+		designPref["bolt"]["bolt_type"] = str(self.ui.combo_boltType.currentText())
+		designPref["bolt"]["bolt_hole_type"] = str(self.ui.combo_boltHoleType.currentText())
+		designPref["bolt"]["bolt_hole_clrnce"] = self.get_clearance()
+		designPref["bolt"]["bolt_fu"] = float(self.ui.txt_boltFu.text())
+		self.ui.combo_slipfactor.setCurrentIndex(4)
+		designPref["bolt"]["slip_factor"] = float(str(self.ui.combo_slipfactor.currentText()))
 
 		self.ui.combo_weldType.setCurrentIndex(0)
 		designPref["weld"] = {}
@@ -207,23 +207,23 @@ class DesignPreference(QDialog):
 		else:
 			pass
 
-	# def get_clearance(self):
-	#
-	# 	uiObj = self.maincontroller.get_user_inputs()
-	# 	boltDia = str(uiObj["Bolt"]["Diameter (mm)"])
-	# 	if boltDia != 'Select diameter':
-	#
-	# 		standard_clrnce = {12: 1, 14: 1, 16: 2, 18: 2, 20: 2, 22: 2, 24: 2, 30: 3, 34: 3, 36: 3}
-	# 		overhead_clrnce = {12: 3, 14: 3, 16: 4, 18: 4, 20: 4, 22: 4, 24: 6, 30: 8, 34: 8, 36: 8}
-	# 		boltHoleType = str(self.ui.combo_boltHoleType.currentText())
-	# 		if boltHoleType == "Standard":
-	# 			clearance = standard_clrnce[int(boltDia)]
-	# 		else:
-	# 			clearance = overhead_clrnce[int(boltDia)]
-	#
-	# 		return clearance
-	# 	else:
-	# 		pass
+	def get_clearance(self):
+
+		uiObj = self.maincontroller.get_user_inputs()
+		boltDia = str(uiObj["Bolt"]["Diameter (mm)"])
+		if boltDia != 'Select diameter':
+
+			standard_clrnce = {12: 1, 14: 1, 16: 2, 18: 2, 20: 2, 22: 2, 24: 2, 30: 3, 34: 3, 36: 3}
+			overhead_clrnce = {12: 3, 14: 3, 16: 4, 18: 4, 20: 4, 22: 4, 24: 6, 30: 8, 34: 8, 36: 8}
+			boltHoleType = str(self.ui.combo_boltHoleType.currentText())
+			if boltHoleType == "Standard":
+				clearance = standard_clrnce[int(boltDia)]
+			else:
+				clearance = overhead_clrnce[int(boltDia)]
+
+			return clearance
+		else:
+			pass
 
 	def get_boltFu(self, boltGrade):
 		"""
@@ -796,7 +796,7 @@ class Maincontroller(QMainWindow):
 
 		# TODO #
 
-		self.ui.txt_oppline_tension.editingFinished.connect(lambda: self.check_weld_range(self.ui.txt_oppline_tension,self.ui.lbl_beam1_3,self.uiObj))
+		# self.ui.txt_oppline_tension.editingFinished.connect(lambda: self.check_weld_range(self.ui.txt_oppline_tension,self.ui.lbl_beam1_3,self.uiObj))
 		# TODO #
 
 
@@ -952,7 +952,7 @@ class Maincontroller(QMainWindow):
 
 		uiObj["Bolt"] = {}
 		uiObj["Bolt"]["Diameter (mm)"] = str(self.ui.combo_diameter.currentText())
-		uiObj["Bolt"]["Type"] = str(self.ui.combo_bolt_typetype.currentText())
+		uiObj["Bolt"]["Type"] = str(self.ui.combo_bolt_type.currentText())
 		uiObj["Bolt"]["Grade"] = str(self.ui.combo_grade.currentText())
 
 		uiObj["Plate"] = {}
@@ -960,7 +960,7 @@ class Maincontroller(QMainWindow):
 
 		uiObj["Weld"] = {}
 		uiObj["Weld"]["Type"] = str(self.ui.combo_weld_type.currentText())
-		uiObj["Weld"]["Thickness (mm)"] = self.ui.combo_thickness.text()
+		uiObj["Weld"]["Thickness (mm)"] = str(self.ui.combo_thickness.currentText())
 
 		uiObj["Connection"] = self.connection
 
@@ -1171,11 +1171,14 @@ class Maincontroller(QMainWindow):
 		flag = True
 		incomplete_list = []
 
-		if self.ui.combo_conn_loc.currentIndex() == 0:
-			incomplete_list.append("Location")
-
 		if self.ui.combo_sectiontype.currentIndex() == 0:
 			incomplete_list.append("Section Type")
+
+		if self.ui.combo_conn_type.currentIndex() == 0:
+			incomplete_list.append("Connection Type")
+
+		if self.ui.combo_conn_loc.currentIndex() == 0:
+			incomplete_list.append("Location")
 
 		if self.ui.combo_sectionsize.currentIndex() == 0:
 			incomplete_list.append("Section Size")
@@ -1192,9 +1195,14 @@ class Maincontroller(QMainWindow):
 		if self.ui.txt_Tensionforce.text() == '' or float(self.ui.txt_Tensionforce.text()) == 0:
 			incomplete_list.append("Axial force")
 
-		# if self.ui.combo_conn_loc.currentText() == "Back to Back Angles":
-		if self.ui.txt_plate_thk.text() == "":
-			incomplete_list.append("Platethickness")
+		if self.ui.combo_diameter.currentIndex() == 0:
+			incomplete_list.append("Diameter")
+
+		if self.ui.combo_bolt_type.currentIndex() == 0:
+			incomplete_list.append("Bolt_Type")
+
+		if self.ui.combo_grade.currentIndex() == 0:
+			incomplete_list.append("Bolt_Grade")
 		# elif self.ui.combo_conn_loc.currentText() == "Star Angles":
 		# 	if self.ui.txt_plate_thk.text() == "":
 		# 		incomplete_list.append("Platethickness")
@@ -1203,24 +1211,15 @@ class Maincontroller(QMainWindow):
 		# 		incomplete_list.append("Platethickness")
 		# else:
 		# 	pass
+		if self.ui.combo_thickness.currentIndex() == 0:
+			incomplete_list.append("Plate_thickness")
 
-		if self.ui.txt_inline_tension.text() == "":
-			incomplete_list.append("inline_tension")
+		if self.ui.combo_weld_type.currentIndex() == 0:
+			incomplete_list.append("Weld_Type")
 
-		if self.ui.txt_oppline_tension.text() == "":
-			incomplete_list.append("oppline_tension")
+		if self.ui.combo_weld.currentIndex() == 0:
+			incomplete_list.append("Weld")
 
-		if self.ui.combo_end1_cond1.currentIndex() == 0:
-			incomplete_list.append("End 1 Condition 1")
-
-		if self.ui.combo_end1_cond2.currentIndex() == 0:
-			incomplete_list.append("End 1 Condition 2")
-
-		if self.ui.combo_end2_cond1.currentIndex() == 0:
-			incomplete_list.append("End 2 Condition 1")
-
-		if self.ui.combo_end2_cond2.currentIndex() == 0:
-			incomplete_list.append("End 2 Condition 2")
 
 		if len(incomplete_list) > 0:
 			flag = False
@@ -1228,37 +1227,37 @@ class Maincontroller(QMainWindow):
 
 		return flag
 
-	def wrong_combo(self):
-		flag = True
-		
-		if self.ui.combo_conn_loc.currentText()== "Back to Back Angles" and self.ui.combo_sectiontype.currentText()!= "Angles":
-			flag = False
-			QMessageBox.information(self, "Information", "Wrong Combination of Connection Type and Section Type")
-
-		elif self.ui.combo_conn_loc.currentText() == "Star Angles" and self.ui.combo_sectiontype.currentText()!= "Angles":
-			flag = False
-			QMessageBox.information(self, "Information", "Wrong Combination of Connection Type and Section Type")
-
-		elif self.ui.combo_conn_loc.currentText()== "Leg" and self.ui.combo_sectiontype.currentText()!= "Angles":
-			flag = False
-			QMessageBox.information(self, "Information", "Wrong Combination of Connection Type and Section Type")
-
-		elif self.ui.combo_conn_loc.currentText()=="Back to Back Web" and self.ui.combo_sectiontype.currentText() != "Channels":
-			flag = False
-			QMessageBox.information(self, "Information", "Wrong Combination of Connection Type and Section Type")
-
-		elif self.ui.combo_conn_loc.currentText() == "Flange" and self.ui.combo_sectiontype.currentText() == "Angles" :
-			flag = False
-			QMessageBox.information(self, "Information", "Wrong Combination of Connection Type and Section Type")
-
-		elif self.ui.combo_conn_loc.currentText() == "Web" and self.ui.combo_sectiontype.currentText() == "Angles" :
-			flag = False
-			QMessageBox.information(self, "Information", "Wrong Combination of Connection Type and Section Type")
-
-		else:
-			flag = True
-
-		return flag
+	# def wrong_combo(self):
+	# 	flag = True
+	#
+	# 	if self.ui.combo_conn_loc.currentText()== "Back to Back Angles" and self.ui.combo_sectiontype.currentText()!= "Angles":
+	# 		flag = False
+	# 		QMessageBox.information(self, "Information", "Wrong Combination of Connection Type and Section Type")
+	#
+	# 	elif self.ui.combo_conn_loc.currentText() == "Star Angles" and self.ui.combo_sectiontype.currentText()!= "Angles":
+	# 		flag = False
+	# 		QMessageBox.information(self, "Information", "Wrong Combination of Connection Type and Section Type")
+	#
+	# 	elif self.ui.combo_conn_loc.currentText()== "Leg" and self.ui.combo_sectiontype.currentText()!= "Angles":
+	# 		flag = False
+	# 		QMessageBox.information(self, "Information", "Wrong Combination of Connection Type and Section Type")
+	#
+	# 	elif self.ui.combo_conn_loc.currentText()=="Back to Back Web" and self.ui.combo_sectiontype.currentText() != "Channels":
+	# 		flag = False
+	# 		QMessageBox.information(self, "Information", "Wrong Combination of Connection Type and Section Type")
+	#
+	# 	elif self.ui.combo_conn_loc.currentText() == "Flange" and self.ui.combo_sectiontype.currentText() == "Angles" :
+	# 		flag = False
+	# 		QMessageBox.information(self, "Information", "Wrong Combination of Connection Type and Section Type")
+	#
+	# 	elif self.ui.combo_conn_loc.currentText() == "Web" and self.ui.combo_sectiontype.currentText() == "Angles" :
+	# 		flag = False
+	# 		QMessageBox.information(self, "Information", "Wrong Combination of Connection Type and Section Type")
+	#
+	# 	else:
+	# 		flag = True
+	#
+	# 	return flag
 
 	def design_btnclicked(self):
 		"""
@@ -1269,7 +1268,7 @@ class Maincontroller(QMainWindow):
 		if self.validate_inputs_on_design_btn() is not True:
 			return
 		self.alist = self.designParameters()
-		self.outputs = tension_welded_design(self.alist)
+		self.outputs = tension_design(self.alist)
 		print("output list ", self.outputs)
 
 		self.ui.outputDock.setFixedSize(310, 710)
@@ -1378,21 +1377,20 @@ class Maincontroller(QMainWindow):
 		"""
 		Returns:
 		"""
-		self.ui.combo_conn_loc.setCurrentIndex(0)
 		self.ui.combo_sectiontype.setCurrentIndex(0)
+		self.ui.combo_conn_type.setCurrentIndex(0)
+		self.ui.combo_conn_loc.setCurrentIndex(0)
 		self.ui.combo_sectionsize.setCurrentIndex(0)
 		self.ui.txt_Fu.clear()
 		self.ui.txt_Fy.clear()
 		self.ui.txt_Member_length.clear()
 		self.ui.txt_Tensionforce.clear()
-		self.ui.txt_plate_thk.clear()
-		self.ui.txt_inline_tension.clear()
-		self.ui.txt_oppline_tension.clear()
-		self.ui.combo_end1_cond1.setCurrentIndex(0)
-		self.ui.combo_end1_cond2.setCurrentIndex(0)
-		self.ui.combo_end2_cond1.setCurrentIndex(0)
-		self.ui.combo_end2_cond2.setCurrentIndex(0)
-
+		self.ui.combo_diameter.setCurrentIndex(0)
+		self.ui.combo_bolt_type.setCurrentIndex(0)
+		self.ui.combo_grade.setCurrentIndex(0)
+		self.ui.combo_thickness.setCurrentIndex(0)
+		self.ui.combo_weld_type.setCurrentIndex(0)
+		self.ui.combo_weld.setCurrentIndex(0)
 		self.ui.btnFront.setDisabled(True)
 		self.ui.btnTop.setDisabled(True)
 		self.ui.btnSide.setDisabled(True)
@@ -1404,6 +1402,12 @@ class Maincontroller(QMainWindow):
 
 		self.ui.combo_sectionsize.clear()
 		member_type = text
+		if member_type == "Angle" or member_type == "Back to Back Angles" or member_type == "Star Angles":
+			member_type = "Angles"
+		elif member_type == "Channels" or member_type == "Back to Back Channels":
+			member_type = "Channels"
+		else:
+			pass
 		membdata = get_membercombolist(member_type)
 		old_beamdata = get_oldbeamcombolist()
 		combo_section = ''
@@ -2498,7 +2502,7 @@ def set_osdaglogger():
 	logger.addHandler(fh)
 
 
-def launch_tension_welded_controller(osdagMainWindow, folder):
+def launch_tension_design_controller(osdagMainWindow, folder):
 	set_osdaglogger()
 	# --------------- To display log messages in different colors ---------------
 	rawLogger = logging.getLogger("raw")

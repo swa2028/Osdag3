@@ -23,6 +23,7 @@ from Connections.Shear.Endplate.endPlateMain import launch_endplate_controller
 from Connections.Moment.BBSpliceCoverPlate.BBSpliceCoverPlateBolted.coverplate_bolted_main import launch_coverplate_controller
 from Connections.Moment.ExtendedEndPlate.extended_main import launch_extendedendplate_controller
 from Connections.Moment.BCEndPlate.bc_endplate_main import launch_bc_endplate_controller
+from Tension.Tension_design_main import launch_tension_design_controller
 from Tension.Tension_bolted_main import launch_tension_bolted_controller
 from Tension.Tension_welded_main import launch_tension_welded_controller
 import os.path
@@ -71,7 +72,7 @@ class OsdagMainWindow(QMainWindow):
         self.ui.btn_start.clicked.connect(self.show_shear_connection)
         self.ui.btn_start_2.clicked.connect(self.show_moment_connection)
         self.ui.btn_start_3.clicked.connect(self.show_moment_connection_bc)
-        self.ui.Tension_Start.clicked.connect(self.show_tension)
+        self.ui.btn_tension.clicked.connect(self.show_tension)
 
         self.ui.btn_beamCol.clicked.connect(self.unavailable)
         self.ui.btn_compression.clicked.connect(self.unavailable)
@@ -299,23 +300,23 @@ class OsdagMainWindow(QMainWindow):
                     shutil.rmtree(os.path.join(folder, create_folder))
                     os.mkdir(os.path.join(root_path, create_folder))
 
-        if self.ui.rdbtn_bolted.isChecked():
-            launch_tension_bolted_controller(self, folder)
-            self.ui.myStackedWidget.setCurrentIndex(0)
-        # else:
-        #     QMessageBox.about(self, "INFO", "Please select appropriate connection")
-
-        elif self.ui.rdbtn_welded.isChecked():
-            launch_tension_welded_controller(self, folder)
-            self.ui.myStackedWidget.setCurrentIndex(0)
-        else:
-            QMessageBox.about(self, "INFO", "Please select appropriate connection")
-        # if self.ui.btn_tension.isChecked():
-        # launch_tension_controller(self, folder)
-        #     # self.ui.myStackedWidget.setCurrentIndex(0)
-        #
+        # if self.ui.rdbtn_bolted.isChecked():
+        #     launch_tension_bolted_controller(self, folder)
+        #     self.ui.myStackedWidget.setCurrentIndex(0)
         # # else:
         # #     QMessageBox.about(self, "INFO", "Please select appropriate connection")
+        #
+        # elif self.ui.rdbtn_welded.isChecked():
+        #     launch_tension_welded_controller(self, folder)
+        #     self.ui.myStackedWidget.setCurrentIndex(0)
+        # else:
+        #     QMessageBox.about(self, "INFO", "Please select appropriate connection")
+        # if self.ui.btn_tension.clicked():
+        launch_tension_design_controller(self, folder)
+        self.ui.myStackedWidget.setCurrentIndex(0)
+
+        # else:
+        #     QMessageBox.about(self, "INFO", "Please select appropriate connection")
 
     # ********************************* Help Action *********************************************************************************************
 
