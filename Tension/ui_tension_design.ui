@@ -3707,21 +3707,6 @@ QMenu::item:selected {
      <property name="maxVisibleItems">
       <number>5</number>
      </property>
-     <item>
-      <property name="text">
-       <string>Please Select Type</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Friction Grip Bolt</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Bearing Bolt</string>
-      </property>
-     </item>
     </widget>
     <widget class="QLabel" name="label_12">
      <property name="geometry">
@@ -3766,21 +3751,6 @@ QMenu::item:selected {
      <property name="maxVisibleItems">
       <number>5</number>
      </property>
-     <item>
-      <property name="text">
-       <string>Please Select Type</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Friction Grip Bolt</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Bearing Bolt</string>
-      </property>
-     </item>
     </widget>
     <widget class="QLabel" name="label_13">
      <property name="geometry">

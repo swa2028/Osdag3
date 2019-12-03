@@ -1035,7 +1035,7 @@ class Maincontroller(QMainWindow):
 		"""
 		Args:
 			filename: file name
-		Returns: open file for writing
+		    Returns: open file for writing
 		"""
 		fname = QFile(filename)
 		if not fname.open(QFile.WriteOnly | QFile.Text):
