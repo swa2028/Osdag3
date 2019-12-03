@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Extended End Plate</string>
+   <string>Column End Plate</string>
   </property>
   <property name="windowIcon">
    <iconset resource="ResourceFiles/icons.qrc">
@@ -304,16 +304,7 @@
         <number>1</number>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
-        <property name="leftMargin">
-         <number>1</number>
-        </property>
-        <property name="topMargin">
-         <number>1</number>
-        </property>
-        <property name="rightMargin">
-         <number>1</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>1</number>
         </property>
         <item>
@@ -386,7 +377,7 @@
      <x>0</x>
      <y>0</y>
      <width>1422</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="styleSheet">

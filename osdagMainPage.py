@@ -26,6 +26,7 @@ from Connections.Moment.BCEndPlate.bc_endplate_main import launch_bc_endplate_co
 from Tension.Tension_bolted_main import launch_tension_bolted_controller
 from Tension.Tension_welded_main import launch_tension_welded_controller
 from Connections.Moment.CCSpliceCoverPlate.CCSpliceCoverPlateBolted.coverplate_bolted_main import launch_column_coverplate_controller
+from Connections.Moment.CCEndPlateSplice.column_end_plate_main import launch_column_endplate_controller
 import os.path
 import subprocess
 import shutil
@@ -299,19 +300,17 @@ class OsdagMainWindow(QMainWindow):
                     shutil.rmtree(os.path.join(folder, create_folder))
                     os.mkdir(os.path.join(root_path, create_folder))
 
-           # if \
-           #
-            self.ui.rdbtn_coverplate.isChecked()
-            launch_column_coverplate_controller(self, folder)
-            self.ui.myStackedWidget.setCurrentIndex(0)
+            if self.ui.rdbtn_coverplate.isChecked():
+                launch_column_coverplate_controller(self, folder)
+                self.ui.myStackedWidget.setCurrentIndex(0)
 
-            # elif self.ui.rdbtn_endplate.isChecked():
-            # launch_column_endplate_controller(self, folder)
-            # self.ui.myStackedWidget.setCurrentIndex(0)
-            #
-            # else:
-            # QMessageBox.about(self, "INFO", "Please select appropriate connection")
-      #
+            elif self.ui.rdbtn_endplate_2.isChecked():
+                launch_column_endplate_controller(self, folder)
+                self.ui.myStackedWidget.setCurrentIndex(0)
+
+            else:
+                QMessageBox.about(self, "INFO", "Please select appropriate connection")
+
     ####added#####
 
     def show_tension(self):

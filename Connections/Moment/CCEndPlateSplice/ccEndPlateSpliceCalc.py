@@ -65,8 +65,8 @@ def ccEndPlateSplice(uiObj):
     else:
         factored_axial_load = float(factored_axial_load)
 
-    bolt_dia = int(uiObj['Bolt']['Diameter (mm)'])
-    bolt_type = uiObj["Bolt"]["Type"]
+    bolt_dia = float(uiObj['Bolt']['Diameter (mm)'])
+    bolt_type = (uiObj["Bolt"]["Type"])
     bolt_grade = float(uiObj['Bolt']['Grade'])
     bolt_fu = float(uiObj["bolt"]["bolt_fu"])
     bolt_fy = float((bolt_grade - int(bolt_grade)) * bolt_fu)
@@ -80,7 +80,7 @@ def ccEndPlateSplice(uiObj):
         bolt_hole_type = 'standard'
 
     dia_hole = bolt_dia + int(uiObj["bolt"]["bolt_hole_clrnce"])
-    end_plate_thickness = float(uiObj['Plate']['Thickness (mm)'])
+    end_plate_thickness = [float(0),float(uiObj['Plate']['Thickness (mm)'])]
 
     # TODO implement after excomm review for different grades of plate
     end_plate_fu = float(uiObj['Member']['fu (MPa)'])
@@ -88,7 +88,7 @@ def ccEndPlateSplice(uiObj):
 
     weld_type = str(uiObj["Weld"]["Type"])  # This is - Fillet weld or Groove weld
 
-    if uiObj["Weld"]["Type"] == "Fillet Weld":
+    if weld_type == "Fillet":
         weld_thickness_flange = float(uiObj['Weld']['Flange (mm)'])
         weld_thickness_web = float(uiObj['Weld']['Web (mm)'])
     else:
@@ -136,22 +136,22 @@ def ccEndPlateSplice(uiObj):
 
     if float(factored_moment) < float(moment_minimum):
         design_status = False
-        logger.warning(": The input factored moment (%2.2f kN-m) is less that the minimum design action on the connection (Cl. 10.7-6, IS 800:2007)" % factored_moment)
+        # logger.warning(": The input factored moment (%2.2f kN-m) is less that the minimum design action on the connection (Cl. 10.7-6, IS 800:2007)" % factored_moment)
         logger.info(": The connection is designed for %2.2f kN-m" % float(moment_minimum))
 
     factored_moment = round(moment_minimum, 3)
 
     #######################################################################
     # Calculation of Bolt strength in MPa
-    bolt_fu = uiObj["bolt"]["bolt_fu"]
-    bolt_fy = (bolt_grade - int(bolt_grade)) * bolt_fu
+    bolt_fu = float(uiObj["bolt"]["bolt_fu"])
+    bolt_fy = float((bolt_grade - int(bolt_grade)) * bolt_fu)
 
     #######################################################################
     # Calculation of Spacing
 
     # Minimum and maximum end distances (mm) [Cl. 10.2.4.2 & Cl. 10.2.4.3, IS 800:2007]
-    end_dist_min = IS800_2007.cl_10_2_4_2_min_edge_end_dist(
-        d=bolt_dia, bolt_hole_type=bolt_hole_type, edge_type=edge_type)
+    end_dist_min = float(IS800_2007.cl_10_2_4_2_min_edge_end_dist(
+        d=bolt_dia, bolt_hole_type=bolt_hole_type, edge_type=edge_type))
 
     end_dist_max = IS800_2007.cl_10_2_4_3_max_edge_dist(plate_thicknesses=end_plate_thickness, f_y=end_plate_fy,
                                                         corrosive_influences=corrosive_influences)
@@ -161,7 +161,7 @@ def ccEndPlateSplice(uiObj):
     edge_dist_max = end_dist_max
 
     # min_pitch & max_pitch = Minimum and Maximum pitch distance (mm) [Cl. 10.2.2, IS 800:2007]
-    min_pitch = 3.0 * bolt_dia
+    min_pitch = float(3.0 * bolt_dia)
     max_pitch = IS800_2007.cl_10_2_3_1_max_spacing(end_plate_thickness)
 
     # min_gauge & max_gauge = Minimum and Maximum gauge distance (mm) [Cl. 10.2.3.1, IS 800:2007]
@@ -174,12 +174,17 @@ def ccEndPlateSplice(uiObj):
     #######################################################################
 
     no_bolts_web = ((column_d - (2 * column_tf) - (2 * end_dist_min)) / min_pitch) + 1
-    no_bolts_web = math.floor(no_bolts_web)
+    no_bolts_web = int(math.floor(no_bolts_web))
+
+    if no_bolts_web == 1 or no_bolts_web < 1:
+        design_status = False
+        logger.warning(": The bolt diameter selected is larger for the given section.")
+        logger.info(": Decrease the bolt diameter or increase the size of section.")
 
     no_bolts_flange = (((column_B/2) - (column_tw / 2) - (2 * end_dist_min)) / min_pitch) + 1
     no_bolts_flange = math.floor(no_bolts_flange)
 
-    no_of_bolts = int(no_bolts_web + no_bolts_flange)
+    no_of_bolts = int(no_bolts_web + (no_bolts_flange - 1))
 
 ####################################################################################
     # New values of pitch and end distance from detailing
@@ -210,25 +215,28 @@ def ccEndPlateSplice(uiObj):
     # Defining y_max and y_sqr
 #########################################################################################
 
-    if ['Member']['Connectivity'] == "Flush":
+    if uiObj['Member']['Connectivity'] == "Flush":
         y_max = column_d - column_tf - (column_tf / 2) - end_dist
-    elif ["Member"]["Connectivity"] == "Extended both ways":
+    elif uiObj["Member"]["Connectivity"] == "Extended both ways":
         y_max = column_d - (column_tf / 2) + end_dist
 
-    if ['Member']['Connectivity'] == "Flush":
-        y_sqr = 0
-        for i in no_bolts_web:
-            y_sqr = y_sqr + (end_dist + (column_tf / 2) + ((i - 1) * pitch)) ** 2
-            return y_sqr
-    elif ["Member"]["Connectivity"] == "Extended both ways":
-        y_sqr = 0
-        for i in no_bolts_web:
-            y_sqr = y_sqr + (end_dist + (column_tf / 2) + ((i - 1) * pitch)) ** 2
+    if uiObj['Member']['Connectivity'] == "Flush":
+        y_sqre = 0
+        for i in range(no_bolts_web):
+            y_sqr = (end_dist + (column_tf / 2) + ((int(i) - 1) * pitch)) ** 2
+            y_sqre = y_sqre + y_sqr
+            # return y_sqr
+    elif uiObj["Member"]["Connectivity"] == "Extended both ways":
+        y_sqre = 0
+        for i in range(no_bolts_web):
+            y_sqr = (end_dist + (column_tf / 2) + ((int(i) - 1) * pitch)) ** 2
             y_sqr = y_sqr + 2 * end_dist + column_tf
-            return y_sqr
+            y_sqre = y_sqre + y_sqr
+
+            # return y_sqr
 
     t_b1 = (factored_axial_load / no_of_bolts) + (factored_moment * y_max / y_sqr)
-    t_b2,t_b3 = (factored_axial_load / no_of_bolts) + (factored_moment * y_max / y_sqr)
+    t_b2 = t_b3 = (factored_axial_load / no_of_bolts) + (factored_moment * y_max / y_sqr)
     y_1 = column_tf/2 + end_dist_min
     y_2 = y_1 + min_pitch
 
@@ -238,7 +246,9 @@ def ccEndPlateSplice(uiObj):
         m_ep = max(0.5 * t_b1 * end_dist_min, t_b3 * end_dist_min)
     
     gamma_m0 = 1.10
-    m_dp = b_eff * end_plate_thickness**2 * column_fy / (4 * gamma_m0)
+
+
+    m_dp = b_eff * end_plate_thickness[1]**2 * column_fy / (4 * gamma_m0)
     
     if m_ep > m_dp:
         design_status = False
@@ -263,7 +273,7 @@ def ccEndPlateSplice(uiObj):
         bolt_shear_capacity = IS800_2007.cl_10_3_3_bolt_shear_capacity(
             f_u=bolt_fu, A_nb=bolt_net_area, A_sb=bolt_shank_area, n_n=1, n_s=0)
         bolt_bearing_capacity = IS800_2007.cl_10_3_4_bolt_bearing_capacity(
-            f_u=min(column_fu, end_plate_fu), f_ub=bolt_fu, t=(2 * end_plate_thickness), d=bolt_dia, e=end_dist_min,
+            f_u=min(column_fu, end_plate_fu), f_ub=bolt_fu, t=sum(end_plate_thickness), d=bolt_dia, e=end_dist_min,
             p=min_pitch, bolt_hole_type=bolt_hole_type)
         bolt_slip_capacity = 0.0
         bolt_capacity = min(bolt_shear_capacity, bolt_bearing_capacity)
@@ -312,10 +322,10 @@ def ccEndPlateSplice(uiObj):
     
     #########################################################################
      # Stiffener
-    #########################################################################
+    ########################################################################
     shear_on_stiff = t_b1
     moment_on_stiff = t_b1 * end_dist_min
-    if uiObj['Weld']['Flange (mm)'] == "Fillet Weld":
+    if uiObj['Weld']['Type'] == "Fillet":
         if weld_thickness_flange <= 10:
             n = 15
         elif weld_thickness_flange >10 and weld_thickness_flange<= 14:
@@ -331,10 +341,10 @@ def ccEndPlateSplice(uiObj):
 
     ans = np.roots(coeff)
     for i in range(len(ans)):
-        if np.isreal(ans[i]):
-            t_s = (np.real(ans[i]))
+        # if np.isreal(ans[i]):
+        t_s = (np.real(ans[i]))
 
-        h_s = 14 * t_s
+    h_s = 14 * t_s
     if h_s < 100:
         design_status = False
         logger.warning(": Stiffener height is not sufficient for the practical purpose")
@@ -353,10 +363,10 @@ def ccEndPlateSplice(uiObj):
         design_status = False
         logger.error(": Moment due to stiffener is greater than the stiffener moment capacity ")
         logger.info(": Re-design the connection by reducing diameter of bolt or using the higher section")
-    
+
     stiff_shear = t_b1
     stiff_shear_capacity = t_s * (h_s - n) * (column_fy / gamma_m0)
-    
+
     if stiff_shear > stiff_shear_capacity:
         design_status = False
         logger.error(": The shear force due to stiffener is greater than the stiffener's shear capacity ")
@@ -374,13 +384,14 @@ def ccEndPlateSplice(uiObj):
     outputobj = dict()
 
     outputobj['Bolt'] = {}
-    #outputobj["Weld"] = {}
+    outputobj["Weld"] = {}
     outputobj['Plate'] = {}
     outputobj['Stiffener'] = {}
 
     ##########   Bolts   #############
     outputobj['Bolt']['status'] = design_status
     outputobj['Bolt']['NumberOfBolts'] = int(no_of_bolts)
+    outputobj["Bolt"]["NumberOfRows"] = int(no_bolts_flange)
     outputobj["Bolt"]["ShearBolt"] = float(round(v_sb,3))
     outputobj["Bolt"]["TensionBolt"] = float(round(t_b1,3))
 
@@ -394,17 +405,18 @@ def ccEndPlateSplice(uiObj):
     outputobj['Bolt']['End'] = float(round(end_dist_min, 3))
     outputobj['Bolt']['Edge'] = float(round(edge_dist_mini, 3))
     outputobj['Bolt']['Pitch'] = float(round(min_pitch, 3))
+    outputobj["Bolt"]["Gauge"] = float(round(min_pitch, 3))
     outputobj['Bolt']['EndMax'] = float(round(end_dist_max, 3))
     outputobj['Bolt']['PitchMax'] = float(round(max_pitch, 3))
 
     ############   Plate    #########################
     outputobj['Plate']['Height'] = float(round(end_plate_height,3))
     outputobj['Plate']['Width'] = float(round(end_plate_width,3))
-    outputobj['Plate']['Thickness'] = float(round(end_plate_thickness,3))
+    outputobj['Plate']['Thickness'] = float(round(end_plate_thickness[1],3))
     outputobj['Plate']['Moment'] = float(round(m_ep,3))
     outputobj['Plate']['MomentCapacity'] = float(round(m_dp,3))
 
-    #############   Stiffener    ##################
+    # #############   Stiffener    ##################
     outputobj['Stiffener']['ShearForce'] = float(round(stiff_shear,3))
     outputobj['Stiffener']['Moment'] = float(round(stiff_moment,3))
     outputobj['Stiffener']['ShearForceCapity'] = float(round(stiff_shear_capacity,3))
@@ -414,15 +426,65 @@ def ccEndPlateSplice(uiObj):
     outputobj['Stiffener']['Thickness'] = float(round(t_s,3))
     outputobj['Stiffener']['NotchSize'] = float(round(n,3))
 
+    ################ Weld  ########################
+    outputobj["Weld"]["Web"] = 0
+    outputobj["Weld"]["Flange"] = 0
 
-    # #######################################################################
-    # Calculating pitch, gauge, end and edge distances for different cases
+#######
+    # outputobj = dict()
+    #
+    # outputobj['Bolt'] = {}
+    # outputobj["Weld"] = {}
+    # outputobj['Plate'] = {}
+    # outputobj['Stiffener'] = {}
+    #
+    # ##########   Bolts   #############
+    # outputobj['Bolt']['status'] = design_status
+    # outputobj['Bolt']['NumberOfBolts'] = 0
+    # outputobj["Bolt"]["NumberOfRows"] = 0
+    # outputobj["Bolt"]["ShearBolt"] = 0
+    # outputobj["Bolt"]["TensionBolt"] = 0
+    #
+    # outputobj["Bolt"]["ShearCapacity"] = 0
+    # outputobj["Bolt"]["BearingCapacity"] = 0
+    # outputobj["Bolt"]["BoltCapacity"] = 0
+    # outputobj["Bolt"]["SlipCapacity"] = 0
+    # outputobj["Bolt"]["TensionCapacity"] = 0
+    # outputobj["Bolt"]["CombinedCapacity"] = 0
+    #
+    # outputobj['Bolt']['End'] = 0
+    # outputobj['Bolt']['Edge'] = 0
+    # outputobj['Bolt']['Pitch'] = 0
+    # outputobj["Bolt"]["Gauge"] = 0
+    # outputobj['Bolt']['EndMax'] = 0
+    # outputobj['Bolt']['PitchMax'] = 0
+    #
+    # ############   Plate    #########################
+    # outputobj['Plate']['Height'] = 0
+    # outputobj['Plate']['Width'] = 0
+    # outputobj['Plate']['Thickness'] = 0
+    # outputobj['Plate']['Moment'] = 0
+    # outputobj['Plate']['MomentCapacity'] = 0
+    #
+    # # #############   Stiffener    ##################
+    # outputobj['Stiffener']['ShearForce'] = 0
+    # outputobj['Stiffener']['Moment'] = 0
+    # outputobj['Stiffener']['ShearForceCapity'] = 0
+    # outputobj['Stiffener']['MomentCapacity'] = 0
+    # outputobj['Stiffener']['Height'] = 0
+    # outputobj['Stiffener']['Width'] = 0
+    # outputobj['Stiffener']['Thickness'] = 0
+    # outputobj['Stiffener']['NotchSize'] = 0
+    #
+    # # ################ Weld  ###############
+    # outputobj["Weld"]["Web"] = 0
+    # outputobj["Weld"]["Flange"] = 0
 
     ###########################################################################
     # End of Output dictionary
     
     if design_status == True:
-        logger.info(": Overall extended end plate connection design is safe \n")
+        logger.info(": Overall column end plate splice connection design is safe \n")
         logger.debug(" :=========End Of design===========")
     else:
         logger.error(": Design is not safe \n ")

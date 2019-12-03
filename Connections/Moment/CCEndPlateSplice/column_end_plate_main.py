@@ -7,17 +7,17 @@ Created on Nov 2019
 from Connections.Moment.CCEndPlateSplice.ui_column_endplate import Ui_MainWindow
 from Connections.Moment.CCEndPlateSplice.ui_column_endplate_design_preference import *
 from Connections.Moment.CCEndPlateSplice.ui_design_summary import Ui_DesignReport
-from Connections.Moment.CCEndPlateSplice.ui_plate import Ui_Plate
-from Connections.Moment.CCEndPlateSplice.ui_stiffener import Ui_Stiffener
-from Connections.Moment.CCEndPlateSplice.ui_pitch import Ui_Pitch
-from Connections.Moment.CCEndPlateSplice.ui_weld_details import Ui_Weld_Details
+# from Connections.Moment.CCEndPlateSplice.ui_plate import Ui_Plate
+# from Connections.Moment.CCEndPlateSplice.ui_stiffener import Ui_Stiffener
+# from Connections.Moment.CCEndPlateSplice.ui_pitch import Ui_Pitch
+# from Connections.Moment.CCEndPlateSplice.ui_weld_details import Ui_Weld_Details
 from Connections.Moment.CCEndPlateSplice.svg_window import SvgWindow
 from ui_tutorial import Ui_Tutorial
 from ui_aboutosdag import Ui_AboutOsdag
 from ui_ask_question import Ui_AskQuestion
 from Connections.Moment.CCEndPlateSplice import ccEndPlateSpliceCalc
 import Connections.Moment.CCEndPlateSplice.ccEndPlateSpliceCalc as db_value
-from Connections.Moment.CCEndPlateSplice.reportGenerator import save_html
+# from Connections.Moment.CCEndPlateSplice.reportGenerator import save_html
 # from Connections.Moment.ColumnToColumn.EndPlateSplice.drawing_2D_ExtendedBothways import ColumnToColumn.EndPlateSplice
 # from Connections.Moment.ColumnToColumn.EndPlateSplice.drawing_2D_Extendedoneway import OnewayEndPlate
 # from Connections.Moment.ColumnToColumn.EndPlateSplice.drawing_2D_BBFlush import FlushEndPlate
@@ -291,23 +291,23 @@ class DesignReportDialog(QDialog):
             return flag
         else:
             infile = open(filename, 'w')
-            pickle.dump(inputData, infile)
+            json.dump(inputData, infile)
             infile.close()
 
-    def get_report_summary(self):
-        report_summary = {"ProfileSummary": {}}
-        report_summary["ProfileSummary"]["CompanyName"] = str(self.ui.lineEdit_companyName.text())
-        report_summary["ProfileSummary"]["CompanyLogo"] = str(self.ui.lbl_browse.text())
-        report_summary["ProfileSummary"]["Group/TeamName"] = str(self.ui.lineEdit_groupName.text())
-        report_summary["ProfileSummary"]["Designer"] = str(self.ui.lineEdit_designer.text())
+    # def get_report_summary(self):
+    #     report_summary = {"ProfileSummary": {}}
+    #     report_summary["ProfileSummary"]["CompanyName"] = str(self.ui.lineEdit_companyName.text())
+    #     report_summary["ProfileSummary"]["CompanyLogo"] = str(self.ui.lbl_browse.text())
+    #     report_summary["ProfileSummary"]["Group/TeamName"] = str(self.ui.lineEdit_groupName.text())
+    #     report_summary["ProfileSummary"]["Designer"] = str(self.ui.lineEdit_designer.text())
+    #
+    #     report_summary["ProjectTitle"] = str(self.ui.lineEdit_projectTitle.text())
+    #     report_summary["Subtitle"] = str(self.ui.lineEdit_subtitle.text())
+    #     report_summary["JobNumber"] = str(self.ui.lineEdit_jobNumber.text())
+    #     report_summary["Client"] = str(self.ui.lineEdit_client.text())
+    #     report_summary["AdditionalComments"] = str(self.ui.txt_additionalComments.toPlainText())
 
-        report_summary["ProjectTitle"] = str(self.ui.lineEdit_projectTitle.text())
-        report_summary["Subtitle"] = str(self.ui.lineEdit_subtitle.text())
-        report_summary["JobNumber"] = str(self.ui.lineEdit_jobNumber.text())
-        report_summary["Client"] = str(self.ui.lineEdit_client.text())
-        report_summary["AdditionalComments"] = str(self.ui.txt_additionalComments.toPlainText())
-
-        return report_summary
+        # return report_summary
 
     def useUserProfile(self):
         filename, _ = QFileDialog.getOpenFileName(self, 'Open Files',
@@ -315,7 +315,7 @@ class DesignReportDialog(QDialog):
                                                   "All Files (*)")
         if os.path.isfile(filename):
             outfile = open(filename, 'r')
-            reportsummary = pickle.load(outfile)
+            reportsummary = json.load(outfile)
             self.ui.lineEdit_companyName.setText(reportsummary["ProfileSummary"]['CompanyName'])
             self.ui.lbl_browse.setText(reportsummary["ProfileSummary"]['CompanyLogo'])
             self.ui.lineEdit_groupName.setText(reportsummary["ProfileSummary"]['Group/TeamName'])
@@ -326,7 +326,6 @@ class DesignReportDialog(QDialog):
 
 class Maincontroller(QMainWindow):
     closed = pyqtSignal()
-
 
     def __init__(self, folder):
         QMainWindow.__init__(self)
@@ -400,27 +399,27 @@ class Maincontroller(QMainWindow):
         self.ui.action_save_input.triggered.connect(self.save_design_inputs)
         self.ui.action_load_input.triggered.connect(self.load_design_inputs)
         self.ui.actionSave_log_messages.triggered.connect(self.save_log_messages)
-        self.ui.actionSave_3D_model.triggered.connect(self.save_3D_cad_images)
-        self.ui.actionCreate_design_report.triggered.connect(self.design_report)
-        self.ui.actionChange_background.triggered.connect(self.show_color_dialog)
-
-        self.ui.actionSave_current_image.triggered.connect(self.save_CAD_images)
-        self.ui.actionZoom_in.triggered.connect(self.call_zoomin)
-        self.ui.actionZoom_out.triggered.connect(self.call_zoomout)
-        self.ui.actionPan.triggered.connect(self.call_pannig)
-        self.ui.actionRotate_3D_model.triggered.connect(self.call_rotation)
-        self.ui.actionClear.triggered.connect(self.clear_log_messages)
+        # self.ui.actionSave_3D_model.triggered.connect(self.save_3D_cad_images)
+        # self.ui.actionCreate_design_report.triggered.connect(self.design_report)
+        # self.ui.actionChange_background.triggered.connect(self.show_color_dialog)
+        #
+        # self.ui.actionSave_current_image.triggered.connect(self.save_CAD_images)
+        # self.ui.actionZoom_in.triggered.connect(self.call_zoomin)
+        # self.ui.actionZoom_out.triggered.connect(self.call_zoomout)
+        # self.ui.actionPan.triggered.connect(self.call_pannig)
+        # self.ui.actionRotate_3D_model.triggered.connect(self.call_rotation)
+        # self.ui.actionClear.triggered.connect(self.clear_log_messages)
         self.ui.actionAbout_Osdag_2.triggered.connect(self.open_about_osdag)
         self.ui.actionAsk_Us_a_Question.triggered.connect(self.open_ask_question)
         self.ui.actionSample_Tutorials.triggered.connect(self.open_tutorials)
-        self.ui.actionDesign_examples.triggered.connect(self.design_examples)
+        # self.ui.actionDesign_examples.triggered.connect(self.design_examples)
 
 
         # self.ui.btn_pitchDetail.clicked.connect(self.pitch_details)
         # self.ui.btn_plateDetail.clicked.connect(self.plate_details)
         # self.ui.btn_stiffnrDetail.clicked.connect(self.stiffener_details)
         # self.ui.btn_weldDetails.clicked.connect(self.weld_details)
-        self.ui.btn_CreateDesign.clicked.connect(self.design_report)
+        #self.ui.btn_CreateDesign.clicked.connect(self.design_report)
         self.ui.btn_SaveMessages.clicked.connect(self.save_log_messages)
 
 
@@ -447,12 +446,12 @@ class Maincontroller(QMainWindow):
         self.ui.txt_Fy.editingFinished.connect(
          lambda: self.validate_fu_fy(self.ui.txt_Fu, self.ui.txt_Fy, self.ui.txt_Fy, self.ui.lbl_fy))
 
-        from osdagMainSettings import backend_name
-        self.display, _ = self.init_display(backend_str=backend_name())
-        self.uiObj = None
-        self.fuse_model = None
-        self.resultObj = None
-        self.disable_buttons()
+        # from osdagMainSettings import backend_name
+        # self.display, _ = self.init_display(backend_str=backend_name())
+        # self.uiObj = None
+        # self.fuse_model = None
+        # self.resultObj = None
+        # self.disable_buttons()
 
     def on_change(self):
         if self.ui.combo_weld_method.currentText() == "Groove Weld (CJP)":
@@ -470,32 +469,32 @@ class Maincontroller(QMainWindow):
             self.ui.combo_weldSize_web.setEnabled(True)
         pass
 
-    def init_display(self, backend_str=None, size=(1024, 768)):
-
-        from OCC.Display.backend import load_backend, get_qt_modules
-
-        used_backend = load_backend(backend_str)
-
-        global display, start_display, app, _, USED_BACKEND
-        if 'qt' in used_backend:
-            from OCC.Display.qtDisplay import qtViewer3d
-            QtCore, QtGui, QtWidgets, QtOpenGL = get_qt_modules()
-
-        from OCC.Display.qtDisplay import qtViewer3d
-        self.ui.modelTab = qtViewer3d(self)
-
-        # ========================  CAD ========================
-        # self.setWindowTitle("Osdag Finplate")
-        self.ui.mytabWidget.resize(size[0], size[1])
-        self.ui.mytabWidget.addTab(self.ui.modelTab, "")
-        self.ui.modelTab.InitDriver()
-        # ===========================================================
-        display = self.ui.modelTab._display
-        display.set_bg_gradient_color(23, 1, 32, 23, 1, 32)
-        # ========================  CAD ========================
-        display.display_trihedron()
-        # ===========================================================
-        display.View.SetProj(1, 1, 1)
+    # def init_display(self, backend_str=None, size=(1024, 768)):
+    #
+    #     from OCC.Display.backend import load_backend, get_qt_modules
+    #
+    #     used_backend = load_backend(backend_str)
+    #
+    #     global display, start_display, app, _, USED_BACKEND
+    #     if 'qt' in used_backend:
+    #         from OCC.Display.qtDisplay import qtViewer3d
+    #         QtCore, QtGui, QtWidgets, QtOpenGL = get_qt_modules()
+    #
+    #     from OCC.Display.qtDisplay import qtViewer3d
+    #     self.ui.modelTab = qtViewer3d(self)
+    #
+    #     # ========================  CAD ========================
+    #     # self.setWindowTitle("Osdag Finplate")
+    #     self.ui.mytabWidget.resize(size[0], size[1])
+    #     self.ui.mytabWidget.addTab(self.ui.modelTab, "")
+    #     self.ui.modelTab.InitDriver()
+    #     # ===========================================================
+    #     display = self.ui.modelTab._display
+    #     display.set_bg_gradient_color(23, 1, 32, 23, 1, 32)
+    #     # ========================  CAD ========================
+    #     display.display_trihedron()
+    #     # ===========================================================
+    #     display.View.SetProj(1, 1, 1)
 
     def centerOnScreen(self):
 
@@ -505,11 +504,11 @@ class Maincontroller(QMainWindow):
         self.move((resolution.width()/2) - (self.frameSize().width()/2),
                  (resolution.height()/2) - (self.frameSize().height()/2))
 
-    def start_display(self):
-
-        self.ui.modelTab.raise_()
-
-        return display, start_display
+    # def start_display(self):
+    #
+    #     self.ui.modelTab.raise_()
+    #
+    #     return display, start_display
 
     def save_design_inputs(self):
 
@@ -568,49 +567,49 @@ class Maincontroller(QMainWindow):
         outf << self.ui.textEdit.toPlainText()
         QApplication.restoreOverrideCursor()
 
-    def save_design(self, report_summary):
-
-        status = self.resultObj['Bolt']['status']
-        if status is True:
-           self.call_3DModel("white_bg")
-           data = os.path.join(str(self.folder), "images_html", "3D_Model.png")
-           self.display.ExportToImage(data)
-           self.display.FitAll()
-        else:
-           pass
-
-        filename = os.path.join(str(self.folder), "images_html", "Html_Report.html")
-        file_name = str(filename)
-        self.call_designreport(file_name, report_summary)
-
-        # Creates PDF
-        # config = ConfigParser.ConfigParser()
-        # config.readfp(open(r'Osdag.config'))
-        # wkhtmltopdf_path = config.get('wkhtml_path', 'path1')
-        #
-        # config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path )
-        #
-        # options = {
-        #    'margin-bottom': '10mm',
-        #    'footer-right': '[page]'
-        # }
-        # file_type = "PDF(*.pdf)"
-        # fname, _ = QFileDialog.getSaveFileName(self, "Save File As", self.folder + "/", file_type)
-        # fname = str(fname)
-        # flag = True
-        # if fname == '':
-        #    flag = False
-        #    return flag
-        # else:
-        #    pdfkit.from_file(filename, fname, configuration=config, options=options)
-        #    QMessageBox.about(self, 'Information', "Report Saved")
-
-    def call_designreport(self, fileName, report_summary):
-        self.alist = self.designParameters()
-        self.result = ccEndPlateSplice(self.alist)
-        print ("resultobj", self.result)
-        self.beam_data = self.fetchBeamPara()
-        save_html(self.result, self.alist, self.beam_data, fileName, report_summary, self.folder)
+    # def save_design(self, report_summary):
+    #
+    #     status = self.resultObj['Bolt']['status']
+    #     if status is True:
+    #        self.call_3DModel("white_bg")
+    #        data = os.path.join(str(self.folder), "images_html", "3D_Model.png")
+    #        self.display.ExportToImage(data)
+    #        self.display.FitAll()
+    #     else:
+    #        pass
+    #
+    #     filename = os.path.join(str(self.folder), "images_html", "Html_Report.html")
+    #     file_name = str(filename)
+    #     self.call_designreport(file_name, report_summary)
+    #
+    #     # Creates PDF
+    #     # config = ConfigParser.ConfigParser()
+    #     # config.readfp(open(r'Osdag.config'))
+    #     # wkhtmltopdf_path = config.get('wkhtml_path', 'path1')
+    #     #
+    #     # config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path )
+    #     #
+    #     # options = {
+    #     #    'margin-bottom': '10mm',
+    #     #    'footer-right': '[page]'
+    #     # }
+    #     # file_type = "PDF(*.pdf)"
+    #     # fname, _ = QFileDialog.getSaveFileName(self, "Save File As", self.folder + "/", file_type)
+    #     # fname = str(fname)
+    #     # flag = True
+    #     # if fname == '':
+    #     #    flag = False
+    #     #    return flag
+    #     # else:
+    #     #    pdfkit.from_file(filename, fname, configuration=config, options=options)
+    #     #    QMessageBox.about(self, 'Information', "Report Saved")
+    #
+    # def call_designreport(self, fileName, report_summary):
+    #     self.alist = self.designParameters()
+    #     self.result = ccEndPlateSplice(self.alist)
+    #     print ("resultobj", self.result)
+    #     self.beam_data = self.fetchBeamPara()
+    #     save_html(self.result, self.alist, self.beam_data, fileName, report_summary, self.folder)
 
     def get_user_inputs(self):
         uiObj = {}
@@ -636,7 +635,7 @@ class Maincontroller(QMainWindow):
         # uiObj["Plate"]["Width (mm)"] = str(self.ui.txt_plateWidth.text())
 
         uiObj["Weld"] = {}
-        # uiObj["Weld"]["Type"] = str(self.ui.toolButton)
+        uiObj["Weld"]["Type"] = str(self.ui.combo_weld_method.currentText())
         # uiObj["Weld"]["Size"] = str(self.ui.combo_weldSize.currentText())
         uiObj["Weld"]["Flange (mm)"] = str(self.ui.combo_weldSize_flange.currentText())
         uiObj["Weld"]["Web (mm)"] = str(self.ui.combo_weldSize_web.currentText())
@@ -693,7 +692,7 @@ class Maincontroller(QMainWindow):
             QMessageBox.warning(self, "Application",
                                 "Cannot write file %s: \n%s"
                                 % (input_file.fileName(), input_file.errorString()))
-        pickle.dump(uiObj, input_file)
+        json.dump(uiObj, input_file)
 
     def get_prevstate(self):
         """
@@ -701,10 +700,10 @@ class Maincontroller(QMainWindow):
         Returns: Read for the previous user inputs design
 
         """
-        filename = os.path.join("Connections","Moment","ExtendedEndPlate","saveINPUT.txt")
+        filename = os.path.join("Connections","Moment","CCEndPlateSplice","saveINPUT.txt")
         if os.path.isfile(filename):
-            file_object = open(filename, 'r')
-            uiObj = pickle.load(file_object)
+            with open(filename, 'r') as fileObject:
+                uiObj = json.load(fileObject)
             return uiObj
         else:
             return None
@@ -748,7 +747,7 @@ class Maincontroller(QMainWindow):
             self.ui.combo_plateThick.setCurrentIndex(self.ui.combo_plateThick.findText(uiObj["Plate"]["Thickness (mm)"]))
             # self.ui.txt_plateHeight.setText(str(uiObj["Plate"]["Height (mm)"]))
             # self.ui.txt_plateWidth.setText(str(uiObj["Plate"]["Width (mm)"]))
-            # self.ui.combo_weld_method.setCurrentIndex(self.ui.combo_weld_method.findText(uiObj["Weld"]["Type"]))
+            self.ui.combo_weld_method.setCurrentIndex(self.ui.combo_weld_method.findText(uiObj["Weld"]["Type"]))
 
             self.ui.combo_weldSize_flange.setCurrentIndex(self.ui.combo_weldSize_flange.findText(uiObj["Weld"]["Flange (mm)"]))
             self.ui.combo_weldSize_web.setCurrentIndex(self.ui.combo_weldSize_web.findText(uiObj["Weld"]["Web (mm)"]))
@@ -898,9 +897,13 @@ class Maincontroller(QMainWindow):
         self.ui.outputDock.setFixedSize(310, 710)
         self.enable_buttons()
 
-        a = self.outputs[self.outputs.keys()[0]]
+        # a = self.outputs[list(self.outputs.keys())[0]]
         self.resultObj = self.outputs
-        alist = self.resultObj.values()
+        alist = list(self.resultObj.values())
+        #
+        # a = self.outputs[self.outputs.keys()[0]]
+        # self.resultObj = self.outputs
+        # alist = self.resultObj.values()
 
         self.display_output(self.outputs)
         self.display_log_to_textedit()
@@ -908,7 +911,7 @@ class Maincontroller(QMainWindow):
 
         if isempty[0] == True:
             status = self.resultObj['Bolt']['status']
-            self.call_3DModel("gradient_bg")
+            # self.call_3DModel("gradient_bg")
             if status is True:
                 self.call_2D_drawing("All")
             else:
@@ -980,10 +983,10 @@ class Maincontroller(QMainWindow):
         self.ui.txt_stiffheight.setText(str(stiffener_height))
 
         stiffener_width = resultObj["Stiffener"]["Width"]
-        self.ui.txt_stiffheight.setText(str(stiffener_width))
+        self.ui.txt_stiffwidth.setText(str(stiffener_width))
 
-        stiffener_height = resultObj["Stiffener"]["Height"]
-        self.ui.txt_stiffheight.setText(str(stiffener_height))
+        stiffener_thk = resultObj["Stiffener"]["Thickness"]
+        self.ui.txt_stiffthickness.setText(str(stiffener_thk))
 
         weld_web = resultObj["Weld"]["Web"]
         self.ui.txt_weldsize_web.setText(str(weld_web))
@@ -1022,11 +1025,11 @@ class Maincontroller(QMainWindow):
         file.close()
 
     def disable_buttons(self):
-        self.ui.btn_CreateDesign.setEnabled(False)
-        self.ui.btn_SaveMessages.setEnabled(False)
-        self.ui.btnFront.setEnabled(False)
-        self.ui.btnTop.setEnabled(False)
-        self.ui.btnSide.setEnabled(False)
+        # self.ui.btn_CreateDesign.setEnabled(False)
+        # self.ui.btn_SaveMessages.setEnabled(False)
+        # self.ui.btnFront.setEnabled(False)
+        # self.ui.btnTop.setEnabled(False)
+        # self.ui.btnSide.setEnabled(False)
         self.ui.chkBx_model.setEnabled(False)
         self.ui.chkBx_columnSec.setEnabled(False)
         self.ui.chkBx_connector.setEnabled(False)
@@ -1035,22 +1038,22 @@ class Maincontroller(QMainWindow):
         # self.ui.btn_stiffnrDetail.setEnabled(False)
         # self.ui.btn_weldDetails.setEnabled(False)
 
-        self.ui.action_save_input.setEnabled(False)
-        self.ui.actionCreate_design_report.setEnabled(False)
-        self.ui.actionSave_3D_model.setEnabled(False)
-        self.ui.actionSave_log_messages.setEnabled(False)
-        self.ui.actionSave_current_image.setEnabled(False)
-        self.ui.actionSave_Front_View.setEnabled(False)
-        self.ui.actionSave_Side_View.setEnabled(False)
-        self.ui.actionSave_Top_View.setEnabled(False)
-        self.ui.menuGraphics.setEnabled(False)
+        # self.ui.action_save_input.setEnabled(False)
+        # self.ui.actionCreate_design_report.setEnabled(False)
+        # self.ui.actionSave_3D_model.setEnabled(False)
+        # self.ui.actionSave_log_messages.setEnabled(False)
+        # self.ui.actionSave_current_image.setEnabled(False)
+        # self.ui.actionSave_Front_View.setEnabled(False)
+        # self.ui.actionSave_Side_View.setEnabled(False)
+        # self.ui.actionSave_Top_View.setEnabled(False)
+        # self.ui.menuGraphics.setEnabled(False)
 
     def enable_buttons(self):
-        self.ui.btn_CreateDesign.setEnabled(True)
-        self.ui.btn_SaveMessages.setEnabled(True)
-        self.ui.btnFront.setEnabled(True)
-        self.ui.btnTop.setEnabled(True)
-        self.ui.btnSide.setEnabled(True)
+        # self.ui.btn_CreateDesign.setEnabled(True)
+        # self.ui.btn_SaveMessages.setEnabled(True)
+        # self.ui.btnFront.setEnabled(True)
+        # self.ui.btnTop.setEnabled(True)
+        # self.ui.btnSide.setEnabled(True)
         self.ui.chkBx_model.setEnabled(True)
         self.ui.chkBx_columnSec.setEnabled(True)
         self.ui.chkBx_connector.setEnabled(True)
@@ -1059,15 +1062,15 @@ class Maincontroller(QMainWindow):
         # self.ui.btn_stiffnrDetail.setEnabled(True)
         # self.ui.btn_weldDetails.setEnabled(True)
 
-        self.ui.action_save_input.setEnabled(True)
-        self.ui.actionCreate_design_report.setEnabled(True)
-        self.ui.actionSave_3D_model.setEnabled(True)
-        self.ui.actionSave_log_messages.setEnabled(True)
-        self.ui.actionSave_current_image.setEnabled(True)
-        self.ui.actionSave_Front_View.setEnabled(True)
-        self.ui.actionSave_Side_View.setEnabled(True)
-        self.ui.actionSave_Top_View.setEnabled(True)
-        self.ui.menuGraphics.setEnabled(True)
+        # self.ui.action_save_input.setEnabled(True)
+        # self.ui.actionCreate_design_report.setEnabled(True)
+        # self.ui.actionSave_3D_model.setEnabled(True)
+        # self.ui.actionSave_log_messages.setEnabled(True)
+        # self.ui.actionSave_current_image.setEnabled(True)
+        # self.ui.actionSave_Front_View.setEnabled(True)
+        # self.ui.actionSave_Side_View.setEnabled(True)
+        # self.ui.actionSave_Top_View.setEnabled(True)
+        # self.ui.menuGraphics.setEnabled(True)
 
     def reset_btnclicked(self):
         """
@@ -1181,7 +1184,7 @@ class Maincontroller(QMainWindow):
                 plate_thick = float(plate_thickness)
 
                 if str(self.ui.combo_connLoc.currentText()) == "Extended both ways" or "Flush" or "Extended one way":
-                    if str(self.ui.combo_columnSecSec.currentText()) == "Select section":
+                    if str(self.ui.combo_columnSec.currentText()) == "Select section":
                         self.ui.combo_weldSize_flange.clear()
                         return
                     else:
@@ -1365,129 +1368,129 @@ class Maincontroller(QMainWindow):
         # save_html(self.result, self.alist, self.beam_data, fileName)
 
    # ===========================  CAD ===========================
-    def show_color_dialog(self):
+   #  def show_color_dialog(self):
+   #
+   #      col = QColorDialog.getColor()
+   #      colorTup = col.getRgb()
+   #      r = colorTup[0]
+   #      g = colorTup[1]
+   #      b = colorTup[2]
+   #      self.display.set_bg_gradient_color(r, g, b, 255, 255, 255)
 
-        col = QColorDialog.getColor()
-        colorTup = col.getRgb()
-        r = colorTup[0]
-        g = colorTup[1]
-        b = colorTup[2]
-        self.display.set_bg_gradient_color(r, g, b, 255, 255, 255)
+    # def create_2D_CAD(self):
+    #     '''
+    #
+    #     Returns: The 3D model of extendedplate depending upon component selected
+    #
+    #     '''
+    #     self.ExtObj = self.create_extended_both_ways()
+    #     if self.component == "Beam":
+    #         cadlist = self.ExtObj.get_beam_models()
+    #         final_model = cadlist[0]
+    #         for model in cadlist[1:]:
+    #             final_model = BRepAlgoAPI_Fuse(model, final_model).Shape()
+    #
+    #     elif self.component == "Connector":
+    #         cadlist = self.ExtObj.get_connector_models()
+    #         final_model = cadlist[0]
+    #         for model in cadlist[1:]:
+    #             final_model = BRepAlgoAPI_Fuse(model, final_model).Shape()
+    #     else:
+    #         cadlist = self.ExtObj.get_models()
+    #         final_model = cadlist[0]
+    #         for model in cadlist[1:]:
+    #             final_model = BRepAlgoAPI_Fuse(model, final_model).Shape()
+    #
+    #     return final_model
 
-    def create_2D_CAD(self):
-        '''
-
-        Returns: The 3D model of extendedplate depending upon component selected
-
-        '''
-        self.ExtObj = self.create_extended_both_ways()
-        if self.component == "Beam":
-            cadlist = self.ExtObj.get_beam_models()
-            final_model = cadlist[0]
-            for model in cadlist[1:]:
-                final_model = BRepAlgoAPI_Fuse(model, final_model).Shape()
-
-        elif self.component == "Connector":
-            cadlist = self.ExtObj.get_connector_models()
-            final_model = cadlist[0]
-            for model in cadlist[1:]:
-                final_model = BRepAlgoAPI_Fuse(model, final_model).Shape()
-        else:
-            cadlist = self.ExtObj.get_models()
-            final_model = cadlist[0]
-            for model in cadlist[1:]:
-                final_model = BRepAlgoAPI_Fuse(model, final_model).Shape()
-
-        return final_model
-
-    def save_3D_cad_images(self):
-        '''
-
-        Returns: Save 3D CAD images in *igs, *step, *stl, *brep format
-
-        '''
-        status = self.resultObj['Bolt']['status']
-        if status is True:
-            if self.fuse_model is None:
-                self.fuse_model = self.create_2D_CAD()
-            shape = self.fuse_model
-
-            files_types = "IGS (*.igs);;STEP (*.stp);;STL (*.stl);;BREP(*.brep)"
-
-            fileName, _ = QFileDialog.getSaveFileName(self, 'Export', os.path.join(str(self.folder), "untitled.igs"),
-                                                      files_types)
-            fName = str(fileName)
-
-            flag = True
-            if fName == '':
-                flag = False
-                return flag
-            else:
-                file_extension = fName.split(".")[-1]
-
-                if file_extension == 'igs':
-                    IGESControl.IGESControl_Controller().Init()
-                    iges_writer = IGESControl.IGESControl_Writer()
-                    iges_writer.AddShape(shape)
-                    iges_writer.Write(fName)
-
-                elif file_extension == 'brep':
-
-                    BRepTools.breptools.Write(shape, fName)
-
-                elif file_extension == 'stp':
-                    # initialize the STEP exporter
-                    step_writer = STEPControl_Writer()
-                    Interface_Static_SetCVal("write.step.schema", "AP203")
-
-                    # transfer shapes and write file
-                    step_writer.Transfer(shape, STEPControl_AsIs)
-                    status = step_writer.Write(fName)
-
-                    assert (status == IFSelect_RetDone)
-
-                else:
-                    stl_writer = StlAPI_Writer()
-                    stl_writer.SetASCIIMode(True)
-                    stl_writer.Write(shape, fName)
-
-                self.fuse_model = None
-
-                QMessageBox.about(self, 'Information', "File saved")
-        else:
-            self.ui.actionSave_3D_model.setEnabled(False)
-            QMessageBox.about(self, 'Information', 'Design Unsafe: 3D Model cannot be saved')
-
-    def save_CAD_images(self):
-        status = self.resultObj['Bolt']['status']
-        if status is True:
-
-            files_types = "PNG (*.png);;JPEG (*.jpeg);;TIFF (*.tiff);;BMP(*.bmp)"
-            fileName, _ = QFileDialog.getSaveFileName(self, 'Export', os.path.join(str(self.folder), "untitled.png"), files_types)
-            fName = str(fileName)
-            file_extension = fName.split(".")[-1]
-
-            if file_extension == 'png' or file_extension == 'jpeg' or file_extension == 'bmp' or file_extension == 'tiff':
-                self.display.ExportToImage(fName)
-                QMessageBox.about(self, 'Information', "File saved")
-        else:
-            self.ui.actionSave_current_image.setEnabled(False)
-            QMessageBox.about(self, 'Information', 'Design Unsafe: CAD image cannot be saved')
-
-    def call_zoomin(self):
-        self.display.ZoomFactor(2)
-
-    def call_zoomout(self):
-        self.display.ZoomFactor(0.5)
-
-    def call_rotation(self):
-        self.display.Rotation(15, 0)
-
-    def call_pannig(self):
-        self.display.Pan(50, 0)
-
-    def clear_log_messages(self):
-        self.ui.textEdit.clear()
+    # def save_3D_cad_images(self):
+    #     '''
+    #
+    #     Returns: Save 3D CAD images in *igs, *step, *stl, *brep format
+    #
+    #     '''
+    #     status = self.resultObj['Bolt']['status']
+    #     if status is True:
+    #         if self.fuse_model is None:
+    #             self.fuse_model = self.create_2D_CAD()
+    #         shape = self.fuse_model
+    #
+    #         files_types = "IGS (*.igs);;STEP (*.stp);;STL (*.stl);;BREP(*.brep)"
+    #
+    #         fileName, _ = QFileDialog.getSaveFileName(self, 'Export', os.path.join(str(self.folder), "untitled.igs"),
+    #                                                   files_types)
+    #         fName = str(fileName)
+    #
+    #         flag = True
+    #         if fName == '':
+    #             flag = False
+    #             return flag
+    #         else:
+    #             file_extension = fName.split(".")[-1]
+    #
+    #             if file_extension == 'igs':
+    #                 IGESControl.IGESControl_Controller().Init()
+    #                 iges_writer = IGESControl.IGESControl_Writer()
+    #                 iges_writer.AddShape(shape)
+    #                 iges_writer.Write(fName)
+    #
+    #             elif file_extension == 'brep':
+    #
+    #                 BRepTools.breptools.Write(shape, fName)
+    #
+    #             elif file_extension == 'stp':
+    #                 # initialize the STEP exporter
+    #                 step_writer = STEPControl_Writer()
+    #                 Interface_Static_SetCVal("write.step.schema", "AP203")
+    #
+    #                 # transfer shapes and write file
+    #                 step_writer.Transfer(shape, STEPControl_AsIs)
+    #                 status = step_writer.Write(fName)
+    #
+    #                 assert (status == IFSelect_RetDone)
+    #
+    #             else:
+    #                 stl_writer = StlAPI_Writer()
+    #                 stl_writer.SetASCIIMode(True)
+    #                 stl_writer.Write(shape, fName)
+    #
+    #             self.fuse_model = None
+    #
+    #             QMessageBox.about(self, 'Information', "File saved")
+    #     else:
+    #         self.ui.actionSave_3D_model.setEnabled(False)
+    #         QMessageBox.about(self, 'Information', 'Design Unsafe: 3D Model cannot be saved')
+    #
+    # def save_CAD_images(self):
+    #     status = self.resultObj['Bolt']['status']
+    #     if status is True:
+    #
+    #         files_types = "PNG (*.png);;JPEG (*.jpeg);;TIFF (*.tiff);;BMP(*.bmp)"
+    #         fileName, _ = QFileDialog.getSaveFileName(self, 'Export', os.path.join(str(self.folder), "untitled.png"), files_types)
+    #         fName = str(fileName)
+    #         file_extension = fName.split(".")[-1]
+    #
+    #         if file_extension == 'png' or file_extension == 'jpeg' or file_extension == 'bmp' or file_extension == 'tiff':
+    #             self.display.ExportToImage(fName)
+    #             QMessageBox.about(self, 'Information', "File saved")
+    #     else:
+    #         self.ui.actionSave_current_image.setEnabled(False)
+    #         QMessageBox.about(self, 'Information', 'Design Unsafe: CAD image cannot be saved')
+    #
+    # def call_zoomin(self):
+    #     self.display.ZoomFactor(2)
+    #
+    # def call_zoomout(self):
+    #     self.display.ZoomFactor(0.5)
+    #
+    # def call_rotation(self):
+    #     self.display.Rotation(15, 0)
+    #
+    # def call_pannig(self):
+    #     self.display.Pan(50, 0)
+    #
+    # def clear_log_messages(self):
+    #     self.ui.textEdit.clear()
 
    # def create_extended_both_ways(self):
    #
@@ -2094,7 +2097,7 @@ def set_osdaglogger():
     logger.setLevel(logging.DEBUG)
 
     # create the logging file handler
-    fh = logging.FileHandler("Connections/Moment/ExtendedEndPlate/extnd.log", mode='a')
+    fh = logging.FileHandler("Connections/Moment/CCEndPlateSplice/extnd.log", mode='a')
 
     # ,datefmt='%a, %d %b %Y %H:%M:%S'
     # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -2116,11 +2119,11 @@ def launch_column_endplate_controller(osdagMainWindow, folder):
     rawLogger = logging.getLogger("raw")
     rawLogger.setLevel(logging.INFO)
     # file_handler = logging.FileHandler(os.path.join('Connections','Moment','ExtendedEndPlate','extnd.log'), mode='w')
-    file_handler = logging.FileHandler("Connections/Moment/ExtendedEndPlate/extnd.log", mode='w')
+    file_handler = logging.FileHandler("Connections/Moment/CCEndPlateSplice/extnd.log", mode='w')
     formatter = logging.Formatter('''%(message)s''')
     file_handler.setFormatter(formatter)
     rawLogger.addHandler(file_handler)
-    rawLogger.info('''<link rel="stylesheet" type="text/css" href="Connections/Moment/BCEndPlate/log.css"/>''')
+    rawLogger.info('''<link rel="stylesheet" type="text/css" href="Connections/Moment/CCEndPlateSplice/log.css"/>''')
     # ----------------------------------------------------------------------------
     module_setup()
     window = Maincontroller(folder)
@@ -2135,7 +2138,7 @@ if __name__ == "__main__":
     rawLogger = logging.getLogger("raw")
     rawLogger.setLevel(logging.INFO)
     # fh = logging.FileHandler(os.path.join('Connections','Moment','CCEndPlateSplice','end.log'), mode="w")
-    fh = logging.FileHandler("Connections/Moment/CCEndPlateSplice/end.log", mode='w')
+    fh = logging.FileHandler("Connections/Moment/CCEndPlateSplice/extnd.log", mode='w')
 
     formatter = logging.Formatter('''%(message)s''')
     fh.setFormatter(formatter)

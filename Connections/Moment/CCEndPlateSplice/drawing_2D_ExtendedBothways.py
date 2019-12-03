@@ -424,7 +424,7 @@ class ExtendedEndPlate(object):
 			else:
 				pass
 
-			print "successful"
+			print ("successful")
 
 	def draw_weld_marker1(self, dwg, oriX, oriY, line):
 		weldMarker = dwg.marker(insert=(oriX, oriY), size=(15, 15), orient="auto")

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'OsdagMainPage.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.1
+# Created by: PyQt5 UI code generator 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -692,7 +692,7 @@ class Ui_MainWindow(object):
         self.tab_columntocolumn = QtWidgets.QWidget()
         self.tab_columntocolumn.setObjectName("tab_columntocolumn")
         self.gridLayoutWidget = QtWidgets.QWidget(self.tab_columntocolumn)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(29, 20, 736, 343))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(29, 20, 743, 345))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.gridLayoutWidget)
         self.gridLayout_6.setContentsMargins(0, 0, 0, 0)
@@ -727,17 +727,17 @@ class Ui_MainWindow(object):
         self.label_8.setTextFormat(QtCore.Qt.AutoText)
         self.label_8.setObjectName("label_8")
         self.gridLayout_6.addWidget(self.label_8, 2, 1, 1, 1)
-        self.rdbtn_endplate_2 = QtWidgets.QLabel(self.gridLayoutWidget)
-        self.rdbtn_endplate_2.setObjectName("rdbtn_endplate_2")
-        self.gridLayout_6.addWidget(self.rdbtn_endplate_2, 2, 4, 1, 1)
-        self.rdb_endplate = QtWidgets.QRadioButton(self.gridLayoutWidget)
-        self.rdb_endplate.setText("")
+        self.label_endplate_2 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_endplate_2.setObjectName("label_endplate_2")
+        self.gridLayout_6.addWidget(self.label_endplate_2, 2, 4, 1, 1)
+        self.rdbtn_endplate_2 = QtWidgets.QRadioButton(self.gridLayoutWidget)
+        self.rdbtn_endplate_2.setText("")
         icon8 = QtGui.QIcon()
         icon8.addPixmap(QtGui.QPixmap(":/newPrefix/images/endplate.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.rdb_endplate.setIcon(icon8)
-        self.rdb_endplate.setIconSize(QtCore.QSize(283, 273))
-        self.rdb_endplate.setObjectName("rdb_endplate")
-        self.gridLayout_6.addWidget(self.rdb_endplate, 5, 4, 1, 1)
+        self.rdbtn_endplate_2.setIcon(icon8)
+        self.rdbtn_endplate_2.setIconSize(QtCore.QSize(283, 273))
+        self.rdbtn_endplate_2.setObjectName("rdbtn_endplate_2")
+        self.gridLayout_6.addWidget(self.rdbtn_endplate_2, 5, 4, 1, 1)
         self.cc_Start = QtWidgets.QPushButton(self.gridLayoutWidget)
         self.cc_Start.setStyleSheet("QPushButton::hover\n"
 "{\n"
@@ -803,7 +803,7 @@ class Ui_MainWindow(object):
         self.Tension.setStyleSheet("")
         self.Tension.setObjectName("Tension")
         self.layoutWidget1 = QtWidgets.QWidget(self.Tension)
-        self.layoutWidget1.setGeometry(QtCore.QRect(-8, 0, 712, 561))
+        self.layoutWidget1.setGeometry(QtCore.QRect(-8, 0, 712, 563))
         self.layoutWidget1.setObjectName("layoutWidget1")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.layoutWidget1)
         self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
@@ -1214,7 +1214,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.frame, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1050, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1050, 25))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -1224,8 +1224,8 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.comboBox_help.setCurrentIndex(0)
         self.myStackedWidget.setCurrentIndex(1)
-        self.mytabWidget.setCurrentIndex(0)
-        self.mytabWidget_2.setCurrentIndex(0)
+        self.mytabWidget.setCurrentIndex(1)
+        self.mytabWidget_2.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1265,7 +1265,7 @@ class Ui_MainWindow(object):
         self.btn_start_3.setShortcut(_translate("MainWindow", "Return"))
         self.mytabWidget_2.setTabText(self.mytabWidget_2.indexOf(self.tab_beamtocolumn), _translate("MainWindow", "Beam To Column"))
         self.label_8.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">Cover Plate Connection</span></p></body></html>"))
-        self.rdbtn_endplate_2.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">End Plate Connection</span></p></body></html>"))
+        self.label_endplate_2.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">End Plate Connection</span></p></body></html>"))
         self.cc_Start.setText(_translate("MainWindow", "Start"))
         self.mytabWidget_2.setTabText(self.mytabWidget_2.indexOf(self.tab_columntocolumn), _translate("MainWindow", "Column To Column"))
         self.label_12.setText(_translate("MainWindow", "This module is not available in the current version."))

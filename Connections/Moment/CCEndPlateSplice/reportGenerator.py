@@ -10,6 +10,7 @@ import math
 import os
 import pickle
 from Connections.connection_calculations import ConnectionCalculations
+from Connections.Moment.CCEndPlateSplice.ccEndPlateSpliceCalc import ccEndPlateSplice
 
 ######################################################################
 # Start of Report

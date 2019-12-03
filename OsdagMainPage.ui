@@ -575,7 +575,7 @@ border-bottom-right-radius: 0px ;
            <enum>QTabWidget::Triangular</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <property name="documentMode">
            <bool>true</bool>
@@ -1175,7 +1175,7 @@ border-bottom-right-radius: 0px ;
                <enum>QTabWidget::Triangular</enum>
               </property>
               <property name="currentIndex">
-               <number>0</number>
+               <number>2</number>
               </property>
               <property name="documentMode">
                <bool>true</bool>
@@ -1650,8 +1650,8 @@ color:#ffffff;
                  <rect>
                   <x>29</x>
                   <y>20</y>
-                  <width>736</width>
-                  <height>343</height>
+                  <width>743</width>
+                  <height>345</height>
                  </rect>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_6">
@@ -1743,14 +1743,14 @@ color:#ffffff;
                   </widget>
                  </item>
                  <item row="2" column="4">
-                  <widget class="QLabel" name="rdbtn_endplate_2">
+                  <widget class="QLabel" name="label_endplate_2">
                    <property name="text">
                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;End Plate Connection&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                   </widget>
                  </item>
                  <item row="5" column="4">
-                  <widget class="QRadioButton" name="rdb_endplate">
+                  <widget class="QRadioButton" name="rdbtn_endplate_2">
                    <property name="text">
                     <string/>
                    </property>
@@ -1950,7 +1950,7 @@ color:#ffffff;
           <x>-8</x>
           <y>0</y>
           <width>712</width>
-          <height>561</height>
+          <height>563</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_5">
@@ -2836,7 +2836,7 @@ color:#ffffff;
      <x>0</x>
      <y>0</y>
      <width>1050</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

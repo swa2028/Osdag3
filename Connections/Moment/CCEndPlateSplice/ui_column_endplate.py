@@ -2144,4 +2144,4 @@ class Ui_MainWindow(object):
         self.actio_load_input.setText(_translate("MainWindow", "Load input"))
         self.actio_load_input.setShortcut(_translate("MainWindow", "Ctrl+L"))
 
-import icons_rc
+# import icons_rc
