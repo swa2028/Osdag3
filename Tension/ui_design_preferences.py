@@ -351,7 +351,7 @@ class Ui_DesignPreferences(object):
         self.btn_defaults.setText(_translate("DesignPreferences", "Defaults"))
         self.label.setText(_translate("DesignPreferences", "Bolt type"))
         self.combo_boltHoleType.setItemText(0, _translate("DesignPreferences", "standard"))
-        self.combo_boltHoleType.setItemText(1, _translate("DesignPreferences", "Over-sized"))
+        self.combo_boltHoleType.setItemText(1, _translate("DesignPreferences", "over_size"))
         self.label_8.setText(_translate("DesignPreferences", "Fu"))
         self.txt_boltFu.setText(_translate("DesignPreferences", "800"))
         self.combo_boltType.setItemText(0, _translate("DesignPreferences", "Pretensioned"))

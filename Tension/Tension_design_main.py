@@ -1,10 +1,10 @@
 from .ui_tension_design import Ui_MainWindow
 from .ui_design_preferences import Ui_DesignPreferences
 from .ui_design_summary import Ui_DesignReport
-# from ui_plate import Ui_Plate
+from .ui_plate import Ui_Plate
 # from ui_plate_bottom import Ui_Plate_Bottom
 # from ui_stiffener import Ui_Stiffener
-# from ui_pitch import Ui_Pitch
+from .ui_pitch import Ui_Pitch
 
 from .svg_window import SvgWindow
 from ui_tutorial import Ui_Tutorial
@@ -245,22 +245,20 @@ class DesignPreference(QDialog):
 		QCloseEvent.accept()
 
 
-# class PlateDetails(QDialog):
-# 	def __init__(self, parent=None):
-# 		QDialog.__init__(self, parent)
-# 		self.ui = Ui_Plate()
-# 		self.ui.setupUi(self)
-# 		self.maincontroller = parent
-#
-# 		uiObj = self.maincontroller.designParameters()
-# 		resultObj_plate = bc_endplate_design(uiObj)
-#
-# 		self.ui.txt_plateno.setText(str(resultObj_plate['ContPlateTens']['Number']))
-# 		self.ui.txt_plateWidth.setText(str(resultObj_plate['ContPlateTens']['Width']))
-# 		self.ui.txt_plateLength.setText(str(resultObj_plate['ContPlateTens']['Length']))
-# 		self.ui.txt_plateThickness.setText(str(resultObj_plate['ContPlateTens']['Thickness']))
-# 		self.ui.txt_NotchSize.setText(str(resultObj_plate['ContPlateTens']['NotchSize']))
-# 		self.ui.txt_WeldSize.setText(str(resultObj_plate['ContPlateTens']['Weld']))
+class PlateDetails(QDialog):
+	def __init__(self, parent=None):
+		QDialog.__init__(self, parent)
+		self.ui = Ui_Plate()
+		self.ui.setupUi(self)
+		self.maincontroller = parent
+
+		uiObj = self.maincontroller.designParameters()
+		resultObj_plate = tension_design(uiObj)
+
+		self.ui.txt_plateLength.setText(str(resultObj_plate['Plate']['Length']))
+		self.ui.txt_plateThickness.setText(str(resultObj_plate['Plate']['Thickness']))
+		self.ui.txt_plateWidth.setText(str(resultObj_plate['Plate']['Width']))
+
 #
 # class PlateDetailsBottom(QDialog):
 # 	def __init__(self, parent=None):
@@ -303,18 +301,21 @@ class DesignPreference(QDialog):
 # 		self.ui.txt_stiffnrWeldSize.setText(str(resultObj_plate['Stiffener']['Weld']))
 #
 #
-# class Pitch(QDialog):
-# 	def __init__(self, parent=None):
-# 		QDialog.__init__(self, parent)
-# 		self.ui = Ui_Pitch()
-# 		self.ui.setupUi(self)
-# 		self.maincontroller = parent
-#
-# 		uiObj = self.maincontroller.designParameters()
-# 		resultObj_plate = bc_endplate_design(uiObj)
-# 		print "result plate", resultObj_plate
-# 		no_of_bolts = resultObj_plate['Bolt']['NumberOfBolts']
-# 		if self.maincontroller.endplate_type == 'both_way':
+class Pitch(QDialog):
+	def __init__(self, parent=None):
+		QDialog.__init__(self, parent)
+		self.ui = Ui_Pitch()
+		self.ui.setupUi(self)
+		self.maincontroller = parent
+
+		uiObj = self.maincontroller.designParameters()
+		resultObj_plate = tension_design(uiObj)
+		# print "result plate", resultObj_plate
+		self.ui.txt_row_pitch.setText(str(resultObj_plate['Pitch']['Row_Pitch']))
+		self.ui.txt_column_pitch.setText(str(resultObj_plate['Pitch']['Column_Pitch']))
+
+		# no_of_bolts = resultObj_plate['Bolt']['NumberOfBolts']
+		# if self.maincontroller.endplate_type == 'both_way':
 # 			if no_of_bolts == 8:
 # 				self.ui.lineEdit_pitch.setText(str(resultObj_plate['Bolt']['Pitch12']))
 # 				self.ui.lineEdit_pitch2.setText(str(resultObj_plate['Bolt']['Pitch23']))
@@ -753,8 +754,8 @@ class Maincontroller(QMainWindow):
 		# self.ui.combo_sectiontype.currentTextChanged.connect(self.type_on_change)
 		# self.ui.combo_conn_loc.activated.connect(self.on_change)
 		# self.ui.btn_Weld.clicked.connect(self.weld_details)
-		# self.ui.btn_pitchDetail.clicked.connect(self.pitch_details)
-		# self.ui.btn_plateDetail.clicked.connect(self.plate_details)
+		self.ui.btn_pitchdetails.clicked.connect(self.pitch_details)
+		self.ui.btn_platedetail.clicked.connect(self.plate_details)
 		# self.ui.btn_plateDetail_2.clicked.connect(self.plate_details_bottom)
 		# self.ui.btn_stiffnrDetail.clicked.connect(self.stiffener_details)
 		self.ui.btn_CreateDesign.clicked.connect(self.design_report)
@@ -1330,6 +1331,11 @@ class Maincontroller(QMainWindow):
 		tension_slenderness = resultObj['Tension_Force']['Slenderness']
 		self.ui.txt_slender.setText(str(tension_slenderness))
 
+		tension_enddistance = resultObj['Tension_Force']['End_Distance']
+		self.ui.txt_enddistance.setText(str(tension_enddistance))
+
+		tension_edgedistance = resultObj['Tension_Force']['Edge_Distance']
+		self.ui.txt_edgedistance.setText(str(tension_edgedistance))
 
 	def display_log_to_textedit(self):
 		file = QFile(os.path.join('Tension', 'extnd.log'))
@@ -1635,6 +1641,13 @@ class Maincontroller(QMainWindow):
 		self.memb_data = self.fetchBeamPara()
 		save_html(self.result, self.alist, self.beam_data, fileName)
 
+	def plate_details(self):
+		section = PlateDetails(self)
+		section.show()
+
+	def pitch_details(self):
+		section = Pitch(self)
+		section.show()
 	# ===========================  CAD ===========================
 	# def show_color_dialog(self):
 	#
