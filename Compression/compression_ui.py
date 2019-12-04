@@ -556,7 +556,7 @@ class Ui_MainWindow(object):
         self.combo_sectiontype.setFont(font)
         self.combo_sectiontype.setStyleSheet("QComboBox { combobox-popup: 0; }")
         self.combo_sectiontype.setMaxVisibleItems(5)
-        self.combo_sectiontype.setObjectName("combo_sectiontype")
+        self.combo_sectiontype.setObjectName("")
         self.combo_sectiontype.addItem("")
         self.combo_sectiontype.addItem("")
         self.combo_sectiontype.addItem("")
@@ -958,6 +958,9 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setFamily("DejaVu Sans")
         font.setItalic(False)
+
+        self.combo_sectiontype.currentIndexChanged.connect(self.comboChanged)
+
         self.actionShow_column_2.setFont(font)
         self.actionShow_column_2.setObjectName("actionShow_column_2")
         self.menuFile.addAction(self.action_load_input)
@@ -1008,20 +1011,20 @@ class Ui_MainWindow(object):
         self.combo_sectiontype.setCurrentIndex(0)
         self.combo_sectionsize.setCurrentIndex(-1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setTabOrder(self.combo_sectiontype, self.combo_sectionsize)
+        MainWindow.setTabOrder(self.combo_sectionsize, self.txt_Fu)
         MainWindow.setTabOrder(self.txt_Fu, self.txt_Fy)
-        MainWindow.setTabOrder(self.txt_Fy, self.btn_Design)
+        MainWindow.setTabOrder(self.txt_Fy, self.txt_Member_length_zz)
+        MainWindow.setTabOrder(self.txt_Member_length_zz, self.txt_Member_length_yy)
+        MainWindow.setTabOrder(self.txt_Member_length_yy, self.txt_plate_thk)
+        MainWindow.setTabOrder(self.txt_plate_thk, self.txt_Compressionforce)
+        MainWindow.setTabOrder(self.txt_Compressionforce, self.combo_end1_cond1)
+        MainWindow.setTabOrder(self.combo_end1_cond1, self.combo_end1_cond2)
+        MainWindow.setTabOrder(self.combo_end1_cond2, self.combo_end2_cond1)
+        MainWindow.setTabOrder(self.combo_end2_cond1, self.combo_end2_cond2)
+        MainWindow.setTabOrder(self.combo_end2_cond2, self.btn_Design)
         MainWindow.setTabOrder(self.btn_Design, self.btn_Reset)
-        MainWindow.setTabOrder(self.btn_Reset, self.btnInput)
-        MainWindow.setTabOrder(self.btnInput, self.btnOutput)
-        MainWindow.setTabOrder(self.btnOutput, self.btnFront)
-        MainWindow.setTabOrder(self.btnFront, self.btnSide)
-        MainWindow.setTabOrder(self.btnSide, self.btnTop)
-        MainWindow.setTabOrder(self.btnTop, self.btn3D)
-        MainWindow.setTabOrder(self.btn3D, self.chkBx_beamSec)
-        MainWindow.setTabOrder(self.chkBx_beamSec, self.chkBx_connector)
-        MainWindow.setTabOrder(self.chkBx_connector, self.txt_comp_capacity_zz)
-        MainWindow.setTabOrder(self.txt_comp_capacity_zz, self.txt_comp_capacity_yy)
-        MainWindow.setTabOrder(self.txt_comp_capacity_yy, self.txt_slender_yy)
+        MainWindow.setTabOrder(self.btn_Reset, self.txt_slender_yy)
         MainWindow.setTabOrder(self.txt_slender_yy, self.btn_SaveMessages)
         MainWindow.setTabOrder(self.btn_SaveMessages, self.btn_CreateDesign)
         MainWindow.setTabOrder(self.btn_CreateDesign, self.textEdit)
@@ -1187,4 +1190,13 @@ class Ui_MainWindow(object):
         self.actio_load_input.setShortcut(_translate("MainWindow", "Ctrl+L"))
         self.actionShow_column_2.setText(_translate("MainWindow", "Show column"))
         self.actionShow_column_2.setShortcut(_translate("MainWindow", "Alt+Shift+C"))
+    def comboChanged(self):
+        lst=["Back to Back Angles","Star Angles","Back to Back Channels"]
+        comboText=self.combo_sectiontype.currentText()
+        if comboText in lst:
+            self.txt_plate_thk.setEnabled(True)
+        else:
+            self.txt_plate_thk.setEnabled(False)
+
+
 from . import icons_rc
