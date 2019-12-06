@@ -4,7 +4,7 @@ from .ui_design_summary import Ui_DesignReport
 from .ui_plate import Ui_Plate
 # from ui_plate_bottom import Ui_Plate_Bottom
 # from ui_stiffener import Ui_Stiffener
-from .ui_pitch import Ui_Pitch
+from .ui_boltdetails import Ui_Pitch
 
 from .svg_window import SvgWindow
 from ui_tutorial import Ui_Tutorial
@@ -152,25 +152,28 @@ class DesignPreference(QDialog):
 
 	def save_default_para(self):
 		uiObj = self.maincontroller.get_user_inputs()
-		if uiObj["Bolt"]["Grade"] == '' or uiObj["Bolt"]["Grade"] == 'Please Select Type':
+		if uiObj["Bolt"]["Grade"] == '':
 			pass
 		else:
 			bolt_grade = float(uiObj["Bolt"]["Grade"])
 			bolt_fu = str(self.get_boltFu(bolt_grade))
 			self.ui.txt_boltFu.setText(bolt_fu)
-		self.ui.combo_boltType.setCurrentIndex(1)
-		self.ui.combo_boltHoleType.setCurrentIndex(0)
+
+
 		designPref = {}
 		designPref["bolt"] = {}
+		self.ui.combo_boltType.setCurrentIndex(1)
 		designPref["bolt"]["bolt_type"] = str(self.ui.combo_boltType.currentText())
+		self.ui.combo_boltHoleType.setCurrentIndex(0)
 		designPref["bolt"]["bolt_hole_type"] = str(self.ui.combo_boltHoleType.currentText())
 		designPref["bolt"]["bolt_hole_clrnce"] = self.get_clearance()
 		designPref["bolt"]["bolt_fu"] = float(self.ui.txt_boltFu.text())
 		self.ui.combo_slipfactor.setCurrentIndex(4)
 		designPref["bolt"]["slip_factor"] = float(str(self.ui.combo_slipfactor.currentText()))
 
-		self.ui.combo_weldType.setCurrentIndex(0)
+
 		designPref["weld"] = {}
+		self.ui.combo_weldType.setCurrentIndex(0)
 		weldType = str(self.ui.combo_weldType.currentText())
 		designPref["weld"]["typeof_weld"] = weldType
 		designPref["weld"]["safety_factor"] = float(1.25)
@@ -311,8 +314,11 @@ class Pitch(QDialog):
 		uiObj = self.maincontroller.designParameters()
 		resultObj_plate = tension_design(uiObj)
 		# print "result plate", resultObj_plate
-		self.ui.txt_row_pitch.setText(str(resultObj_plate['Pitch']['Row_Pitch']))
-		self.ui.txt_column_pitch.setText(str(resultObj_plate['Pitch']['Column_Pitch']))
+		self.ui.txt_no_of_rows_bolts.setText(str(resultObj_plate['Bolt']['No_of_Rows_Bolts']))
+		self.ui.txt_no_of_columns_bolts.setText(str(resultObj_plate['Bolt']['No_of_Columns_Bolts']))
+		self.ui.txt_row_pitch.setText(str(resultObj_plate['Bolt']['Row_Pitch']))
+		self.ui.txt_column_pitch.setText(str(resultObj_plate['Bolt']['Column_Pitch']))
+		self.ui.txt_bolt_qty.setText(str(resultObj_plate['Bolt']['Bolt_Qty']))
 
 		# no_of_bolts = resultObj_plate['Bolt']['NumberOfBolts']
 		# if self.maincontroller.endplate_type == 'both_way':
@@ -754,7 +760,10 @@ class Maincontroller(QMainWindow):
 		# self.ui.combo_sectiontype.currentTextChanged.connect(self.type_on_change)
 		# self.ui.combo_conn_loc.activated.connect(self.on_change)
 		# self.ui.btn_Weld.clicked.connect(self.weld_details)
-		self.ui.btn_pitchdetails.clicked.connect(self.pitch_details)
+		if self.ui.combo_conn_type.currentText() == "Welded" :
+			self.ui.btn_pitchdetails.clicked.connect(self.pitch_details)
+		else:
+			pass
 		self.ui.btn_platedetail.clicked.connect(self.plate_details)
 		# self.ui.btn_plateDetail_2.clicked.connect(self.plate_details_bottom)
 		# self.ui.btn_stiffnrDetail.clicked.connect(self.stiffener_details)
@@ -797,7 +806,7 @@ class Maincontroller(QMainWindow):
 
 		# TODO #
 
-		# self.ui.txt_oppline_tension.editingFinished.connect(lambda: self.check_weld_range(self.ui.txt_oppline_tension,self.ui.lbl_beam1_3,self.uiObj))
+		# self.ui.txt_oppline_tension.WeldeditingFinished.connect(lambda: self.check_weld_range(self.ui.txt_oppline_tension,self.ui.lbl_beam1_3,self.uiObj))
 		# TODO #
 
 
@@ -1331,11 +1340,16 @@ class Maincontroller(QMainWindow):
 		tension_slenderness = resultObj['Tension_Force']['Slenderness']
 		self.ui.txt_slender.setText(str(tension_slenderness))
 
-		tension_enddistance = resultObj['Tension_Force']['End_Distance']
-		self.ui.txt_enddistance.setText(str(tension_enddistance))
+		if self.ui.combo_conn_type.currentIndex() == 1:
 
-		tension_edgedistance = resultObj['Tension_Force']['Edge_Distance']
-		self.ui.txt_edgedistance.setText(str(tension_edgedistance))
+			tension_enddistance = resultObj['Tension_Force']['End_Distance']
+			self.ui.txt_enddistance.setText(str(tension_enddistance))
+
+			tension_edgedistance = resultObj['Tension_Force']['Edge_Distance']
+			self.ui.txt_edgedistance.setText(str(tension_edgedistance))
+
+		else:
+			pass
 
 	def display_log_to_textedit(self):
 		file = QFile(os.path.join('Tension', 'extnd.log'))
@@ -1429,7 +1443,6 @@ class Maincontroller(QMainWindow):
 		self.ui.combo_sectionsize.addItems(membdata)
 		combo_section = self.ui.combo_sectionsize
 		self.color_oldDatabase_section(old_beamdata, membdata, combo_section)
-
 
 	def color_oldDatabase_section(self, old_section, intg_section, combo_section):
 		"""

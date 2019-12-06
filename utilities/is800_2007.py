@@ -5,6 +5,7 @@ Started on 01 - Nov - 2018
 @author: ajmalbabums
 """
 import math
+from Connections.connection_calculations import ConnectionCalculations
 
 
 class IS800_2007(object):
@@ -548,7 +549,7 @@ class IS800_2007(object):
         #     "Standard": 1.0,
         #     "Over-sized": 0.85
         # }[bolt_hole_type]
-        F_0 = ConnectionCalculations.proof_load_F_0(bolt_diameter, bolt_fu)
+        F_0 = ConnectionCalculations.proof_load_F_0(int(bolt_diameter), bolt_fu)
         k_h = ConnectionCalculations.calculate_k_h(bolt_hole_type)
         v_nsf = mu_f * n_e * k_h * F_0  # nominal shear capacity of bolt
         v_dsf = v_nsf / gamma_mf

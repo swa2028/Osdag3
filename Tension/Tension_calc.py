@@ -31,7 +31,7 @@ def bolt_capacity(member_fu, bolt_fu,bolt_type,bolt_hole_type, bolt_slip,thickne
     elif bolt_type == "Friction Grip Bolt":
         muf = bolt_slip
         n_e = 2  # number of effective surfaces offering frictional resistance
-        Vdsf = round(IS800_2007.bolt_shear_friction_grip_bolt(diameter, bolt_fu, muf, n_e, bolt_hole_type), 2)
+        Vdsf = round(IS800_2007.bolt_shear_friction_grip_bolt(diameter, bolt_fu, muf, n_e, bolt_hole_type), 2)*1000
         Vsb = IS800_2007.cl_10_3_3_bolt_shear_capacity(bolt_fu, A_nb, A_sb, n_n=1, n_s=0, safety_factor_parameter='field')
         Vs = IS800_2007.cl_10_3_2_bolt_design_strength(Vsb, Vdsf)
     else:
@@ -80,6 +80,8 @@ def tension_design(uiObj):
 
     weld_type = (uiObj["Weld"]["Type"])
     weld_thickness = float(uiObj["Weld"]["Thickness (mm)"])
+    weld_fu =  float(uiObj["weld"]["fu_overwrite"])
+    weld_fabrication = str(uiObj["weld"]["typeof_weld"])
 
     dia_hole = diameter + int(uiObj["bolt"]["bolt_hole_clrnce"])
     bolt_hole_type = uiObj["bolt"]["bolt_hole_type"]
@@ -102,7 +104,7 @@ def tension_design(uiObj):
         member_d = float(dictmemberdata["D"])
         member_B = float(dictmemberdata["B"])
         member_R1= float(dictmemberdata["R1"])
-        member_Ag = float (dictmemberdata["Area"]) * 100
+        member_Ag = float(dictmemberdata["Area"]) * 100
         radius_gyration = min((float(dictmemberdata["rz"])),(float(dictmemberdata["ry"])))*10
 
     else:
@@ -175,8 +177,8 @@ def tension_design(uiObj):
         end_distance = IS800_2007.cl_10_2_4_2_min_edge_end_dist(diameter, bolt_hole_type, edge_type)
         pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
         no_of_bolts_sec = int(((member_d- 2*member_tf) - (edge_distance * 2))/pitch)
-        pitch = float(math.floor(((member_d- 2*member_tf) - (edge_distance * 2))/no_of_bolts_sec))
-        edge_distance = float(math.floor(((member_d- 2*member_tf) - (pitch * no_of_bolts_sec))))
+        # pitch = float(math.floor(((member_d- 2*member_tf) - (edge_distance * 2))/no_of_bolts_sec))
+
         kbChk1 = end_distance / float(3 * dia_hole)
         kbChk2 = pitch / float(3 * dia_hole) - 0.25
         kbChk3 = bolt_fu / float(member_fu)
@@ -192,9 +194,10 @@ def tension_design(uiObj):
         if no_of_bolts < no_of_bolts_sec:
             no_of_rows_bolt = no_of_bolts
             no_of_columns_bolt = 1
-            bolt_qty = no_of_bolts
-            row_pitch = round((float(((member_d- 2*member_tf)-(edge_distance * 2)) / no_of_rows_bolt)),2)
+            bolt_qty = no_of_rows_bolt * no_of_columns_bolt
+            row_pitch = round((int(((member_d- 2*member_tf)-(edge_distance * 2)) / no_of_rows_bolt)),2)
             column_pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
+            edge_distance = float((((member_d- 2*member_tf) - (row_pitch * no_of_rows_bolt))))/2
             kbChk1 = end_distance / float(3 * dia_hole)
             kbChk2 = pitch / float(3 * dia_hole) - 0.25
             kbChk3 = bolt_fu / float(member_fu)
@@ -209,8 +212,9 @@ def tension_design(uiObj):
             no_of_rows_bolt = no_of_bolts
             no_of_columns_bolt = 1
             bolt_qty = no_of_bolts
-            row_pitch = round((float(((member_d- 2*member_tf)- (edge_distance * 2)) / no_of_rows_bolt)), 2)
+            row_pitch = round((int(((member_d- 2*member_tf)- (edge_distance * 2)) / no_of_rows_bolt)), 2)
             column_pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
+            edge_distance = float((((member_d - 2 * member_tf) - (row_pitch * no_of_rows_bolt)))) / 2
             kbChk1 = end_distance / float(3 * dia_hole)
             kbChk2 = pitch / float(3 * dia_hole) - 0.25
             kbChk3 = bolt_fu / float(member_fu)
@@ -245,8 +249,9 @@ def tension_design(uiObj):
                         pass
 
             bolt_qty = no_of_columns_bolt * no_of_rows_bolt
-            row_pitch = round((float(((member_d - 2 * member_tf) - (edge_distance * 2)) / no_of_rows_bolt)), 2)
+            row_pitch = round((int(((member_d - 2 * member_tf) - (edge_distance * 2)) / no_of_rows_bolt)), 2)
             column_pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
+            edge_distance = float((((member_d - 2 * member_tf) - (row_pitch * no_of_rows_bolt)))) / 2
             kbChk1 = end_distance / float(3 * dia_hole)
             kbChk2 = pitch / float(3 * dia_hole) - 0.25
             kbChk3 = bolt_fu / float(member_fu)
@@ -295,8 +300,8 @@ def tension_design(uiObj):
     #                        end_distance, pitch, kb, A_nb, A_sb)
 
 
-    shear_force_bolt = tension_load/bolt_qty
-    bolt_efficiency = shear_force_bolt/Vs
+        shear_force_bolt = tension_load/bolt_qty
+        bolt_efficiency = shear_force_bolt/Vs
 
 # member_d = 250
 # [A_sb, A_nb] = IS1367_Part3_2002.bolt_area(12)
@@ -392,47 +397,47 @@ def tension_design(uiObj):
 
 
 
-    if member_type == "Channels" and conn == "Web":
-        member_An = member_Ag - (no_of_rows_bolt * dia_hole * member_tw)
-        if no_of_rows_bolt >=2 :
-            A_vg = ((column_pitch*(no_of_columns_bolt-1) + end_distance)*member_tw)*2
-            A_vn = ((column_pitch*(no_of_columns_bolt-1) + end_distance - ((no_of_columns_bolt -0.5)*dia_hole)) * member_tw)*2
-            A_tg = row_pitch * (no_of_rows_bolt - 1) * member_tw
-            A_tn = (row_pitch*(no_of_rows_bolt - 1) - ((1)*dia_hole)) * member_tw
-        else:
-            A_vg = (column_pitch + end_distance) * member_tw
-            A_vn = ((column_pitch * (no_of_columns_bolt - 1) + end_distance - ((no_of_columns_bolt - 0.5) * dia_hole)) * member_tw)
-            A_tg = (end_distance)* member_tw
-            A_tn = (end_distance - 0.5* dia_hole) * member_tw
-    elif member_type == "Back to Back Channels" and conn == "Web":
-        member_Ag = float (dictmemberdata["Area"]) * 100 * 2
-        member_An = member_Ag - (no_of_rows_bolt * dia_hole * 2 * member_tw)
-        if no_of_rows_bolt >=2:
-            A_vg = ((column_pitch*(no_of_columns_bolt-1) + end_distance) * member_tw) * 2 * 2
-            A_vn = ((column_pitch*(no_of_columns_bolt-1) + end_distance - ((no_of_columns_bolt - 0.5)*dia_hole)) * member_tw)*2*2
-            A_tg = row_pitch* (no_of_rows_bolt - 1)* member_tw*2
-            A_tn = (row_pitch*(no_of_rows_bolt-1) - ((1)*dia_hole)) * member_tw * 2
-        else:
-            A_vg = (column_pitch + end_distance) * member_tw * 2
-            A_vn = ((column_pitch * (no_of_columns_bolt - 1) + end_distance - ((no_of_columns_bolt - 0.5) * dia_hole)) * member_tw)*2
-            A_tg = end_distance * member_tw * 2
-            A_tn = (end_distance - 0.5* dia_hole) * member_tw * 2
+        if member_type == "Channels" and conn == "Web":
+            member_An = member_Ag - (no_of_rows_bolt * dia_hole * member_tw)
+            if no_of_rows_bolt >=2 :
+                A_vg = ((column_pitch*(no_of_columns_bolt-1) + end_distance)*member_tw)*2
+                A_vn = ((column_pitch*(no_of_columns_bolt-1) + end_distance - ((no_of_columns_bolt -0.5)*dia_hole)) * member_tw)*2
+                A_tg = row_pitch * (no_of_rows_bolt - 1) * member_tw
+                A_tn = (row_pitch*(no_of_rows_bolt - 1) - ((1)*dia_hole)) * member_tw
+            else:
+                A_vg = (column_pitch + end_distance) * member_tw
+                A_vn = ((column_pitch * (no_of_columns_bolt - 1) + end_distance - ((no_of_columns_bolt - 0.5) * dia_hole)) * member_tw)
+                A_tg = (end_distance)* member_tw
+                A_tn = (end_distance - 0.5* dia_hole) * member_tw
+        elif member_type == "Back to Back Channels" and conn == "Web":
+            member_Ag = float (dictmemberdata["Area"]) * 100 * 2
+            member_An = member_Ag - (no_of_rows_bolt * dia_hole * 2 * member_tw)
+            if no_of_rows_bolt >=2:
+                A_vg = ((column_pitch*(no_of_columns_bolt-1) + end_distance) * member_tw) * 2 * 2
+                A_vn = ((column_pitch*(no_of_columns_bolt-1) + end_distance - ((no_of_columns_bolt - 0.5)*dia_hole)) * member_tw)*2*2
+                A_tg = row_pitch* (no_of_rows_bolt - 1)* member_tw*2
+                A_tn = (row_pitch*(no_of_rows_bolt-1) - ((1)*dia_hole)) * member_tw * 2
+            else:
+                A_vg = (column_pitch + end_distance) * member_tw * 2
+                A_vn = ((column_pitch * (no_of_columns_bolt - 1) + end_distance - ((no_of_columns_bolt - 0.5) * dia_hole)) * member_tw)*2
+                A_tg = end_distance * member_tw * 2
+                A_tn = (end_distance - 0.5* dia_hole) * member_tw * 2
 
-    plate_detailing = False
-    plate_length = (column_pitch * (no_of_columns_bolt - 1)) + 2 * end_distance
-    plate_width = member_d + 50
-    plate_A_vg = ((column_pitch*(no_of_columns_bolt-1) + end_distance) * plate_thickness) * 2
-    plate_A_vn = ((column_pitch * (no_of_columns_bolt - 1) + end_distance - (
-                (no_of_columns_bolt - 0.5) * dia_hole)) * plate_thickness) * 2
-    plate_A_tg = row_pitch * (no_of_rows_bolt - 1) * plate_thickness * 2
-    plate_A_tn = (row_pitch * (no_of_rows_bolt - 1) - ((1) * dia_hole)) * plate_thickness * 2
-
-    plate_capacity = IS800_2007.cl_6_4_1_block_shear_strength(plate_A_vg, plate_A_vn, plate_A_tg, plate_A_tn, member_fu, member_fy)/1000
-    if plate_capacity > tension_load:
-        plate_detailing = True
-    else:
         plate_detailing = False
-        logger.error(": Chosen Plate Thickness is not sufficient")
+        plate_length = (column_pitch * (no_of_columns_bolt - 1)) + 2 * end_distance
+        plate_width = member_d + 50
+        plate_A_vg = ((column_pitch*(no_of_columns_bolt-1) + end_distance) * plate_thickness) * 2
+        plate_A_vn = ((column_pitch * (no_of_columns_bolt - 1) + end_distance - (
+                    (no_of_columns_bolt - 0.5) * dia_hole)) * plate_thickness) * 2
+        plate_A_tg = row_pitch * (no_of_rows_bolt - 1) * plate_thickness
+        plate_A_tn = (row_pitch * (no_of_rows_bolt - 1) - ((1) * dia_hole)) * plate_thickness
+
+        plate_capacity = IS800_2007.cl_6_4_1_block_shear_strength(plate_A_vg, plate_A_vn, plate_A_tg, plate_A_tn, member_fu, member_fy)/1000
+        if plate_capacity > tension_load:
+            plate_detailing = True
+        else:
+            plate_detailing = False
+            logger.error(": Chosen Plate Thickness is not sufficient")
 
 
 
@@ -481,42 +486,129 @@ def tension_design(uiObj):
 #
 #     no_of_bolts = bolt_row
 #
+
+        # cl 6.2 Design Strength Due to Block Shear
+        tension_blockshear = IS800_2007.cl_6_4_1_block_shear_strength(A_vg, A_vn, A_tg, A_tn, member_fu, member_fy)/1000
+    #     # Calculation for Design Strength Due to Yielding of Gross Section
+    #     if (Member_type == "Angles")and bolt_row > 1 :
+    #      tension_rupture =IS800_2007.tension_angle_member_design_due_to_rupture_of_critical_section(member_An,member_Ag, member_fu , member_fy, L_c, w, shear_lag, t)/1000
+    #     else:
+        tension_rupture =IS800_2007.tension_member_design_due_to_rupture_of_critical_section(member_An, member_fu)/1000
+        tension_yielding = IS800_2007.tension_member_design_due_to_yielding_of_gross_section(member_Ag, member_fy) / 1000
+        tension_design = min(tension_blockshear,tension_rupture,tension_yielding)
+
+    if conn_type == "Welded" and conn == "Web":
+        member_Ag = float(dictmemberdata["Area"]) * 100 * 2
+        member_An = member_Ag
+        A_vg = 0
+        A_vn = 0
+        A_tg = 0
+        A_tn = 0
+
+
+
+        # plate_detailing = False
+        # plate_length = (column_pitch * (no_of_columns_bolt - 1)) + 2 * end_distance
+        # plate_width = member_d + 50
+        # plate_A_vg = ((column_pitch * (no_of_columns_bolt - 1) + end_distance) * plate_thickness) * 2
+        # plate_A_vn = ((column_pitch * (no_of_columns_bolt - 1) + end_distance - (
+        #         (no_of_columns_bolt - 0.5) * dia_hole)) * plate_thickness) * 2
+        # plate_A_tg = row_pitch * (no_of_rows_bolt - 1) * plate_thickness * 2
+        # plate_A_tn = (row_pitch * (no_of_rows_bolt - 1) - ((1) * dia_hole)) * plate_thickness * 2
+        #
+        # plate_capacity = IS800_2007.cl_6_4_1_block_shear_strength(plate_A_vg, plate_A_vn, plate_A_tg, plate_A_tn,
+        #                                                           member_fu, member_fy) / 1000
+        # if plate_capacity > tension_load:
+        #     plate_detailing = True
+        # else:
+        #     plate_detailing = False
+        #     logger.error(": Chosen Plate Thickness is not sufficient")
+
+        f_weld = IS800_2007.cl_10_5_7_1_1_fillet_weld_design_stress(
+            ultimate_stresses=[member_fu,weld_fu], fabrication=weld_fabrication)
+        min_weld_thickness = float (min(plate_thickness, member_tf,member_tw))
+        print(min_weld_thickness)
+        if weld_thickness >  min_weld_thickness:
+            logger.error(": Chosen Weld Size is higher than Member Thickness or Plate Thickness")
+
+        throat = IS800_2007.cl_10_5_3_2_fillet_weld_effective_throat_thickness(weld_thickness, fusion_face_angle=90)
+        L_eff = tension_load*1000/(throat * f_weld)
+
+        Btw = IS800_2007.cl_10_5_7_3_weld_long_joint(L_eff, throat)
+        if L_eff > 150 * throat:
+            f_weld = Btw * f_weld
+        else:
+            pass
+
+        web_weld = member_d
+        L_eff = tension_load * 1000 / (throat * f_weld)
+        print(L_eff)
+        # diff = ((L_eff - member_d)/2)%10
+        # print(diff)
+        flange_weld = round_up(((L_eff - member_d)/2),10,50)
+
+        plate_length = flange_weld
+        plate_width = member_d + 50
+
+        plate_A_vg = plate_length * plate_thickness
+        plate_A_vn = plate_A_vg
+        plate_A_tg = plate_width * plate_thickness
+        plate_A_tn = plate_A_tg
+        plate_capacity = IS800_2007.cl_6_4_1_block_shear_strength(plate_A_vg, plate_A_vn, plate_A_tg, plate_A_tn, member_fu, member_fy) / 1000
+        if plate_capacity > tension_load:
+            plate_detailing = True
+        else:
+            plate_detailing = False
+            logger.error(": Chosen Plate Thickness is not sufficient")
+
     k = 1
-    tension_slenderness = IS800_2007.design_check_for_slenderness(k, member_length, radius_gyration)
     radius_gyration_min = k * (member_length) / 400
     # cl 6.2 Design Strength Due to Block Shear
-    tension_blockshear = IS800_2007.cl_6_4_1_block_shear_strength(A_vg, A_vn, A_tg, A_tn, member_fu, member_fy)/1000
-#     # Calculation for Design Strength Due to Yielding of Gross Section
-#     if (Member_type == "Angles")and bolt_row > 1 :
-#      tension_rupture =IS800_2007.tension_angle_member_design_due_to_rupture_of_critical_section(member_An,member_Ag, member_fu , member_fy, L_c, w, shear_lag, t)/1000
-#     else:
-    tension_rupture =IS800_2007.tension_member_design_due_to_rupture_of_critical_section(member_An, member_fu)/1000
+    tension_blockshear = IS800_2007.cl_6_4_1_block_shear_strength(A_vg, A_vn, A_tg, A_tn, member_fu,
+                                                                  member_fy) / 1000
+    #     # Calculation for Design Strength Due to Yielding of Gross Section
+    #     if (Member_type == "Angles")and bolt_row > 1 :
+    #      tension_rupture =IS800_2007.tension_angle_member_design_due_to_rupture_of_critical_section(member_An,member_Ag, member_fu , member_fy, L_c, w, shear_lag, t)/1000
+    #     else:
+    tension_rupture = IS800_2007.tension_member_design_due_to_rupture_of_critical_section(member_An, member_fu) / 1000
     tension_yielding = IS800_2007.tension_member_design_due_to_yielding_of_gross_section(member_Ag, member_fy) / 1000
-    tension_design = min(tension_blockshear,tension_rupture,tension_yielding)
-#
-#
+    tension_slenderness = IS800_2007.design_check_for_slenderness(k, member_length, radius_gyration)
+    if conn_type == "Welded" and conn == "Web":
+        tension_design = min(tension_rupture, tension_yielding)
+    else:
+        tension_design = min(tension_rupture, tension_yielding, tension_blockshear)
+
+
+
  # End of Calculation, SAMPLE Output dictionary
     outputobj = dict()
 
     # FOR OUTPUT DOCK
     outputobj['Tension_Force'] = {}
     outputobj['Plate'] = {}
-    outputobj['Pitch'] = {}
+    outputobj['Bolt'] = {}
 
     outputobj['Tension_Force']['Yielding'] = float(round(tension_yielding,3))
     outputobj['Tension_Force']['Rupture'] = float(round(tension_rupture,3))
     outputobj['Tension_Force']['Block_Shear'] = float(round(tension_blockshear,3))
     outputobj['Tension_Force']['Efficiency'] = float(round((tension_load/tension_design),3))
     outputobj['Tension_Force']['Slenderness'] = float(round((tension_slenderness),3))
-    outputobj['Tension_Force']['End_Distance'] = float(round((end_distance), 3))
-    outputobj['Tension_Force']['Edge_Distance'] = float(round((end_distance), 3))
+    if conn_type == "Bolted" and conn == "Web":
+        outputobj['Tension_Force']['End_Distance'] = float(round((end_distance), 3))
+        outputobj['Tension_Force']['Edge_Distance'] = float(round((edge_distance), 3))
+        outputobj['Bolt']['No_of_Rows_Bolts'] = float(round(no_of_rows_bolt, 3))
+        outputobj['Bolt']['No_of_Columns_Bolts'] = float(round(no_of_columns_bolt, 3))
+        outputobj['Bolt']['Row_Pitch'] = float(round(row_pitch, 3))
+        outputobj['Bolt']['Column_Pitch'] = float(round(column_pitch, 3))
+        outputobj['Bolt']['Bolt_Qty'] = float(round(bolt_qty, 3))
+    else:
+        pass
 
     outputobj['Plate']['Length'] = float(round(plate_length,3))
     outputobj['Plate']['Width'] = float(round(plate_width, 3))
     outputobj['Plate']['Thickness'] = float(round(plate_thickness, 3))
 
-    outputobj['Pitch']['Row_Pitch'] = float(round(row_pitch, 3))
-    outputobj['Pitch']['Column_Pitch'] = float(round(column_pitch, 3))
+
 
 
 

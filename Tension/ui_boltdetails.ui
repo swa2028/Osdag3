@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Pitch Details</string>
+   <string>Bolt Detail</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -40,7 +40,7 @@
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="8" column="0" colspan="6">
+       <item row="7" column="0" colspan="6">
         <widget class="QTextEdit" name="textEdit">
          <property name="html">
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -64,13 +64,6 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item row="0" column="1" rowspan="4">
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="font">
@@ -81,13 +74,6 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="text">
           <string>Sr. No.</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3" rowspan="4">
-        <widget class="Line" name="line_6">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </item>
@@ -134,7 +120,7 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="1" column="4">
-        <widget class="QLineEdit" name="txt_row_pitch">
+        <widget class="QLineEdit" name="txt_no_of_rows_bolts">
          <property name="font">
           <font>
            <family>Arial</family>
@@ -189,7 +175,7 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="2" column="4">
-        <widget class="QLineEdit" name="txt_column_pitch">
+        <widget class="QLineEdit" name="txt_no_of_columns_bolts">
          <property name="font">
           <font>
            <family>Arial</family>
@@ -214,19 +200,6 @@ p, li { white-space: pre-wrap; }
          </property>
         </spacer>
        </item>
-       <item row="7" column="2">
-        <widget class="QLabel" name="lbl_3">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Column_Pitch</string>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="0">
         <widget class="QLabel" name="lbl_mem2_2">
          <property name="font">
@@ -244,7 +217,7 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="3" column="4">
-        <widget class="QLineEdit" name="txt_column_pitch_2">
+        <widget class="QLineEdit" name="txt_row_pitch">
          <property name="font">
           <font>
            <family>Arial</family>
@@ -317,12 +290,12 @@ p, li { white-space: pre-wrap; }
           </font>
          </property>
          <property name="text">
-          <string>Column_Pitch</string>
+          <string>Bolt_Qty</string>
          </property>
         </widget>
        </item>
        <item row="4" column="4">
-        <widget class="QLineEdit" name="txt_column_pitch_3">
+        <widget class="QLineEdit" name="txt_column_pitch">
          <property name="font">
           <font>
            <family>Arial</family>
@@ -351,7 +324,7 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="6" column="4">
-        <widget class="QLineEdit" name="txt_column_pitch_4">
+        <widget class="QLineEdit" name="txt_bolt_qty">
          <property name="font">
           <font>
            <family>Arial</family>
@@ -389,6 +362,29 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" rowspan="7">
+        <widget class="Line" name="line">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3" rowspan="7">
+        <widget class="Line" name="line_6">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </item>
