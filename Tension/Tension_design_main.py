@@ -319,7 +319,7 @@ class Pitch(QDialog):
 		self.ui.txt_row_pitch.setText(str(resultObj_plate['Bolt']['Row_Pitch']))
 		self.ui.txt_column_pitch.setText(str(resultObj_plate['Bolt']['Column_Pitch']))
 		self.ui.txt_bolt_qty.setText(str(resultObj_plate['Bolt']['Bolt_Qty']))
-
+		self.ui.txt_req_bolt.setText(str(resultObj_plate['Bolt']['Req_Qty']))
 		# no_of_bolts = resultObj_plate['Bolt']['NumberOfBolts']
 		# if self.maincontroller.endplate_type == 'both_way':
 # 			if no_of_bolts == 8:
@@ -760,7 +760,7 @@ class Maincontroller(QMainWindow):
 		# self.ui.combo_sectiontype.currentTextChanged.connect(self.type_on_change)
 		# self.ui.combo_conn_loc.activated.connect(self.on_change)
 		# self.ui.btn_Weld.clicked.connect(self.weld_details)
-		if self.ui.combo_conn_type.currentText() == "Welded" :
+		if self.ui.combo_conn_type.currentText() == "Bolted":
 			self.ui.btn_pitchdetails.clicked.connect(self.pitch_details)
 		else:
 			pass
