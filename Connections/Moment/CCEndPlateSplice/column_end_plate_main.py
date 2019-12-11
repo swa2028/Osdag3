@@ -4,7 +4,7 @@ Created on Nov 2019
 @author: Yash
 """
 
-from Connections.Moment.CCEndPlateSplice.ui_column_endplate import Ui_MainWindow
+from Connections.Moment.CCEndPlateSplice.ui_columnendplate import Ui_MainWindow
 from Connections.Moment.CCEndPlateSplice.ui_column_endplate_design_preference import *
 from Connections.Moment.CCEndPlateSplice.ui_design_summary import Ui_DesignReport
 # from Connections.Moment.CCEndPlateSplice.ui_plate import Ui_Plate
@@ -631,8 +631,8 @@ class Maincontroller(QMainWindow):
 
         uiObj["Plate"] = {}
         uiObj["Plate"]["Thickness (mm)"] = str(self.ui.combo_plateThick.currentText())
-        # uiObj["Plate"]["Height (mm)"] = str(self.ui.txt_plateHeight.text())
-        # uiObj["Plate"]["Width (mm)"] = str(self.ui.txt_plateWidth.text())
+        uiObj["Plate"]["Height (mm)"] = str(self.ui.txt_plate_height.text())
+        uiObj["Plate"]["Width (mm)"] = str(self.ui.txt_plate_width.text())
 
         uiObj["Weld"] = {}
         uiObj["Weld"]["Type"] = str(self.ui.combo_weld_method.currentText())
