@@ -668,6 +668,8 @@ def tension_design(uiObj):
         logger.error(":Member fails for the applied tension load \n ")
         logger.debug(" :=========End Of design===========")
 
+    outputobj['Tension_Force']['Design_Status'] = design_status
+
     return outputobj
 #
 # def tension_welded_design(uiObj):
