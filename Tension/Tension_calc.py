@@ -195,9 +195,9 @@ def tension_design(uiObj):
             no_of_rows_bolt = no_of_bolts
             no_of_columns_bolt = 1
             bolt_qty = no_of_rows_bolt * no_of_columns_bolt
-            row_pitch = round((int(((member_d- 2*member_tf)-(edge_distance * 2)) / no_of_rows_bolt)),2)
+            row_pitch = round((int(((member_d- 2*member_tf)-(edge_distance * 2)) / (no_of_rows_bolt-1))),2)
             column_pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
-            edge_distance = float((((member_d- 2*member_tf) - (row_pitch * no_of_rows_bolt))))/2
+            edge_distance = float((((member_d- 2*member_tf) - (row_pitch * (no_of_rows_bolt-1))))/2)
             kbChk1 = end_distance / float(3 * dia_hole)
             kbChk2 = pitch / float(3 * dia_hole) - 0.25
             kbChk3 = bolt_fu / float(member_fu)
@@ -217,9 +217,9 @@ def tension_design(uiObj):
             no_of_rows_bolt = no_of_bolts
             no_of_columns_bolt = 1
             bolt_qty = no_of_bolts
-            row_pitch = round((int(((member_d- 2*member_tf)- (edge_distance * 2)) / no_of_rows_bolt)), 2)
+            row_pitch = round((int(((member_d- 2*member_tf)- (edge_distance * 2)) / (no_of_rows_bolt-1)), 2))
             column_pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
-            edge_distance = float((((member_d - 2 * member_tf) - (row_pitch * no_of_rows_bolt)))) / 2
+            edge_distance = float((((member_d - 2 * member_tf) - (row_pitch * (no_of_rows_bolt-1)))) / 2)
             kbChk1 = end_distance / float(3 * dia_hole)
             kbChk2 = pitch / float(3 * dia_hole) - 0.25
             kbChk3 = bolt_fu / float(member_fu)
@@ -271,9 +271,9 @@ def tension_design(uiObj):
                         pass
             if bolt_arrange == True:
                 bolt_qty = no_of_columns_bolt * no_of_rows_bolt
-                row_pitch = round((int(((member_d - 2 * member_tf) - (edge_distance * 2)) / no_of_rows_bolt)), 2)
+                row_pitch = round((int(((member_d - 2 * member_tf) - (edge_distance * 2)) / (no_of_rows_bolt-1))), 2)
                 column_pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
-                edge_distance = float((((member_d - 2 * member_tf) - (row_pitch * no_of_rows_bolt)))) / 2
+                edge_distance = float((((member_d - 2 * member_tf) - (row_pitch * (no_of_rows_bolt-1)))) / 2)
                 kbChk1 = end_distance / float(3 * dia_hole)
                 kbChk2 = pitch / float(3 * dia_hole) - 0.25
                 kbChk3 = bolt_fu / float(member_fu)

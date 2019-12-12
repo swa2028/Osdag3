@@ -43,6 +43,8 @@ class Tension_drawing(object):
 		self.no_of_columns_bolts = float(output_dict['Bolt']['No_of_Columns_Bolts'])
 		self.row_pitch = float(output_dict['Bolt']['Row_Pitch'])
 		self.column_pitch = float(output_dict['Bolt']['Column_Pitch'])
+		self.end_distance = float(output_dict['Tension_Force']['End_Distance'])
+		self.edge_distance = float(output_dict['Tension_Force']['Edge_Distance'])
 		self.bolt_qty = float(output_dict['Bolt']['Bolt_Qty'])
 		self.req_bolt_qty = float(output_dict['Bolt']['Req_Qty'])
 		self.plate_length = float(output_dict['Plate']['Length'])
@@ -857,7 +859,7 @@ class Front_View(object):
 			ptA9y = ptA1y - 25
 			self.A9 = np.array([ptA9x, ptA9y])
 
-			ptA9ax = ptA1x + 25
+			ptA9ax = ptA9x
 			ptA9ay = ptA1y
 			self.A9a = np.array([ptA9ax, ptA9ay])
 
@@ -869,11 +871,11 @@ class Front_View(object):
 			ptA10ay = ptA4y
 			self.A10a = np.array([ptA10ax, ptA10ay])
 
-			ptA11x = ptA10x - self.data_object.plate_length + self.data_object.member_d/2
+			ptA11x = ptA10x - self.data_object.plate_length - self.data_object.member_d/2
 			ptA11y = ptA10y
 			self.A11 = np.array([ptA11x, ptA11y])
 
-			ptA12x = ptA9x - self.data_object.plate_length + self.data_object.member_d/2
+			ptA12x = ptA9x - self.data_object.plate_length - self.data_object.member_d/2
 			ptA12y = ptA9y
 			self.A12 = np.array([ptA12x, ptA12y])
 
@@ -1159,17 +1161,16 @@ class Front_View(object):
 								 stroke_width=2.5))
 			dwg.add(dwg.line(self.A5, self.A6).stroke('blue', width=2.5, linecap='square'))
 			dwg.add(dwg.line(self.A8, self.A7).stroke('blue', width=2.5, linecap='square'))
-			if self.data_object.section_type == "Channels":
-				dwg.add(dwg.line(self.A9, self.A9a).stroke('blue', width=2.5, linecap='square'))
-
-				dwg.add(dwg.line(self.A10a, self.A9a).stroke('red', width=2.5, linecap='square').dasharray(dasharray=[5, 5]))
-				dwg.add(dwg.line(self.A10a, self.A10).stroke('blue', width=2.5, linecap='square'))
-				dwg.add(dwg.line(self.A10, self.A11).stroke('blue', width=2.5, linecap='square'))
-				dwg.add(dwg.line(self.A12, self.A11).stroke('blue', width=2.5, linecap='square'))
-				dwg.add(dwg.line(self.A12, self.A9).stroke('blue', width=2.5, linecap='square'))
-				pattern = dwg.defs.add(dwg.pattern(id="diagonalHatch", size=(8, 8), patternUnits="userSpaceOnUse",
-												   patternTransform="rotate(45 2 2)"))
-				pattern.add(dwg.path(d="M 0,1 l 8,0", stroke='#000000', stroke_width=2.5))
+			# if self.data_object.section_type == "Channels":
+			dwg.add(dwg.line(self.A9, self.A9a).stroke('blue', width=2.5, linecap='square'))
+			dwg.add(dwg.line(self.A10a, self.A9a).stroke('red', width=2.5, linecap='square').dasharray(dasharray=[5, 5]))
+			dwg.add(dwg.line(self.A10a, self.A10).stroke('blue', width=2.5, linecap='square'))
+			dwg.add(dwg.line(self.A10, self.A11).stroke('blue', width=2.5, linecap='square'))
+			dwg.add(dwg.line(self.A12, self.A11).stroke('blue', width=2.5, linecap='square'))
+			dwg.add(dwg.line(self.A12, self.A9).stroke('blue', width=2.5, linecap='square'))
+			pattern = dwg.defs.add(dwg.pattern(id="diagonalHatch", size=(8, 8), patternUnits="userSpaceOnUse",
+											   patternTransform="rotate(45 2 2)"))
+			pattern.add(dwg.path(d="M 0,1 l 8,0", stroke='#000000', stroke_width=2.5))
 				# dwg.add(dwg.rect(insert=(self.A1 - 8 * np.array([0, 1])), size=(self.data_object.weld_inline / 2, 8),
 				# 				 fill="url(#diagonalHatch)", stroke='white', stroke_width=1.0))
 				# dwg.add(dwg.rect(insert=(self.A4), size=(self.data_object.weld_inline / 2, 8), fill="url(#diagonalHatch)",
@@ -1190,13 +1191,13 @@ class Front_View(object):
 				# 	dwg.add(dwg.rect(insert=(self.A4), size=(self.data_object.weld_inline / 2,self.data_object.plate_thickness),
 				# 					 fill="url(#diagonalHatch)",
 				# 					 stroke='white', stroke_width=1.0))
-			else:
-				dwg.add(dwg.line(self.A9, self.A10).stroke('blue', width=2.5, linecap='square'))
-				dwg.add(dwg.line(self.A12, self.A12a).stroke('blue', width=2.5, linecap='square'))
-				dwg.add(dwg.line(self.A9, self.A9a).stroke('blue', width=2.5, linecap='square'))
-				dwg.add(dwg.line(self.A12a, self.A9a).stroke('blue', width=2.5, linecap='square'))
-				dwg.add(dwg.line(self.A10, self.A11).stroke('blue', width=2.5, linecap='square'))
-				dwg.add(dwg.line(self.A11, self.A12).stroke('blue', width=2.5, linecap='square'))
+			# else:
+			# 	dwg.add(dwg.line(self.A9, self.A10).stroke('blue', width=2.5, linecap='square'))
+			# 	# dwg.add(dwg.line(self.A12, self.A12a).stroke('blue', width=2.5, linecap='square'))
+			# 	dwg.add(dwg.line(self.A9, self.A9a).stroke('blue', width=2.5, linecap='square'))
+			# 	# dwg.add(dwg.line(self.A12a, self.A9a).stroke('blue', width=2.5, linecap='square'))
+			# 	dwg.add(dwg.line(self.A10, self.A11).stroke('blue', width=2.5, linecap='square'))
+			# 	dwg.add(dwg.line(self.A11, self.A12).stroke('blue', width=2.5, linecap='square'))
 				# pattern = dwg.defs.add(dwg.pattern(id="diagonalHatch", size=(8, 8), patternUnits="userSpaceOnUse",
 				# 								   patternTransform="rotate(45 2 2)"))
 				# pattern.add(dwg.path(d="M 0,1 l 8,0", stroke='#000000', stroke_width=2.5))
@@ -1239,6 +1240,29 @@ class Front_View(object):
 		#
 		# else:
 		# 	pass
+		# self.row_pitch = float(output_dict['Bolt']['Row_Pitch'])
+		# self.column_pitch = float(output_dict['Bolt']['Column_Pitch'])
+		nr = int(self.data_object.no_of_rows_bolts)
+		nc = int(self.data_object.no_of_columns_bolts)
+		bolt_r = self.data_object.diameter / 2
+		ptList = []
+
+		for i in range(1, (nr + 1)):
+			colList = []
+			for j in range(1, (nc + 1)):
+				pt = self.A1 + self.data_object.end_distance * np.array([1, 0]) + (self.data_object.edge_distance + self.data_object.member_tf) * np.array(
+					[0, 1]) + (i - 1) * self.data_object.row_pitch * np.array([0, 1]) + (j - 1) * self.data_object.column_pitch * np.array([1, 0])
+				dwg.add(dwg.circle(center=(pt), r=bolt_r, stroke='blue', fill='none', stroke_width=1.5))
+				ptC = pt - (bolt_r + 4) * np.array([1, 0])
+				PtD = pt + (bolt_r + 4) * np.array([1, 0])
+				dwg.add(dwg.line((ptC), (PtD)).stroke('red', width=2.0, linecap='square'))
+				ptE = self.A1 + self.data_object.edge_distance * np.array([1, 0]) + (
+							j - 1) * self.data_object.column_pitch * np.array([1, 0])
+				ptF = ptE + (self.data_object.plate_width-50) * np.array([0, 1])
+				dwg.add(dwg.line((ptE), (ptF)).stroke('blue', width=1.5, linecap='square').dasharray(
+					dasharray=([20, 5, 1, 5])))
+				colList.append(pt)
+			ptList.append(colList)
 		# ------------------------------------------  Beam Designation Labeling  -------------------------------------------
 		point = self.A1
 		theta = 30
