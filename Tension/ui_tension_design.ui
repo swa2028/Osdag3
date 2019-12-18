@@ -3479,7 +3479,17 @@ QMenu::item:selected {
      </item>
      <item>
       <property name="text">
+       <string>18</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>20</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>22</string>
       </property>
      </item>
      <item>
@@ -3489,12 +3499,17 @@ QMenu::item:selected {
      </item>
      <item>
       <property name="text">
+       <string>27</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>30</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>32</string>
+       <string>33</string>
       </property>
      </item>
      <item>
@@ -3504,7 +3519,7 @@ QMenu::item:selected {
      </item>
      <item>
       <property name="text">
-       <string>40</string>
+       <string>39</string>
       </property>
      </item>
     </widget>

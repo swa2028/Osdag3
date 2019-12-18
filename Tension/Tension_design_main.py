@@ -216,8 +216,8 @@ class DesignPreference(QDialog):
 		boltDia = str(uiObj["Bolt"]["Diameter (mm)"])
 		if boltDia != 'Select diameter':
 
-			standard_clrnce = {12: 1, 14: 1, 16: 2, 18: 2, 20: 2, 22: 2, 24: 2, 30: 3, 34: 3, 36: 3}
-			overhead_clrnce = {12: 3, 14: 3, 16: 4, 18: 4, 20: 4, 22: 4, 24: 6, 30: 8, 34: 8, 36: 8}
+			standard_clrnce = {10: 1,12: 1, 14: 1, 16: 2, 18: 2, 20: 2, 22: 2, 24: 2, 27: 3, 30: 3, 33: 3, 36: 3, 39: 3}
+			overhead_clrnce = {10: 1,12: 3, 14: 3, 16: 4, 18: 4, 20: 4, 22: 4, 24: 6, 27: 8, 30: 8, 33: 8, 36: 8, 39: 8}
 			boltHoleType = str(self.ui.combo_boltHoleType.currentText())
 			if boltHoleType == "Standard":
 				clearance = standard_clrnce[int(boltDia)]
@@ -258,7 +258,7 @@ class PlateDetails(QDialog):
 		uiObj = self.maincontroller.designParameters()
 		resultObj_plate = tension_design(uiObj)
 
-		self.ui.txt_plateLength.setText(str(resultObj_plate['Plate']['Length']))
+		self.ui.txt_plateLength.setText(str(resultObj_plate['Plate']['Total Length']))
 		self.ui.txt_plateThickness.setText(str(resultObj_plate['Plate']['Thickness']))
 		self.ui.txt_plateWidth.setText(str(resultObj_plate['Plate']['Width']))
 
@@ -760,10 +760,10 @@ class Maincontroller(QMainWindow):
 		# self.ui.combo_sectiontype.currentTextChanged.connect(self.type_on_change)
 		# self.ui.combo_conn_loc.activated.connect(self.on_change)
 		# self.ui.btn_Weld.clicked.connect(self.weld_details)
-		if self.ui.combo_conn_type.currentText() == "Bolted":
-			self.ui.btn_pitchdetails.clicked.connect(self.pitch_details)
-		else:
-			pass
+		# if self.ui.combo_conn_type.currentText()=="Bolted":
+		self.ui.btn_pitchdetails.clicked.connect(self.pitch_details)
+		# else:
+		# 	pass
 		self.ui.btn_platedetail.clicked.connect(self.plate_details)
 		# self.ui.btn_plateDetail_2.clicked.connect(self.plate_details_bottom)
 		# self.ui.btn_stiffnrDetail.clicked.connect(self.stiffener_details)
@@ -1462,8 +1462,15 @@ class Maincontroller(QMainWindow):
 			combo_section.setItemData(i, QBrush(QColor("red")), Qt.TextColorRole)
 
 	def fetchMembPara(self):
+
 		membertype_sec = self.ui.combo_sectiontype.currentText()
 		memberdata_sec = self.ui.combo_sectionsize.currentText()
+		if membertype_sec == "Angle" or membertype_sec == "Back to Back Angles" or membertype_sec == "Star Angles":
+			membertype_sec = "Angles"
+		elif membertype_sec == "Channels" or membertype_sec == "Back to Back Channels":
+			membertype_sec = "Channels"
+		else:
+			pass
 		dictmembdata = get_memberdata(memberdata_sec,membertype_sec)
 		return dictmembdata
 
@@ -1659,8 +1666,12 @@ class Maincontroller(QMainWindow):
 		section.show()
 
 	def pitch_details(self):
-		section = Pitch(self)
-		section.show()
+		if self.ui.combo_conn_type.currentText() == "Bolted":
+			section = Pitch(self)
+			section.show()
+		else:
+			pass
+
 	# ===========================  CAD ===========================
 	# def show_color_dialog(self):
 	#

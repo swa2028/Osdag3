@@ -149,7 +149,7 @@ class ConnectionCalculations(object):
         Returns:
 
         """
-        k_h = {"standard": 1.0, "over-sized": 0.85}
+        k_h = {"Standard": 1.0, "Over-sized": 0.85}
         return k_h[bolt_hole_type]
 
     @staticmethod
