@@ -17,7 +17,7 @@ from ui_aboutosdag import Ui_AboutOsdag
 from ui_ask_question import Ui_AskQuestion
 from Connections.Moment.CCEndPlateSplice import ccEndPlateSpliceCalc
 import Connections.Moment.CCEndPlateSplice.ccEndPlateSpliceCalc as db_value
-# from Connections.Moment.CCEndPlateSplice.reportGenerator import save_html
+from Connections.Moment.CCEndPlateSplice.reportGenerator import A
 # from Connections.Moment.ColumnToColumn.EndPlateSplice.drawing_2D_ExtendedBothways import ColumnToColumn.EndPlateSplice
 # from Connections.Moment.ColumnToColumn.EndPlateSplice.drawing_2D_Extendedoneway import OnewayEndPlate
 # from Connections.Moment.ColumnToColumn.EndPlateSplice.drawing_2D_BBFlush import FlushEndPlate
@@ -32,7 +32,7 @@ import os
 import pickle
 import pdfkit
 import json
-# import ConfigParser
+import configparser
 import cairosvg
 import shutil
 import subprocess
@@ -44,7 +44,7 @@ from Connections.Component.filletweld import FilletWeld
 from Connections.Component.groove_weld import GrooveWeld
 from Connections.Component.plate import Plate
 from Connections.Component.stiffener_plate import StiffenerPlate
-from Connections.Moment.CCEndPlateSplice.ccEndPlateSpliceCalc import ccEndPlateSplice
+from Connections.Moment.CCEndPlateSplice.ccEndPlateSpliceCalc import ccEndPlate
 # from Connections.Moment.ColumnToColumn.EndPlateSplice.extendedBothWays import CADFillet
 # from Connections.Moment.ColumnToColumn.EndPlateSplice.extendedBothWays import CADGroove
 # from Connections.Moment.ColumnToColumn.EndPlateSplice.nutBoltPlacement import NutBoltArray
@@ -294,20 +294,20 @@ class DesignReportDialog(QDialog):
             json.dump(inputData, infile)
             infile.close()
 
-    # def get_report_summary(self):
-    #     report_summary = {"ProfileSummary": {}}
-    #     report_summary["ProfileSummary"]["CompanyName"] = str(self.ui.lineEdit_companyName.text())
-    #     report_summary["ProfileSummary"]["CompanyLogo"] = str(self.ui.lbl_browse.text())
-    #     report_summary["ProfileSummary"]["Group/TeamName"] = str(self.ui.lineEdit_groupName.text())
-    #     report_summary["ProfileSummary"]["Designer"] = str(self.ui.lineEdit_designer.text())
-    #
-    #     report_summary["ProjectTitle"] = str(self.ui.lineEdit_projectTitle.text())
-    #     report_summary["Subtitle"] = str(self.ui.lineEdit_subtitle.text())
-    #     report_summary["JobNumber"] = str(self.ui.lineEdit_jobNumber.text())
-    #     report_summary["Client"] = str(self.ui.lineEdit_client.text())
-    #     report_summary["AdditionalComments"] = str(self.ui.txt_additionalComments.toPlainText())
+    def get_report_summary(self):
+        report_summary = {"ProfileSummary": {}}
+        report_summary["ProfileSummary"]["CompanyName"] = str(self.ui.lineEdit_companyName.text())
+        report_summary["ProfileSummary"]["CompanyLogo"] = str(self.ui.lbl_browse.text())
+        report_summary["ProfileSummary"]["Group/TeamName"] = str(self.ui.lineEdit_groupName.text())
+        report_summary["ProfileSummary"]["Designer"] = str(self.ui.lineEdit_designer.text())
 
-        # return report_summary
+        report_summary["ProjectTitle"] = str(self.ui.lineEdit_projectTitle.text())
+        report_summary["Subtitle"] = str(self.ui.lineEdit_subtitle.text())
+        report_summary["JobNumber"] = str(self.ui.lineEdit_jobNumber.text())
+        report_summary["Client"] = str(self.ui.lineEdit_client.text())
+        report_summary["AdditionalComments"] = str(self.ui.txt_additionalComments.toPlainText())
+
+        return report_summary
 
     def useUserProfile(self):
         filename, _ = QFileDialog.getOpenFileName(self, 'Open Files',
@@ -400,7 +400,7 @@ class Maincontroller(QMainWindow):
         self.ui.action_load_input.triggered.connect(self.load_design_inputs)
         self.ui.actionSave_log_messages.triggered.connect(self.save_log_messages)
         # self.ui.actionSave_3D_model.triggered.connect(self.save_3D_cad_images)
-        # self.ui.actionCreate_design_report.triggered.connect(self.design_report)
+        self.ui.actionCreate_design_report.triggered.connect(self.design_report)
         # self.ui.actionChange_background.triggered.connect(self.show_color_dialog)
         #
         # self.ui.actionSave_current_image.triggered.connect(self.save_CAD_images)
@@ -421,8 +421,6 @@ class Maincontroller(QMainWindow):
         # self.ui.btn_weldDetails.clicked.connect(self.weld_details)
         #self.ui.btn_CreateDesign.clicked.connect(self.design_report)
         self.ui.btn_SaveMessages.clicked.connect(self.save_log_messages)
-
-
 
         validator = QIntValidator()
 
@@ -567,49 +565,49 @@ class Maincontroller(QMainWindow):
         outf << self.ui.textEdit.toPlainText()
         QApplication.restoreOverrideCursor()
 
-    # def save_design(self, report_summary):
-    #
-    #     status = self.resultObj['Bolt']['status']
-    #     if status is True:
-    #        self.call_3DModel("white_bg")
-    #        data = os.path.join(str(self.folder), "images_html", "3D_Model.png")
-    #        self.display.ExportToImage(data)
-    #        self.display.FitAll()
-    #     else:
-    #        pass
-    #
-    #     filename = os.path.join(str(self.folder), "images_html", "Html_Report.html")
-    #     file_name = str(filename)
-    #     self.call_designreport(file_name, report_summary)
-    #
-    #     # Creates PDF
-    #     # config = ConfigParser.ConfigParser()
-    #     # config.readfp(open(r'Osdag.config'))
-    #     # wkhtmltopdf_path = config.get('wkhtml_path', 'path1')
-    #     #
-    #     # config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path )
-    #     #
-    #     # options = {
-    #     #    'margin-bottom': '10mm',
-    #     #    'footer-right': '[page]'
-    #     # }
-    #     # file_type = "PDF(*.pdf)"
-    #     # fname, _ = QFileDialog.getSaveFileName(self, "Save File As", self.folder + "/", file_type)
-    #     # fname = str(fname)
-    #     # flag = True
-    #     # if fname == '':
-    #     #    flag = False
-    #     #    return flag
-    #     # else:
-    #     #    pdfkit.from_file(filename, fname, configuration=config, options=options)
-    #     #    QMessageBox.about(self, 'Information', "Report Saved")
-    #
-    # def call_designreport(self, fileName, report_summary):
-    #     self.alist = self.designParameters()
-    #     self.result = ccEndPlateSplice(self.alist)
-    #     print ("resultobj", self.result)
-    #     self.beam_data = self.fetchBeamPara()
-    #     save_html(self.result, self.alist, self.beam_data, fileName, report_summary, self.folder)
+    def save_design(self, report_summary):
+
+        status = self.resultObj['Bolt']['status']
+        if status is True:
+           self.call_3DModel("white_bg")
+           data = os.path.join(str(self.folder), "images_html", "3D_Model.png")
+           self.display.ExportToImage(data)
+           self.display.FitAll()
+        else:
+           pass
+
+        filename = os.path.join(str(self.folder), "images_html", "Html_Report.html")
+        file_name = str(filename)
+        self.call_designreport(file_name, report_summary)
+
+        # Creates PDF
+        config = configparser.ConfigParser()
+        config.readfp(open(r'Osdag.config'))
+        wkhtmltopdf_path = config.get('wkhtml_path', 'path1')
+
+        config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path )
+
+        options = {
+           'margin-bottom': '10mm',
+           'footer-right': '[page]'
+        }
+        file_type = "PDF(*.pdf)"
+        fname, _ = QFileDialog.getSaveFileName(self, "Save File As", self.folder + "/", file_type)
+        fname = str(fname)
+        flag = True
+        if fname == '':
+           flag = False
+           return flag
+        else:
+           pdfkit.from_file(filename, fname, configuration=config, options=options)
+           QMessageBox.about(self, 'Information', "Report Saved")
+
+    def call_designreport(self, fileName, report_summary):
+        self.alist = self.designParameters()
+        self.result = ccEndPlate.ccEndPlateSplice(self,self.alist)
+        print ("resultobj", self.result)
+        self.column_data = self.fetchColumnPara()
+        A(self.result, self.alist, self.column_data, fileName, report_summary, self.folder)
 
     def get_user_inputs(self):
         uiObj = {}
@@ -891,8 +889,8 @@ class Maincontroller(QMainWindow):
         if self.validate_inputs_on_design_btn() is not True:
             return
         self.alist = self.designParameters()
-        self.outputs = ccEndPlateSplice(self.alist)
-        print ("output list ", self.outputs)
+        self.outputs = ccEndPlate.ccEndPlateSplice(self,self.alist)
+        print("output list ", self.outputs)
 
         self.ui.outputDock.setFixedSize(310, 710)
         self.enable_buttons()
@@ -929,7 +927,7 @@ class Maincontroller(QMainWindow):
                     resultObj = outputObj
                 else:
                     resultObj = outputObj
-        print (resultObj)
+        print(resultObj)
 
         tension_capacity = resultObj["Bolt"]["TensionCapacity"]
         self.ui.txt_tensionCapacity.setText(str(tension_capacity))
@@ -1025,7 +1023,7 @@ class Maincontroller(QMainWindow):
         file.close()
 
     def disable_buttons(self):
-        # self.ui.btn_CreateDesign.setEnabled(False)
+        self.ui.btn_CreateDesign.setEnabled(False)
         # self.ui.btn_SaveMessages.setEnabled(False)
         # self.ui.btnFront.setEnabled(False)
         # self.ui.btnTop.setEnabled(False)
@@ -1039,7 +1037,7 @@ class Maincontroller(QMainWindow):
         # self.ui.btn_weldDetails.setEnabled(False)
 
         # self.ui.action_save_input.setEnabled(False)
-        # self.ui.actionCreate_design_report.setEnabled(False)
+        self.ui.actionCreate_design_report.setEnabled(False)
         # self.ui.actionSave_3D_model.setEnabled(False)
         # self.ui.actionSave_log_messages.setEnabled(False)
         # self.ui.actionSave_current_image.setEnabled(False)
@@ -1049,7 +1047,7 @@ class Maincontroller(QMainWindow):
         # self.ui.menuGraphics.setEnabled(False)
 
     def enable_buttons(self):
-        # self.ui.btn_CreateDesign.setEnabled(True)
+        self.ui.btn_CreateDesign.setEnabled(True)
         # self.ui.btn_SaveMessages.setEnabled(True)
         # self.ui.btnFront.setEnabled(True)
         # self.ui.btnTop.setEnabled(True)
@@ -1063,7 +1061,7 @@ class Maincontroller(QMainWindow):
         # self.ui.btn_weldDetails.setEnabled(True)
 
         # self.ui.action_save_input.setEnabled(True)
-        # self.ui.actionCreate_design_report.setEnabled(True)
+        self.ui.actionCreate_design_report.setEnabled(True)
         # self.ui.actionSave_3D_model.setEnabled(True)
         # self.ui.actionSave_log_messages.setEnabled(True)
         # self.ui.actionSave_current_image.setEnabled(True)
@@ -1156,10 +1154,10 @@ class Maincontroller(QMainWindow):
         for i in duplicate:
             combo_section.setItemData(i, QBrush(QColor("red")), Qt.TextColorRole)
 
-    # def fetchBeamPara(self):
-    #    beamdata_sec = self.ui.combo_beamSec.currentText()
-    #    dictbeamdata = get_beamdata(beamdata_sec)
-    #    return dictbeamdata
+    def fetchColumnPara(self):
+       columndata_sec = self.ui.combo_columnSec.currentText()
+       dictcolumndata = get_beamdata(columndata_sec)
+       return dictcolumndata
 
     def populate_weld_thk_flange(self):
         """
@@ -1362,10 +1360,10 @@ class Maincontroller(QMainWindow):
         # fileName = ("Connections\Moment\ExtendedEndPlate\Html_Report.html")
         # fileName = str(fileName)
         # self.alist = self.designParameters()
-        # self.result = bbExtendedEndPlateSplice(self.alist)
-        # print "result_obj", self.result
-        # self.beam_data = self.fetchBeamPara()
-        # save_html(self.result, self.alist, self.beam_data, fileName)
+        # self.result = ccEndPlate()
+        # print ("result_obj", self.result)
+        # self.column_data = self.get_columndata()
+        # A.__init__(self,self.result, self.alist, self.column_data, fileName,reportsummary ,self.folder)
 
    # ===========================  CAD ===========================
    #  def show_color_dialog(self):

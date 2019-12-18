@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>808</width>
-    <height>519</height>
+    <height>522</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -88,7 +88,7 @@
       </font>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tab_Bolt">
       <attribute name="title">
@@ -745,12 +745,12 @@ p, li { white-space: pre-wrap; }
             <widget class="QComboBox" name="combo_detailingEdgeType">
              <item>
               <property name="text">
-               <string>a - Sheared or hand flame cut</string>
+               <string>Sheared or hand flame cut</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>b - Rolled, machine-flame cut, sawn and planed</string>
+               <string>Rolled, machine-flame cut, sawn and planed</string>
               </property>
              </item>
             </widget>

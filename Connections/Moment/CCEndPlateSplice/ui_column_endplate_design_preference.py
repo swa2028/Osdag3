@@ -2,16 +2,18 @@
 
 # Form implementation generated from reading ui file 'ui_column_end_plate_design_preferences.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(808, 519)
+        Dialog.resize(808, 522)
         self.gridLayout_5 = QtWidgets.QGridLayout(Dialog)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.gridLayout_2 = QtWidgets.QGridLayout()
@@ -339,7 +341,7 @@ class Ui_Dialog(object):
         self.gridLayout_5.addWidget(self.tabWidget, 0, 0, 1, 1)
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(3)
         self.combo_slipfactor.setCurrentIndex(8)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -493,8 +495,8 @@ class Ui_Dialog(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Weld), _translate("Dialog", "Weld"))
         self.label_38.setText(_translate("Dialog", "Inputs"))
         self.label_39.setText(_translate("Dialog", "Type of edges"))
-        self.combo_detailingEdgeType.setItemText(0, _translate("Dialog", "a - Sheared or hand flame cut"))
-        self.combo_detailingEdgeType.setItemText(1, _translate("Dialog", "b - Rolled, machine-flame cut, sawn and planed"))
+        self.combo_detailingEdgeType.setItemText(0, _translate("Dialog", "Sheared or hand flame cut"))
+        self.combo_detailingEdgeType.setItemText(1, _translate("Dialog", "Rolled, machine-flame cut, sawn and planed"))
         self.label_40.setText(_translate("Dialog", "Are the members exposed to\n"
 "corrosive influences?"))
         self.combo_detailing_memebers.setItemText(0, _translate("Dialog", "No"))
@@ -516,13 +518,3 @@ class Ui_Dialog(object):
         self.combo_design_method.setItemText(1, _translate("Dialog", "Limit State (Capacity based) Design"))
         self.combo_design_method.setItemText(2, _translate("Dialog", "Working Stress Design"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Design), _translate("Dialog", "Design"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog()
-    ui = Ui_Dialog()
-    ui.setupUi(Dialog)
-    Dialog.show()
-    sys.exit(app.exec_())
