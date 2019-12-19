@@ -24,19 +24,21 @@ class SvgWindow(object):
         self.label.setFrameShape(QFrame.Box)
         self.label.setFrameShadow(QFrame.Plain)
         self.label.setPixmap(QPixmap(filename))
+        # self.label.setPixmap(QPixmap.scaledToWidth(1000))
         # self.label.setPixmap(self.heightForWidth())
         # self.label.setPixmap(QPixmap.scaled(1000, 700,Qtcore.KeepAspectRatio))
+        # self.label.sizePolicy.setHeightForWidth(True)
         self.label.setScaledContents(True)
         # self.label.setPixmap(True)
 
         self.gridlayout = QGridLayout(self.svgWidget)
         self.gridlayout.addWidget(self.label, 0, 0, 1, 3)
-        spaceritem = QSpacerItem(260,20, QSizePolicy.Ignored, QSizePolicy.Ignored)
+        spaceritem = QSpacerItem(260,20, QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
         self.gridlayout.addItem(spaceritem, 1, 0, 1, 1)
 
         self.horizontallayout = QHBoxLayout()
         self.gridlayout.addLayout(self.horizontallayout, 1, 1, 1, 1)
-        spaceritem2 = QSpacerItem(260, 20, QSizePolicy.Ignored, QSizePolicy.Ignored)
+        spaceritem2 = QSpacerItem(260, 20, QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
         self.gridlayout.addItem(spaceritem2, 1, 2, 1, 1)
         self.svgWidget.setFixedSize(1000, 700)
 
