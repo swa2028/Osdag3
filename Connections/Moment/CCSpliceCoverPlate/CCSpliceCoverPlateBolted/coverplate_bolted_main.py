@@ -9,7 +9,7 @@ from .ui_flangespliceplate import Ui_flangespliceplate
 from .ui_flangespliceplate_inner import Ui_FlangespliceplateInner
 from .ui_webspliceplate import Ui_webspliceplate
 from .svg_window import SvgWindow
-from .cover_plate_bolted_calc import coverplateboltedconnection
+from .ccsplice2_calc import coverplateboltedconnection
 from .drawing_2D import CoverEndPlate
 from .ui_design_preferences import  Ui_Design_Preferences
 from .ui_design_summary import Ui_DesignReport
@@ -202,7 +202,7 @@ class DesignPreferences(QDialog):
 			standard_clrnce = {12: 1, 14: 1, 16: 2, 18: 2, 20: 2, 22: 2, 24: 2, 30: 3, 34: 3, 36: 3}
 			overhead_clrnce = {12: 3, 14: 3, 16: 4, 18: 4, 20: 4, 22: 4, 24: 6, 30: 8, 34: 8, 36: 8}
 			boltHoleType = str(self.ui.combo_boltHoleType.currentText())
-			if boltHoleType == "Standard":
+			if boltHoleType == "standard":
 				clearance = standard_clrnce[int(boltDia)]
 			else:
 				clearance = overhead_clrnce[int(boltDia)]
@@ -1186,7 +1186,7 @@ class MainController(QMainWindow):
 		self.ui.txt_edgeDist_2.setText(str(web_edgedist))
 
 	def display_log_to_textedit(self):
-		file = QFile(os.path.join('Connections','Moment','BBSpliceCoverPlate','BBSpliceCoverPlateBolted','coverplate.log'))
+		file = QFile(os.path.join('Connections','Moment','CCSpliceCoverPlate','CCSpliceCoverPlateBolted','coverplate.log'))
 		if not file.open(QtCore.QIODevice.ReadOnly):
 			QMessageBox.information(None, 'info', file.errorString())
 		stream = QtCore.QTextStream(file)

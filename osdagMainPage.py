@@ -14,19 +14,22 @@ from ui_OsdagMainPage import Ui_MainWindow
 from ui_tutorial import Ui_Tutorial
 from ui_aboutosdag import Ui_AboutOsdag
 from ui_ask_question import Ui_AskQuestion
-from Connections.Shear.Finplate.finPlateMain import launchFinPlateController
-
 import os
+
+from Connections.Shear.Finplate.finPlateMain import launchFinPlateController
 from Connections.Shear.SeatedAngle.seat_angle_main import launchSeatedAngleController
 from Connections.Shear.cleatAngle.cleatAngleMain import launch_cleatangle_controller
 from Connections.Shear.Endplate.endPlateMain import launch_endplate_controller
 from Connections.Moment.BBSpliceCoverPlate.BBSpliceCoverPlateBolted.coverplate_bolted_main import launch_coverplate_controller
 from Connections.Moment.ExtendedEndPlate.extended_main import launch_extendedendplate_controller
 from Connections.Moment.BCEndPlate.bc_endplate_main import launch_bc_endplate_controller
+from Connections.Moment.CCSpliceCoverPlate.CCSpliceCoverPlateBolted.coverplate_bolted_main import launch_column_coverplate_controller
 from Tension.Tension_bolted_main import launch_tension_bolted_controller
 from Tension.Tension_welded_main import launch_tension_welded_controller
 from Connections.Moment.CCSpliceCoverPlate.CCSpliceCoverPlateBolted.coverplate_bolted_main import launch_column_coverplate_controller
 from Connections.Moment.CCEndPlateSplice.column_end_plate_main import launch_column_endplate_controller
+from Compression.Compression_main import launch_compression_controller
+
 import os.path
 import subprocess
 import shutil
@@ -65,7 +68,7 @@ class OsdagMainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.showMaximized()
-        list_of_items = {'Osdagpage': 0, 'connectionpage': 1, 'Tension': 2, 'beamtocolumnpage': 3,'compressionpage': 4, 'flexuralpage': 5}
+        list_of_items = {'Osdagpage': 0, 'connectionpage': 1, 'Tension': 2,'Compression': 3, 'beamtocolumnpage': 4,'flexuralpage': 5}
 
         self.ui.myStackedWidget.setCurrentIndex(list_of_items['Osdagpage'])
         self.ui.btn_connection.clicked.connect(lambda: self.change_desgin_page(list_of_items['connectionpage'], list_of_items['Osdagpage']))
@@ -74,10 +77,11 @@ class OsdagMainWindow(QMainWindow):
         self.ui.btn_start_2.clicked.connect(self.show_moment_connection)
         self.ui.btn_start_3.clicked.connect(self.show_moment_connection_bc)
         self.ui.Tension_Start.clicked.connect(self.show_tension)
+        self.ui.Compression_Start.clicked.connect(self.show_compression)
         self.ui.cc_Start.clicked.connect(self.show_moment_connection_cc)
 
         self.ui.btn_beamCol.clicked.connect(self.unavailable)
-        self.ui.btn_compression.clicked.connect(self.unavailable)
+        self.ui.btn_compression.clicked.connect(lambda: self.change_desgin_page(list_of_items['Compression'], list_of_items['Osdagpage']))
         self.ui.btn_flexural.clicked.connect(self.unavailable)
         self.ui.btn_truss.clicked.connect(self.unavailable)
         self.ui.btn_2dframe.clicked.connect(self.unavailable)
@@ -354,6 +358,32 @@ class OsdagMainWindow(QMainWindow):
         #
         # # else:
         # #     QMessageBox.about(self, "INFO", "Please select appropriate connection")
+    def show_compression(self):
+
+        folder = self.select_workspace_folder()
+        folder = str(folder)
+        if not os.path.exists(folder):
+            if folder == '':
+                pass
+            else:
+                os.mkdir(folder, 0o755)
+
+        root_path = folder
+        images_html_folder = ['images_html']
+        flag = True
+        for create_folder in images_html_folder:
+            if root_path == '':
+                flag = False
+                return flag
+            else:
+                try:
+                    os.mkdir(os.path.join(root_path, create_folder))
+                except OSError:
+                    shutil.rmtree(os.path.join(folder, create_folder))
+                    os.mkdir(os.path.join(root_path, create_folder))
+
+        launch_compression_controller(self, folder)
+        self.ui.myStackedWidget.setCurrentIndex(0)
 
     # ********************************* Help Action *********************************************************************************************
 
