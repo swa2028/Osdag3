@@ -2,7 +2,11 @@
 
 # Form implementation generated from reading ui file 'OsdagMainPage.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.0
+# <<<<<<< HEAD
+# Created by: PyQt5 UI code generator 5.13.2
+# =======
+# # Created by: PyQt5 UI code generator 5.13.0
+# >>>>>>> origin/test
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -457,6 +461,26 @@ class Ui_MainWindow(object):
 "{\n"
 "background-color: #925a5b;\n"
 "color:#ffffff;\n"
+# # <<<<<<< HEAD
+# "}")
+        # self.btn_start_3.setCheckable(False)
+        # self.btn_start_3.setAutoExclusive(False)
+        # self.btn_start_3.setAutoDefault(True)
+        # self.btn_start_3.setObjectName("btn_start_3")
+        # self.gridLayout_9.addWidget(self.btn_start_3, 3, 1, 1, 1)
+        # spacerItem25 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        # self.gridLayout_9.addItem(spacerItem25, 1, 1, 1, 2)
+        # self.mytabWidget_2.addTab(self.tab_beamtocolumn, "")
+        # self.tab_columntocolumn = QtWidgets.QWidget()
+        # self.tab_columntocolumn.setObjectName("tab_columntocolumn")
+        # self.gridLayoutWidget = QtWidgets.QWidget(self.tab_columntocolumn)
+        # self.gridLayoutWidget.setGeometry(QtCore.QRect(29, 20, 743, 345))
+        # self.gridLayoutWidget.setObjectName("gridLayoutWidget")
+        # self.gridLayout_6 = QtWidgets.QGridLayout(self.gridLayoutWidget)
+        # self.gridLayout_6.setContentsMargins(0, 0, 0, 0)
+        # self.gridLayout_6.setObjectName("gridLayout_6")
+        # self.label_13 = QtWidgets.QLabel(self.gridLayoutWidget)
+# =======
 "}\n"
 "\n"
 "")
@@ -550,11 +574,52 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.mytabWidget.sizePolicy().hasHeightForWidth())
         self.mytabWidget.setSizePolicy(sizePolicy)
+# >>>>>>> origin/test
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(11)
         font.setBold(True)
         font.setWeight(75)
+# <<<<<<< HEAD
+#         self.label_13.setFont(font)
+#         self.label_13.setText("")
+#         self.label_13.setObjectName("label_13")
+#         self.gridLayout_6.addWidget(self.label_13, 2, 6, 1, 1)
+#         spacerItem26 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+#         self.gridLayout_6.addItem(spacerItem26, 4, 1, 1, 1)
+#         spacerItem27 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+#         self.gridLayout_6.addItem(spacerItem27, 2, 0, 1, 1)
+#         spacerItem28 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+#         self.gridLayout_6.addItem(spacerItem28, 6, 1, 1, 1)
+#         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
+#         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+#         self.gridLayout_6.addLayout(self.horizontalLayout_6, 2, 2, 1, 1)
+#         self.rdbtn_coverplate = QtWidgets.QRadioButton(self.gridLayoutWidget)
+#         self.rdbtn_coverplate.setText("")
+#         self.rdbtn_coverplate.setIcon(icon5)
+#         self.rdbtn_coverplate.setIconSize(QtCore.QSize(275, 230))
+#         self.rdbtn_coverplate.setChecked(True)
+#         self.rdbtn_coverplate.setObjectName("rdbtn_coverplate")
+#         self.gridLayout_6.addWidget(self.rdbtn_coverplate, 5, 1, 1, 1)
+#         self.label_8 = QtWidgets.QLabel(self.gridLayoutWidget)
+#         self.label_8.setTextFormat(QtCore.Qt.AutoText)
+#         self.label_8.setObjectName("label_8")
+#         self.gridLayout_6.addWidget(self.label_8, 2, 1, 1, 1)
+#         self.label_endplate_2 = QtWidgets.QLabel(self.gridLayoutWidget)
+#         self.label_endplate_2.setObjectName("label_endplate_2")
+#         self.gridLayout_6.addWidget(self.label_endplate_2, 2, 4, 1, 1)
+#         self.rdbtn_endplate_2 = QtWidgets.QRadioButton(self.gridLayoutWidget)
+#         self.rdbtn_endplate_2.setText("")
+#         icon8 = QtGui.QIcon()
+#         icon8.addPixmap(QtGui.QPixmap(":/newPrefix/images/endplate.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+#         self.rdbtn_endplate_2.setIcon(icon8)
+#         self.rdbtn_endplate_2.setIconSize(QtCore.QSize(283, 273))
+#         self.rdbtn_endplate_2.setObjectName("rdbtn_endplate_2")
+#         self.gridLayout_6.addWidget(self.rdbtn_endplate_2, 5, 4, 1, 1)
+#         self.cc_Start = QtWidgets.QPushButton(self.gridLayoutWidget)
+#         self.cc_Start.setStyleSheet("QPushButton::hover\n"
+# "{\n"
+# =======
         self.mytabWidget.setFont(font)
         self.mytabWidget.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.mytabWidget.setStyleSheet("QTabBar::tab {\n"
@@ -567,6 +632,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QTabBar::tab::hover{\n"
+# >>>>>>> origin/test
 "   background-color: #d97f7f;\n"
 "   color:#000000 ;\n"
 "}\n"
@@ -612,6 +678,77 @@ class Ui_MainWindow(object):
         font.setPointSize(12)
         font.setBold(True)
         font.setWeight(75)
+# # <<<<<<< HEAD
+#         self.label_12.setFont(font)
+#         self.label_12.setObjectName("label_12")
+#         self.gridLayout_11.addWidget(self.label_12, 1, 1, 1, 1)
+#         spacerItem30 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+#         self.gridLayout_11.addItem(spacerItem30, 1, 2, 1, 1)
+#         spacerItem31 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+#         self.gridLayout_11.addItem(spacerItem31, 0, 1, 1, 1)
+#         spacerItem32 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+#         self.gridLayout_11.addItem(spacerItem32, 1, 0, 1, 1)
+#         spacerItem33 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+#         self.gridLayout_11.addItem(spacerItem33, 2, 1, 1, 1)
+#         self.mytabWidget_2.addTab(self.tab_PEB, "")
+#         self.gridLayout_7.addWidget(self.mytabWidget_2, 0, 0, 1, 1)
+#         self.mytabWidget.addTab(self.tab2_momentconnection, "")
+#         self.tab3_trussconnection = QtWidgets.QWidget()
+#         self.tab3_trussconnection.setAccessibleName("")
+#         self.tab3_trussconnection.setObjectName("tab3_trussconnection")
+#         self.layoutWidget = QtWidgets.QWidget(self.tab3_trussconnection)
+#         self.layoutWidget.setGeometry(QtCore.QRect(0, 220, 654, 22))
+#         self.layoutWidget.setObjectName("layoutWidget")
+#         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.layoutWidget)
+#         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
+#         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+#         spacerItem34 = QtWidgets.QSpacerItem(150, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+#         self.horizontalLayout_2.addItem(spacerItem34)
+#         self.label = QtWidgets.QLabel(self.layoutWidget)
+#         self.label.setObjectName("label")
+#         self.horizontalLayout_2.addWidget(self.label)
+#         spacerItem35 = QtWidgets.QSpacerItem(150, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+#         self.horizontalLayout_2.addItem(spacerItem35)
+#         self.mytabWidget.addTab(self.tab3_trussconnection, "")
+#         self.gridLayout_10.addWidget(self.mytabWidget, 0, 0, 1, 1)
+#         self.myStackedWidget.addWidget(self.Connectionpage)
+#         self.Tension = QtWidgets.QWidget()
+#         self.Tension.setEnabled(True)
+#         self.Tension.setStyleSheet("")
+#         self.Tension.setObjectName("Tension")
+#         self.layoutWidget1 = QtWidgets.QWidget(self.Tension)
+#         self.layoutWidget1.setGeometry(QtCore.QRect(-8, 0, 712, 563))
+#         self.layoutWidget1.setObjectName("layoutWidget1")
+#         self.gridLayout_5 = QtWidgets.QGridLayout(self.layoutWidget1)
+#         self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
+#         self.gridLayout_5.setObjectName("gridLayout_5")
+#         spacerItem36 = QtWidgets.QSpacerItem(100, 208, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+#         self.gridLayout_5.addItem(spacerItem36, 2, 2, 2, 1)
+#         spacerItem37 = QtWidgets.QSpacerItem(50, 528, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+#         self.gridLayout_5.addItem(spacerItem37, 0, 0, 6, 1)
+#         spacerItem38 = QtWidgets.QSpacerItem(598, 100, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+#         self.gridLayout_5.addItem(spacerItem38, 5, 1, 1, 3)
+#         spacerItem39 = QtWidgets.QSpacerItem(50, 528, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+#         self.gridLayout_5.addItem(spacerItem39, 0, 4, 6, 1)
+#         spacerItem40 = QtWidgets.QSpacerItem(598, 100, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+#         self.gridLayout_5.addItem(spacerItem40, 0, 1, 1, 3)
+#         self.Tension_Start = QtWidgets.QPushButton(self.layoutWidget1)
+#         self.Tension_Start.setEnabled(True)
+#         self.Tension_Start.setStyleSheet("QPushButton::hover\n"
+# "{\n"
+# "   background-color: #d97f7f;\n"
+# "   color:#000000 ;\n"
+# "}\n"
+# "\n"
+# "QPushButton\n"
+# "{\n"
+# "background-color: #925a5b;\n"
+# "color:#ffffff;\n"
+# "}")
+#         self.Tension_Start.setObjectName("Tension_Start")
+#         self.gridLayout_5.addWidget(self.Tension_Start, 6, 2, 1, 1)
+#         self.label_6 = QtWidgets.QLabel(self.layoutWidget1)
+# =======
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.verticalLayout.addWidget(self.label_2)
@@ -621,6 +758,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.rdbtn_finplate.sizePolicy().hasHeightForWidth())
         self.rdbtn_finplate.setSizePolicy(sizePolicy)
+# >>>>>>> origin/test
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(12)
@@ -1057,17 +1195,20 @@ class Ui_MainWindow(object):
         self.label_8.setTextFormat(QtCore.Qt.AutoText)
         self.label_8.setObjectName("label_8")
         self.gridLayout_6.addWidget(self.label_8, 2, 1, 1, 1)
+        self.label_endplate_2 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_endplate_2.setObjectName("label_endplate_2")
+        self.gridLayout_6.addWidget(self.label_endplate_2, 2, 4, 1, 1)
         self.rdbtn_endplate_2 = QtWidgets.QLabel(self.gridLayoutWidget)
         self.rdbtn_endplate_2.setObjectName("rdbtn_endplate_2")
         self.gridLayout_6.addWidget(self.rdbtn_endplate_2, 2, 4, 1, 1)
-        self.rdb_endplate = QtWidgets.QRadioButton(self.gridLayoutWidget)
-        self.rdb_endplate.setText("")
+        self.rdbtn_endplate_2 = QtWidgets.QRadioButton(self.gridLayoutWidget)
+        self.rdbtn_endplate_2.setText("")
         icon8 = QtGui.QIcon()
         icon8.addPixmap(QtGui.QPixmap(":/newPrefix/images/endplate.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.rdb_endplate.setIcon(icon8)
-        self.rdb_endplate.setIconSize(QtCore.QSize(283, 273))
-        self.rdb_endplate.setObjectName("rdb_endplate")
-        self.gridLayout_6.addWidget(self.rdb_endplate, 5, 4, 1, 1)
+        self.rdbtn_endplate_2.setIcon(icon8)
+        self.rdbtn_endplate_2.setIconSize(QtCore.QSize(283, 273))
+        self.rdbtn_endplate_2.setObjectName("rdbtn_endplate_2")
+        self.gridLayout_6.addWidget(self.rdbtn_endplate_2, 5, 4, 1, 1)
         self.cc_Start = QtWidgets.QPushButton(self.gridLayoutWidget)
         self.cc_Start.setStyleSheet("QPushButton::hover\n"
 "{\n"
@@ -1249,9 +1390,9 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.comboBox_help.setCurrentIndex(0)
-        self.myStackedWidget.setCurrentIndex(3)
-        self.mytabWidget.setCurrentIndex(0)
-        self.mytabWidget_2.setCurrentIndex(0)
+        self.myStackedWidget.setCurrentIndex(1)
+        self.mytabWidget.setCurrentIndex(1)
+        self.mytabWidget_2.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1321,7 +1462,7 @@ class Ui_MainWindow(object):
         self.btn_start_3.setShortcut(_translate("MainWindow", "Return"))
         self.mytabWidget_2.setTabText(self.mytabWidget_2.indexOf(self.tab_beamtocolumn), _translate("MainWindow", "Beam To Column"))
         self.label_8.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">Cover Plate Connection</span></p></body></html>"))
-        self.rdbtn_endplate_2.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">End Plate Connection</span></p></body></html>"))
+        self.label_endplate_2.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">End Plate Connection</span></p></body></html>"))
         self.cc_Start.setText(_translate("MainWindow", "Start"))
         self.mytabWidget_2.setTabText(self.mytabWidget_2.indexOf(self.tab_columntocolumn), _translate("MainWindow", "Column To Column"))
         self.label_12.setText(_translate("MainWindow", "This module is not available in the current version."))
