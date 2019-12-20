@@ -207,7 +207,7 @@ def tension_design(uiObj):
                         row_pitch = 0
                     else:
                         row_pitch = round((int(((member_d- 2*member_tf)-(edge_distance * 2)) / (no_of_rows_bolt-1))),2)
-                    column_pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
+                    column_pitch = 0
                     edge_distance = float((((member_d- 2*member_tf) - (row_pitch * (no_of_rows_bolt-1))))/2)
                     # kbChk1 = end_distance / float(3 * dia_hole)
                     # kbChk2 = pitch / float(3 * dia_hole) - 0.25
@@ -231,6 +231,7 @@ def tension_design(uiObj):
                             bolt_arrange = True
                             break
                     else:
+                        bolt_arrange = True
                         break
 
 
@@ -249,7 +250,7 @@ def tension_design(uiObj):
                         row_pitch = 0
                     else:
                         row_pitch = round((int(((member_d - 2 * member_tf) - (edge_distance * 2)) / (no_of_rows_bolt - 1))), 2)
-                    column_pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
+                    column_pitch = 0
                     edge_distance = float((((member_d - 2 * member_tf) - (row_pitch * (no_of_rows_bolt-1)))) / 2)
                     # kbChk1 = end_distance / float(3 * dia_hole)
                     # kbChk2 = pitch / float(3 * dia_hole) - 0.25
@@ -272,6 +273,7 @@ def tension_design(uiObj):
                             bolt_arrange = True
                             break
                     else:
+                        bolt_arrange = True
                         break
 
 
@@ -346,6 +348,7 @@ def tension_design(uiObj):
                             else:
                                 no_of_bolts = rev_bolt_qty
                         else:
+                            bolt_arrange = True
                             break
 
                     else:

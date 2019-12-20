@@ -778,10 +778,15 @@ class Maincontroller(QMainWindow):
 		# self.ui.btn_Weld.clicked.connect(self.weld_details)
 		# if self.ui.combo_conn_type.currentText()=="Bolted":
 		self.ui.btn_pitchdetails.clicked.connect(self.pitch_details)
+			# self.ui.btn_weld.setDisabled(True)
+		# elif self.ui.combo_conn_type.currentText()=="Welded":
+		self.ui.btn_weld.clicked.connect(self.weld_details)
+			# self.ui.btn_pitchdetails.setDisabled(True)
 		# else:
 		# 	pass
+
 		self.ui.btn_platedetail.clicked.connect(self.plate_details)
-		self.ui.btn_weld.clicked.connect(self.weld_details)
+
 		# self.ui.btn_plateDetail_2.clicked.connect(self.plate_details_bottom)
 		# self.ui.btn_stiffnrDetail.clicked.connect(self.stiffener_details)
 		self.ui.btn_CreateDesign.clicked.connect(self.design_report)
@@ -1317,6 +1322,17 @@ class Maincontroller(QMainWindow):
 		self.display_output(self.outputs)
 		self.display_log_to_textedit()
 		isempty = [True if val != '' else False for ele in alist for val in list(ele.values())]
+
+		if self.ui.combo_conn_type.currentText()=="Bolted":
+			# self.ui.btn_pitchdetails.clicked.connect(self.pitch_details)
+			self.ui.btn_pitchdetails.setEnabled(True)
+			self.ui.btn_weld.setDisabled(True)
+		elif self.ui.combo_conn_type.currentText()=="Welded":
+			# self.ui.btn_weld.clicked.connect(self.weld_details)
+			self.ui.btn_weld.setEnabled(True)
+			self.ui.btn_pitchdetails.setDisabled(True)
+		else:
+			pass
 
 		# if isempty[0] == True:
 		# 	status = self.resultObj['Bolt']['status']
