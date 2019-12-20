@@ -3,18 +3,20 @@ Created on 13-November-2017
 
 @author: Reshma Konjari
 '''
-from PyQt5 import QtSvg
+from PyQt5 import QtSvg,QtCore
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtWidgets import QApplication, QFileDialog, QSpacerItem, QSizePolicy, QPushButton, \
                             QMessageBox, QHBoxLayout, QFrame, QLabel,QGridLayout
 import sys
 import shutil
 import os
+from Tension.drawing2D_tension_bolted import Front_View
 
 
 class SvgWindow(object):
 
     def call_svgwindow(self, filename, view, folder):
+
         self.folder = folder
         self.svgWidget = QtSvg.QSvgWidget()
 
@@ -22,16 +24,21 @@ class SvgWindow(object):
         self.label.setFrameShape(QFrame.Box)
         self.label.setFrameShadow(QFrame.Plain)
         self.label.setPixmap(QPixmap(filename))
+        # self.label.setPixmap(QPixmap.scaledToWidth(1000))
+        # self.label.setPixmap(self.heightForWidth())
+        # self.label.setPixmap(QPixmap.scaled(1000, 700,Qtcore.KeepAspectRatio))
+        # self.label.sizePolicy.setHeightForWidth(True)
         self.label.setScaledContents(True)
+        # self.label.setPixmap(True)
 
         self.gridlayout = QGridLayout(self.svgWidget)
         self.gridlayout.addWidget(self.label, 0, 0, 1, 3)
-        spaceritem = QSpacerItem(260,20, QSizePolicy.Preferred, QSizePolicy.Preferred)
+        spaceritem = QSpacerItem(260,20, QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
         self.gridlayout.addItem(spaceritem, 1, 0, 1, 1)
 
         self.horizontallayout = QHBoxLayout()
         self.gridlayout.addLayout(self.horizontallayout, 1, 1, 1, 1)
-        spaceritem2 = QSpacerItem(260, 20, QSizePolicy.Preferred, QSizePolicy.Preferred)
+        spaceritem2 = QSpacerItem(260, 20, QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
         self.gridlayout.addItem(spaceritem2, 1, 2, 1, 1)
         self.svgWidget.setFixedSize(1000, 700)
 
@@ -56,6 +63,13 @@ class SvgWindow(object):
 
         self.btn_save_png.clicked.connect(lambda: self.save_2d_image_png_names(view))
         self.btn_save_svg.clicked.connect(lambda: self.save_2d_image_svg_names(view))
+
+    def hasHeightForWidth(self):
+        return self.label.pixmap() is not None
+
+    def heightForWidth(self):
+        if self.label.pixmap():
+            return int(2* (self.label.pixmap().height() / self.label.pixmap().width()))
 
     def save_2d_image_png_names(self, view):
         flag = True
