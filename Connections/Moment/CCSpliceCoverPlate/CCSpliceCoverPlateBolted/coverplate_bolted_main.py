@@ -3,7 +3,6 @@ Created on 7-November-2017
 
 @author: Reshma Konjari
 """
-
 from .ui_coverplatebolted import Ui_MainWindow
 from .ui_flangespliceplate import Ui_flangespliceplate
 from .ui_flangespliceplate_inner import Ui_FlangespliceplateInner
@@ -19,7 +18,7 @@ from ui_tutorial import Ui_Tutorial
 from .svg_window import SvgWindow
 from .reportGenerator import save_html
 from PyQt5.QtWidgets import QDialog, QMainWindow, QApplication, QFontDialog, QFileDialog, QColorDialog
-from PyQt5.Qt import QIntValidator, QDoubleValidator, QFile, Qt, QBrush, QColor, QTextStream, pyqtSignal, QPixmap, QPalette
+from PyQt5.QtCore import QFile, Qt, QTextStream, pyqtSignal
 from PyQt5 import QtCore, QtGui, QtWidgets, QtOpenGL
 from .model import *
 # from OCC.Core import IGESControl, BRepTools

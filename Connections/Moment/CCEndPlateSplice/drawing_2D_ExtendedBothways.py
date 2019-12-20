@@ -25,7 +25,7 @@ class ExtendedEndPlate(object):
 			None
 
 		"""
-		print "calculation", input_dict
+		print ("calculation", input_dict)
 		self.folder = folder
 		self.beam_length_L1 = 700
 		self.beam_length_L2 = 700

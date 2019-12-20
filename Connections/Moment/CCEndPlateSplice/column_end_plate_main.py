@@ -24,7 +24,7 @@ from Connections.Moment.CCEndPlateSplice.reportGenerator import A
 
 
 from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QFontDialog, QFileDialog
-from PyQt5.Qt import QColor, QBrush, Qt, QIntValidator, QDoubleValidator, QFile, QTextStream, pyqtSignal, QColorDialog, QPixmap, QPalette
+from PyQt5.QtCore import Qt, QFile, QTextStream, pyqtSignal
 from PyQt5 import QtGui, QtCore, QtWidgets, QtOpenGL
 from Connections.Moment.CCEndPlateSplice.model import *
 import sys
@@ -49,13 +49,13 @@ from Connections.Moment.CCEndPlateSplice.ccEndPlateSpliceCalc import ccEndPlate
 # from Connections.Moment.ColumnToColumn.EndPlateSplice.extendedBothWays import CADGroove
 # from Connections.Moment.ColumnToColumn.EndPlateSplice.nutBoltPlacement import NutBoltArray
 from Connections.Component.quarterCone import QuarterCone
-from OCC.Quantity import Quantity_NOC_SADDLEBROWN
+from OCC.Core.Quantity import Quantity_NOC_SADDLEBROWN
 from OCC import IGESControl, BRepTools
-from OCC.BRepAlgoAPI import BRepAlgoAPI_Fuse
-from OCC.Interface import Interface_Static_SetCVal
-from OCC.IFSelect import IFSelect_RetDone
-from OCC.StlAPI import StlAPI_Writer
-from OCC.STEPControl import STEPControl_Writer, STEPControl_AsIs
+from OCC.Core.BRepAlgoAPI import BRepAlgoAPI_Fuse
+from OCC.Core.Interface import Interface_Static_SetCVal
+from OCC.Core.IFSelect import IFSelect_RetDone
+from OCC.Core.StlAPI import StlAPI_Writer
+from OCC.Core.STEPControl import STEPControl_Writer, STEPControl_AsIs
 
 from utilities import osdag_display_shape
 import copy

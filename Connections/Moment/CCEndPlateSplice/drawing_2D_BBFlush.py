@@ -25,7 +25,7 @@ class FlushEndPlate(object):
 			None
 
 		"""
-		print "calculation", input_dict
+		print ("calculation", input_dict)
 		self.folder = folder
 		self.beam_length_L1 = 700
 		self.beam_length_L2 = 700
@@ -404,7 +404,7 @@ class FlushEndPlate(object):
 			else:
 				pass
 
-			print "successful"
+			print ("successful")
 
 	def draw_weld_marker1(self, dwg, oriX, oriY, line):
 		weldMarker = dwg.marker(insert=(oriX, oriY), size=(15, 15), orient="auto")
