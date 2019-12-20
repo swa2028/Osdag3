@@ -91,9 +91,9 @@ def bc_endplate_design(uiObj):
 
     dp_bolt_hole_type = uiObj["bolt"]["bolt_hole_type"]
     if dp_bolt_hole_type == "Over-sized":
-        bolt_hole_type = 'over_size'
+        bolt_hole_type = 'Over-sized'
     else:   # "Standard"
-        bolt_hole_type = 'standard'
+        bolt_hole_type = 'Standard'
 
     dia_hole = bolt_dia + int(uiObj["bolt"]["bolt_hole_clrnce"])
     end_plate_thickness = float(uiObj['Plate']['Thickness (mm)'])

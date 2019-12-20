@@ -2,6 +2,7 @@ from .ui_tension_design import Ui_MainWindow
 from .ui_design_preferences import Ui_DesignPreferences
 from .ui_design_summary import Ui_DesignReport
 from .ui_plate import Ui_Plate
+from .ui_weld import Ui_Weld
 # from ui_plate_bottom import Ui_Plate_Bottom
 # from ui_stiffener import Ui_Stiffener
 from .ui_boltdetails import Ui_Pitch
@@ -11,7 +12,8 @@ from ui_tutorial import Ui_Tutorial
 from ui_aboutosdag import Ui_AboutOsdag
 from ui_ask_question import Ui_AskQuestion
 from .Tension_calc import tension_design
-from .drawing2D_tension_bolted import Tension_drawing
+from .drawing2D_tension_bolted import Tension_bolted_drawing
+from .drawing2D_tension_welded import Tension_welded_drawing
 # import bc_endplate_calc as db_value
 # from ui_weld_details_1 import Ui_Weld_Details_1
 # from ui_weld_details_2 import Ui_Weld_Details_2
@@ -261,6 +263,20 @@ class PlateDetails(QDialog):
 		self.ui.txt_plateLength.setText(str(resultObj_plate['Plate']['Total Length']))
 		self.ui.txt_plateThickness.setText(str(resultObj_plate['Plate']['Thickness']))
 		self.ui.txt_plateWidth.setText(str(resultObj_plate['Plate']['Width']))
+
+class WeldDetails(QDialog):
+	def __init__(self, parent=None):
+		QDialog.__init__(self, parent)
+		self.ui = Ui_Weld()
+		self.ui.setupUi(self)
+		self.maincontroller = parent
+
+		uiObj = self.maincontroller.designParameters()
+		resultObj_weld = tension_design(uiObj)
+
+		self.ui.weld_length1.setText(str(resultObj_weld['Weld']['Length1']))
+		self.ui.weld_length2.setText(str(resultObj_weld['Weld']['Length2']))
+		self.ui.txt_weldsize.setText(str(resultObj_weld['Weld']['Size']))
 
 #
 # class PlateDetailsBottom(QDialog):
@@ -765,6 +781,7 @@ class Maincontroller(QMainWindow):
 		# else:
 		# 	pass
 		self.ui.btn_platedetail.clicked.connect(self.plate_details)
+		self.ui.btn_weld.clicked.connect(self.weld_details)
 		# self.ui.btn_plateDetail_2.clicked.connect(self.plate_details_bottom)
 		# self.ui.btn_stiffnrDetail.clicked.connect(self.stiffener_details)
 		self.ui.btn_CreateDesign.clicked.connect(self.design_report)
@@ -970,7 +987,7 @@ class Maincontroller(QMainWindow):
 
 		uiObj["Weld"] = {}
 		uiObj["Weld"]["Type"] = str(self.ui.combo_weld_type.currentText())
-		uiObj["Weld"]["Thickness (mm)"] = str(self.ui.combo_thickness.currentText())
+		# uiObj["Weld"]["Thickness (mm)"] = str(self.ui.combo_thickness.currentText())
 
 		uiObj["Connection"] = self.connection
 
@@ -1085,7 +1102,7 @@ class Maincontroller(QMainWindow):
 			self.ui.combo_thickness.setCurrentIndex(self.ui.combo_thickness.findText(uiObj["Plate"]["Thickness (mm)"]))
 
 			self.ui.combo_weld_type.setCurrentIndex(self.ui.combo_weld_type.findText(uiObj["Weld"]["Type"]))
-			self.ui.combo_weld.setCurrentIndex(self.ui.combo_weld.findText(uiObj["Weld"]["Thickness (mm)"]))
+			# self.ui.combo_weld.setCurrentIndex(self.ui.combo_weld.findText(uiObj["Weld"]["Thickness (mm)"]))
 
 			self.designPrefDialog.ui.combo_boltType.setCurrentIndex(
 				self.designPrefDialog.ui.combo_boltType.findText(uiObj["bolt"]["bolt_type"]))
@@ -1235,8 +1252,8 @@ class Maincontroller(QMainWindow):
 		if self.ui.combo_weld_type.currentIndex() == 0:
 			incomplete_list.append("Weld_Type")
 
-		if self.ui.combo_weld.currentIndex() == 0:
-			incomplete_list.append("Weld")
+		# if self.ui.combo_weld.currentIndex() == 0:
+		# 	incomplete_list.append("Weld")
 
 
 		if len(incomplete_list) > 0:
@@ -1340,7 +1357,7 @@ class Maincontroller(QMainWindow):
 		tension_slenderness = resultObj['Tension_Force']['Slenderness']
 		self.ui.txt_slender.setText(str(tension_slenderness))
 
-		if self.ui.combo_conn_type.currentIndex() == 1:
+		if self.ui.combo_conn_type.currentText()== "Bolted":
 
 			tension_enddistance = resultObj['Tension_Force']['End_Distance']
 			self.ui.txt_enddistance.setText(str(tension_enddistance))
@@ -1419,7 +1436,7 @@ class Maincontroller(QMainWindow):
 		self.ui.combo_grade.setCurrentIndex(0)
 		self.ui.combo_thickness.setCurrentIndex(0)
 		self.ui.combo_weld_type.setCurrentIndex(0)
-		self.ui.combo_weld.setCurrentIndex(0)
+		# self.ui.combo_weld.setCurrentIndex(0)
 		self.ui.btnFront.setDisabled(True)
 		self.ui.btnTop.setDisabled(True)
 		self.ui.btnSide.setDisabled(True)
@@ -1608,8 +1625,13 @@ class Maincontroller(QMainWindow):
 		self.alist = self.designParameters()
 		self.result_obj = tension_design(self.alist)
 		self.member_data = self.fetchMembPara()
-		tension_drawing = Tension_drawing(self.alist, self.result_obj, self.member_data,
-										  self.folder)
+		if self.alist["Member"]["ConnType"] == "Bolted":
+			tension_drawing = Tension_bolted_drawing(self.alist, self.result_obj, self.member_data,
+											  self.folder)
+		else:
+			tension_drawing = Tension_welded_drawing(self.alist, self.result_obj, self.member_data,
+													 self.folder)
+
 
 		status = self.resultObj['Tension_Force']['Design_Status']
 		if status is True:
@@ -1663,6 +1685,10 @@ class Maincontroller(QMainWindow):
 
 	def plate_details(self):
 		section = PlateDetails(self)
+		section.show()
+
+	def weld_details(self):
+		section = WeldDetails(self)
 		section.show()
 
 	def pitch_details(self):

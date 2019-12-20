@@ -23,10 +23,10 @@ module_setup()
 
 # Start of Main Program
 
-def bolt_capacity(member_fu, bolt_fu,bolt_type,bolt_hole_type, bolt_slip,thickness,diameter, end_distance, pitch,kb, A_nb,A_sb):
+def bolt_capacity(member_fu, bolt_fu,bolt_type,bolt_hole_type, bolt_slip,thickness,diameter, end_distance, pitch, A_nb,A_sb):
     if bolt_type == "Bearing Bolt":
         Vsb = IS800_2007.cl_10_3_3_bolt_shear_capacity(bolt_fu, A_nb, A_sb, n_n=1, n_s=0, safety_factor_parameter='field')
-        Vdpb = IS800_2007.cl_10_3_4_bolt_bearing_capacity(member_fu, bolt_fu, thickness ,diameter, end_distance, pitch,kb,bolt_hole_type,safety_factor_parameter='field')
+        Vdpb = IS800_2007.cl_10_3_4_bolt_bearing_capacity(member_fu, bolt_fu, thickness ,diameter, end_distance, pitch,bolt_hole_type,safety_factor_parameter='field')
         Vs = IS800_2007.cl_10_3_2_bolt_design_strength(Vsb, Vdpb)
     elif bolt_type == "Friction Grip Bolt":
         muf = bolt_slip
@@ -79,7 +79,7 @@ def tension_design(uiObj):
     plate_thickness = float(uiObj["Plate"]["Thickness (mm)"])
 
     weld_type = (uiObj["Weld"]["Type"])
-    weld_thickness = float(uiObj["Weld"]["Thickness (mm)"])
+    # weld_thickness = float(uiObj["Weld"]["Thickness (mm)"])
     weld_fu =  float(uiObj["weld"]["fu_overwrite"])
     weld_fabrication = str(uiObj["weld"]["typeof_weld"])
 
@@ -169,9 +169,10 @@ def tension_design(uiObj):
     else:
         pass
 
-
     bolt_arrange = False
+    weld_arrange = False
     if conn_type == "Bolted" and conn == "Web":
+
         [A_sb, A_nb] = IS1367_Part3_2002.bolt_area(diameter)
         edge_distance = IS800_2007.cl_10_2_4_2_min_edge_end_dist(diameter, bolt_hole_type, edge_type)
         end_distance = IS800_2007.cl_10_2_4_2_min_edge_end_dist(diameter, bolt_hole_type, edge_type)
@@ -184,127 +185,173 @@ def tension_design(uiObj):
 
         # pitch = float(math.floor(((member_d- 2*member_tf) - (edge_distance * 2))/no_of_bolts_sec))
 
-            kbChk1 = end_distance / float(3 * dia_hole)
-            kbChk2 = pitch / float(3 * dia_hole) - 0.25
-            kbChk3 = bolt_fu / float(member_fu)
-            kbChk4 = 1
-            kb = min(kbChk1, kbChk2, kbChk3, kbChk4)
-            kb = round(kb, 3)
+            # kbChk1 = end_distance / float(3 * dia_hole)
+            # kbChk2 = pitch / float(3 * dia_hole) - 0.25
+            # kbChk3 = bolt_fu / float(member_fu)
+            # kbChk4 = 1
+            # kb = min(kbChk1, kbChk2, kbChk3, kbChk4)
+            # kb = round(kb, 3)
 
             Vs = bolt_capacity(member_fu, bolt_fu, bolt_type, bolt_hole_type, bolt_slip, member_tw, diameter,
-                               end_distance, pitch, kb, A_nb, A_sb)
+                               end_distance, pitch, A_nb, A_sb)
             no_of_bolts = float(math.ceil(tension_load / (Vs/1000)))
 
+            restart = True
 
-            if no_of_bolts < no_of_bolts_sec:
-                no_of_rows_bolt = no_of_bolts
-                no_of_columns_bolt = 1
-                bolt_qty = float(no_of_rows_bolt * no_of_columns_bolt)
-                if no_of_rows_bolt == 1:
-                    row_pitch = 0
-                else:
-                    row_pitch = round((int(((member_d- 2*member_tf)-(edge_distance * 2)) / (no_of_rows_bolt-1))),2)
-                column_pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
-                edge_distance = float((((member_d- 2*member_tf) - (row_pitch * (no_of_rows_bolt-1))))/2)
-                kbChk1 = end_distance / float(3 * dia_hole)
-                kbChk2 = pitch / float(3 * dia_hole) - 0.25
-                kbChk3 = bolt_fu / float(member_fu)
-                kbChk4 = 1
-                kb = min(kbChk1, kbChk2, kbChk3, kbChk4)
-                kb = round(kb, 3)
-                Vs = bolt_capacity(member_fu, bolt_fu, bolt_type, bolt_hole_type, bolt_slip,member_tw, diameter,
-                                   end_distance, column_pitch, kb, A_nb, A_sb)
-                bolt_arrange = True
-                #
-                # if bolt_arrange == True:
-                #     break
-                # else:
-                #     logger.error(": Bolot Diameter is not sufficient")
-
-            elif no_of_bolts == no_of_bolts_sec:
-                no_of_rows_bolt = no_of_bolts
-                no_of_columns_bolt = 1
-                bolt_qty = float(no_of_bolts)
-                if no_of_rows_bolt == 1:
-                    row_pitch = 0
-                else:
-                    row_pitch = round((int(((member_d - 2 * member_tf) - (edge_distance * 2)) / (no_of_rows_bolt - 1))), 2)
-                column_pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
-                edge_distance = float((((member_d - 2 * member_tf) - (row_pitch * (no_of_rows_bolt-1)))) / 2)
-                kbChk1 = end_distance / float(3 * dia_hole)
-                kbChk2 = pitch / float(3 * dia_hole) - 0.25
-                kbChk3 = bolt_fu / float(member_fu)
-                kbChk4 = 1
-                kb = min(kbChk1, kbChk2, kbChk3, kbChk4)
-                kb = round(kb, 3)
-                Vs = bolt_capacity(member_fu, bolt_fu, bolt_type, bolt_hole_type, bolt_slip,member_tw, diameter,
-                                   end_distance, column_pitch, kb, A_nb, A_sb)
-                bolt_arrange = True
-
-                # if bolt_arrange == True:
-                #     break
-                # else:
-                #     logger.error(": Bolot Diameter is not sufficient")
-
-            elif no_of_bolts > no_of_bolts_sec:
-                ratio = round_up((no_of_bolts/no_of_bolts_sec))
-                no_of_columns_bolt = ratio
-                print(no_of_columns_bolt)
-                # total_bolt_1 = no_of_bolts_sec * no_of_columns_bolt
-                # total_bolt_2 = (no_of_bolts_sec-1) * no_of_columns_bolt
-                # if total_bolt_1 > total_bolt_2 and total_bolt_2>=no_of_bolts:
-                #     no_of_rows_bolt = no_of_bolts_sec-1
-                # elif total_bolt_2 > total_bolt_1 and total_bolt_1 >= no_of_bolts:
-                #     no_of_rows_bolt = no_of_bolts_sec
-                # else:
-                #     pass
-                for i in range(int(no_of_bolts_sec+1)):
-                    if bolt_arrange == True:
-                        break
-                    else:
-                        pass
-                    no_of_columns_bolt = ratio
-                    for j in range(3):
-                        bolt_qty = (no_of_bolts_sec - i) * (no_of_columns_bolt+j)
-                        no_of_columns_bolt= no_of_columns_bolt+j
-                        if (bolt_qty - no_of_bolts) == 0:
-                            no_of_rows_bolt = float(math.ceil(bolt_qty/no_of_columns_bolt))
-                            bolt_arrange = True
-                            break
-                        elif bolt_qty > no_of_bolts and (bolt_qty - no_of_bolts) == 1:
-                            no_of_rows_bolt = float(math.ceil(bolt_qty/no_of_columns_bolt))
-                            bolt_arrange = True
-                            break
-                        elif bolt_qty > no_of_bolts and (bolt_qty - no_of_bolts) == 2:
-                            no_of_rows_bolt = float(math.ceil(bolt_qty/no_of_columns_bolt))
-                            bolt_arrange = True
-                            break
-                        else:
-                            pass
-                if bolt_arrange == True:
-                    bolt_qty = float(no_of_columns_bolt * no_of_rows_bolt)
+            while restart:
+                if no_of_bolts < no_of_bolts_sec:
+                    no_of_rows_bolt = no_of_bolts
+                    no_of_columns_bolt = 1
+                    bolt_qty = float(no_of_rows_bolt * no_of_columns_bolt)
                     if no_of_rows_bolt == 1:
                         row_pitch = 0
                     else:
-                        row_pitch = round((int(((member_d - 2 * member_tf) - (edge_distance * 2)) / (no_of_rows_bolt - 1))),2)
+                        row_pitch = round((int(((member_d- 2*member_tf)-(edge_distance * 2)) / (no_of_rows_bolt-1))),2)
+                    column_pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
+                    edge_distance = float((((member_d- 2*member_tf) - (row_pitch * (no_of_rows_bolt-1))))/2)
+                    # kbChk1 = end_distance / float(3 * dia_hole)
+                    # kbChk2 = pitch / float(3 * dia_hole) - 0.25
+                    # kbChk3 = bolt_fu / float(member_fu)
+                    # kbChk4 = 1
+                    # kb = min(kbChk1, kbChk2, kbChk3, kbChk4)
+                    # kb = round(kb, 3)
+                    #
+                    # Vs = bolt_capacity(member_fu, bolt_fu, bolt_type, bolt_hole_type, bolt_slip, member_tw, diameter,
+                    #                    end_distance, column_pitch, kb, A_nb, A_sb)
+                    Bij = 1.075 - ((column_pitch * (no_of_columns_bolt - 1))/(200 * diameter))
+                    if (column_pitch * (no_of_columns_bolt - 1)) == (15 * diameter):
+                        if 0.75 < Bij:
+                            Vs = 0.75 * Vs
+                        elif Bij > 1:
+                            Vs = 1 * Vs
+                        else:
+                            Vs = Vs
+                        rev_bolt_qty = float(math.ceil(tension_load / (Vs / 1000)))
+                        if bolt_qty >= rev_bolt_qty:
+                            bolt_arrange = True
+                            break
+                    else:
+                        break
+
+
+
+                    #
+                    # if bolt_arrange == True:
+                    #     break
+                    # else:
+                    #     logger.error(": Bolot Diameter is not sufficient")
+
+                elif no_of_bolts == no_of_bolts_sec:
+                    no_of_rows_bolt = no_of_bolts
+                    no_of_columns_bolt = 1
+                    bolt_qty = float(no_of_bolts)
+                    if no_of_rows_bolt == 1:
+                        row_pitch = 0
+                    else:
+                        row_pitch = round((int(((member_d - 2 * member_tf) - (edge_distance * 2)) / (no_of_rows_bolt - 1))), 2)
                     column_pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
                     edge_distance = float((((member_d - 2 * member_tf) - (row_pitch * (no_of_rows_bolt-1)))) / 2)
-                    kbChk1 = end_distance / float(3 * dia_hole)
-                    kbChk2 = pitch / float(3 * dia_hole) - 0.25
-                    kbChk3 = bolt_fu / float(member_fu)
-                    kbChk4 = 1
-                    kb = min(kbChk1, kbChk2, kbChk3, kbChk4)
-                    kb = round(kb, 3)
-                    Vs = bolt_capacity(member_fu, bolt_fu, bolt_type, bolt_hole_type, bolt_slip, member_tw, diameter,
-                                       end_distance, column_pitch, kb, A_nb, A_sb)
+                    # kbChk1 = end_distance / float(3 * dia_hole)
+                    # kbChk2 = pitch / float(3 * dia_hole) - 0.25
+                    # kbChk3 = bolt_fu / float(member_fu)
+                    # kbChk4 = 1
+                    # kb = min(kbChk1, kbChk2, kbChk3, kbChk4)
+                    # kb = round(kb, 3)
+                    # Vs = bolt_capacity(member_fu, bolt_fu, bolt_type, bolt_hole_type, bolt_slip,member_tw, diameter,
+                    #                    end_distance, column_pitch, kb, A_nb, A_sb)
+                    Bij = 1.075 - ((column_pitch * (no_of_columns_bolt - 1)) / (200 * diameter))
+                    if (column_pitch * (no_of_columns_bolt - 1)) == (15 * diameter):
+                        if 0.75 < Bij:
+                            Vs = 0.75 * Vs
+                        elif Bij > 1:
+                            Vs = 1 * Vs
+                        else:
+                            Vs = Vs
+                        rev_bolt_qty = float(math.ceil(tension_load / (Vs / 1000)))
+                        if bolt_qty >= rev_bolt_qty:
+                            bolt_arrange = True
+                            break
+                    else:
+                        break
 
+
+                    # if bolt_arrange == True:
+                    #     break
+                    # else:
+                    #     logger.error(": Bolot Diameter is not sufficient")
+
+                elif no_of_bolts > no_of_bolts_sec:
+                    ratio = round_up((no_of_bolts/no_of_bolts_sec))
+                    no_of_columns_bolt = ratio
+                    print(no_of_columns_bolt)
+                    # total_bolt_1 = no_of_bolts_sec * no_of_columns_bolt
+                    # total_bolt_2 = (no_of_bolts_sec-1) * no_of_columns_bolt
+                    # if total_bolt_1 > total_bolt_2 and total_bolt_2>=no_of_bolts:
+                    #     no_of_rows_bolt = no_of_bolts_sec-1
+                    # elif total_bolt_2 > total_bolt_1 and total_bolt_1 >= no_of_bolts:
+                    #     no_of_rows_bolt = no_of_bolts_sec
+                    # else:
+                    #     pass
+                    for i in range(int(no_of_bolts_sec+1)):
+                        if bolt_arrange == True:
+                            break
+                        else:
+                            pass
+                        no_of_columns_bolt = ratio
+                        for j in range(3):
+                            bolt_qty = (no_of_bolts_sec - i) * (no_of_columns_bolt+j)
+                            no_of_columns_bolt= no_of_columns_bolt+j
+                            if (bolt_qty - no_of_bolts) == 0:
+                                no_of_rows_bolt = float(math.ceil(bolt_qty/no_of_columns_bolt))
+                                bolt_arrange = True
+                                break
+                            elif bolt_qty > no_of_bolts and (bolt_qty - no_of_bolts) == 1:
+                                no_of_rows_bolt = float(math.ceil(bolt_qty/no_of_columns_bolt))
+                                bolt_arrange = True
+                                break
+                            elif bolt_qty > no_of_bolts and (bolt_qty - no_of_bolts) == 2:
+                                no_of_rows_bolt = float(math.ceil(bolt_qty/no_of_columns_bolt))
+                                bolt_arrange = True
+                                break
+                            else:
+                                pass
+                    if bolt_arrange == True:
+                        bolt_qty = float(no_of_columns_bolt * no_of_rows_bolt)
+                        if no_of_rows_bolt == 1:
+                            row_pitch = 0
+                        else:
+                            row_pitch = round((int(((member_d - 2 * member_tf) - (edge_distance * 2)) / (no_of_rows_bolt - 1))),2)
+                        column_pitch = IS800_2007.cl_10_2_2_min_spacing(diameter)
+                        edge_distance = float((((member_d - 2 * member_tf) - (row_pitch * (no_of_rows_bolt-1)))) / 2)
+                        # kbChk1 = end_distance / float(3 * dia_hole)
+                        # kbChk2 = pitch / float(3 * dia_hole) - 0.25
+                        # kbChk3 = bolt_fu / float(member_fu)
+                        # kbChk4 = 1
+                        # kb = min(kbChk1, kbChk2, kbChk3, kbChk4)
+                        # kb = round(kb, 3)
+                        # Vs = bolt_capacity(member_fu, bolt_fu, bolt_type, bolt_hole_type, bolt_slip, member_tw, diameter,
+                        #                    end_distance, column_pitch, kb, A_nb, A_sb)
+                        Bij = 1.075 - ((column_pitch * (no_of_columns_bolt - 1)) / (200 * diameter))
+                        if (column_pitch * (no_of_columns_bolt - 1)) == (15 * diameter):
+                            if Bij < 0.75:
+                                Vs = 0.75 * Vs
+                            elif Bij > 1:
+                                Vs = 1 * Vs
+                            else:
+                                Vs = Vs
+                            rev_bolt_qty = float(math.ceil(tension_load / (Vs / 1000)))
+                            if bolt_qty >= rev_bolt_qty:
+                                bolt_arrange = True
+                                break
+                            else:
+                                no_of_bolts = rev_bolt_qty
+                        else:
+                            break
+
+                    else:
+                        logger.error(": Bolt Diameter is not sufficient")
                 else:
-                    logger.error(": Bolt Diameter is not sufficient")
-
-
-
-            else:
-                bolt_arrange = False
+                    bolt_arrange = False
 
 
 
@@ -581,10 +628,11 @@ def tension_design(uiObj):
 
         f_weld = IS800_2007.cl_10_5_7_1_1_fillet_weld_design_stress(
             ultimate_stresses=[member_fu,weld_fu], fabrication=weld_fabrication)
-        min_weld_thickness = float (min(plate_thickness, member_tf,member_tw))
-        print(min_weld_thickness)
-        if weld_thickness >  min_weld_thickness:
-            logger.error(": Chosen Weld Size is higher than Member Thickness or Plate Thickness")
+        max_weld_thickness = float (min(plate_thickness, member_tf,member_tw))
+        print(max_weld_thickness)
+        weld_thickness = round_up((0.75 * max_weld_thickness),1,3)
+        # if weld_thickness >  max_weld_thickness:
+        #     logger.error(": Chosen Weld Size is higher than Member Thickness or Plate Thickness")
 
         throat = IS800_2007.cl_10_5_3_2_fillet_weld_effective_throat_thickness(weld_thickness, fusion_face_angle=90)
         L_eff = tension_load*1000/(throat * f_weld)
@@ -594,16 +642,26 @@ def tension_design(uiObj):
             f_weld = Btw * f_weld
         else:
             pass
+        if member_type == "Channels":
+            web_weld = member_d
+            L_eff = tension_load * 1000 / (throat * f_weld)
+            print(L_eff)
+            # diff = ((L_eff - member_d)/2)%10
+            # print(diff)
+            flange_weld = round_up(((L_eff - member_d)/2),10,50)
 
-        web_weld = member_d
-        L_eff = tension_load * 1000 / (throat * f_weld)
-        print(L_eff)
-        # diff = ((L_eff - member_d)/2)%10
-        # print(diff)
-        flange_weld = round_up(((L_eff - member_d)/2),10,50)
+        else:
+            web_weld = member_d
+            L_eff = tension_load * 1000 / (throat * f_weld)
+            print(L_eff)
+            # diff = ((L_eff - member_d)/2)%10
+            # print(diff)
+            flange_weld = round_up(((L_eff - 2*member_d) / 4), 10, 50)
 
         plate_length = flange_weld
+        total_plate_length = round_up((plate_length + member_d / 4), 5, 30)
         plate_width = member_d + 50
+
 
         plate_A_vg = plate_length * plate_thickness
         plate_A_vn = plate_A_vg
@@ -632,39 +690,13 @@ def tension_design(uiObj):
             tension_design = min(tension_rupture, tension_yielding)
         else:
             tension_design = min(tension_rupture, tension_yielding, tension_blockshear)
+
+        weld_arrange = True
     else:
         pass
 
-    if bolt_arrange == False:
-        outputobj = dict()
-        outputobj['Tension_Force'] = {}
-        outputobj['Plate'] = {}
-        outputobj['Bolt'] = {}
 
-        outputobj['Tension_Force']['Yielding'] = 0
-        outputobj['Tension_Force']['Rupture'] = 0
-        outputobj['Tension_Force']['Block_Shear'] = 0
-        outputobj['Tension_Force']['Efficiency'] =0
-        outputobj['Tension_Force']['Slenderness'] = 0
-        if conn_type == "Bolted" and conn == "Web":
-            outputobj['Tension_Force']['End_Distance'] =0
-            outputobj['Tension_Force']['Edge_Distance'] = 0
-            outputobj['Bolt']['No_of_Rows_Bolts'] = 0
-            outputobj['Bolt']['No_of_Columns_Bolts'] = 0
-            outputobj['Bolt']['Row_Pitch'] =0
-            outputobj['Bolt']['Column_Pitch'] = 0
-            outputobj['Bolt']['Bolt_Qty'] =0
-            outputobj['Bolt']['Req_Qty'] = 0
-        else:
-            pass
-        outputobj['Plate']['Length'] = 0
-        outputobj['Plate']['Total Length'] = 0
-        outputobj['Plate']['Width'] = 0
-        outputobj['Plate']['Thickness'] =0
-        outputobj['Tension_Force']['Design_Status'] = design_status
-        design_status = False
-        return outputobj
-    else:
+    if bolt_arrange == True or weld_arrange == True:
  # End of Calculation, SAMPLE Output dictionary
         outputobj = dict()
 
@@ -672,6 +704,7 @@ def tension_design(uiObj):
         outputobj['Tension_Force'] = {}
         outputobj['Plate'] = {}
         outputobj['Bolt'] = {}
+        outputobj['Weld'] = {}
 
         outputobj['Tension_Force']['Yielding'] = float(round(tension_yielding,3))
         outputobj['Tension_Force']['Rupture'] = float(round(tension_rupture,3))
@@ -687,12 +720,46 @@ def tension_design(uiObj):
             outputobj['Bolt']['Column_Pitch'] = float(round(column_pitch, 3))
             outputobj['Bolt']['Bolt_Qty'] = float(round(bolt_qty, 3))
             outputobj['Bolt']['Req_Qty'] = float(round(no_of_bolts, 3))
-        else:
-            pass
+        elif conn_type == "Welded" and conn == "Web":
+            outputobj['Weld']['Length1'] = float(round(flange_weld, 3))
+            outputobj['Weld']['Length2'] = float(round(web_weld, 3))
+            outputobj['Weld']['Size'] = float(round(weld_thickness, 3))
+
+
         outputobj['Plate']['Length'] = float(round(plate_length, 3))
         outputobj['Plate']['Total Length'] = float(round(total_plate_length,3))
         outputobj['Plate']['Width'] = float(round(plate_width, 3))
         outputobj['Plate']['Thickness'] = float(round(plate_thickness, 3))
+        outputobj['Tension_Force']['Design_Status'] = design_status
+
+    else:
+        outputobj = dict()
+        outputobj['Tension_Force'] = {}
+        outputobj['Plate'] = {}
+        outputobj['Bolt'] = {}
+
+        outputobj['Tension_Force']['Yielding'] = 0
+        outputobj['Tension_Force']['Rupture'] = 0
+        outputobj['Tension_Force']['Block_Shear'] = 0
+        outputobj['Tension_Force']['Efficiency'] = 0
+        outputobj['Tension_Force']['Slenderness'] = 0
+        if conn_type == "Bolted" and conn == "Web":
+            outputobj['Tension_Force']['End_Distance'] = 0
+            outputobj['Tension_Force']['Edge_Distance'] = 0
+            outputobj['Bolt']['No_of_Rows_Bolts'] = 0
+            outputobj['Bolt']['No_of_Columns_Bolts'] = 0
+            outputobj['Bolt']['Row_Pitch'] = 0
+            outputobj['Bolt']['Column_Pitch'] = 0
+            outputobj['Bolt']['Bolt_Qty'] = 0
+            outputobj['Bolt']['Req_Qty'] = 0
+        else:
+            pass
+        outputobj['Plate']['Length'] = 0
+        outputobj['Plate']['Total Length'] = 0
+        outputobj['Plate']['Width'] = 0
+        outputobj['Plate']['Thickness'] = 0
+        outputobj['Tension_Force']['Design_Status'] = design_status
+        design_status = False
 
 
 
@@ -706,30 +773,30 @@ def tension_design(uiObj):
         #     else:
         #         pass
 
-        if outputobj['Tension_Force']['Efficiency'] < 1 and outputobj['Tension_Force']['Slenderness'] < 400:
-            design_status = True
-        elif outputobj['Tension_Force']['Efficiency'] > 1 and outputobj['Tension_Force']['Slenderness'] < 400:
-            design_status = False
-            logger.error(": Chosen Member Section Size is not sufficient")
-            logger.info(": Increase the size of Member ")
-        elif outputobj['Tension_Force']['Efficiency'] < 1 and outputobj['Tension_Force']['Slenderness']> 400:
-            design_status = False
-            logger.error(": Chosen Member Section Size is not sufficient")
-            logger.warning(": Minimum Radius of Gyration of Member shall be {} mm ".format(radius_gyration_min))
-            logger.info(": Increase the size of Member ")
+    if outputobj['Tension_Force']['Efficiency'] < 1 and outputobj['Tension_Force']['Slenderness'] < 400:
+        design_status = True
+    elif outputobj['Tension_Force']['Efficiency'] > 1 and outputobj['Tension_Force']['Slenderness'] < 400:
+        design_status = False
+        logger.error(": Chosen Member Section Size is not sufficient")
+        logger.info(": Increase the size of Member ")
+    elif outputobj['Tension_Force']['Efficiency'] < 1 and outputobj['Tension_Force']['Slenderness']> 400:
+        design_status = False
+        logger.error(": Chosen Member Section Size is not sufficient")
+        logger.warning(": Minimum Radius of Gyration of Member shall be {} mm ".format(radius_gyration_min))
+        logger.info(": Increase the size of Member ")
 
-        if design_status is True:
-            logger.info(":Member is safe for the applied tension load \n")
-            logger.info(":In case of reversal load, Slenderness value shall be less than 180 \n")
-            logger.debug(" :=========End Of design===========")
-        else:
-            logger.error(":Member fails for the applied tension load \n ")
-            logger.info(": Increase the size of Member ")
-            logger.debug(" :=========End Of design===========")
+    if design_status is True:
+        logger.info(":Member is safe for the applied tension load \n")
+        logger.info(":In case of reversal load, Slenderness value shall be less than 180 \n")
+        logger.debug(" :=========End Of design===========")
+    else:
+        logger.error(":Member fails for the applied tension load \n ")
+        logger.info(": Increase the size of Member ")
+        logger.debug(" :=========End Of design===========")
 
-        outputobj['Tension_Force']['Design_Status'] = design_status
+    outputobj['Tension_Force']['Design_Status'] = design_status
 
-        return outputobj
+    return outputobj
     #
 # def tension_welded_design(uiObj):
 #     global logger
