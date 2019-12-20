@@ -27,17 +27,17 @@ def save_html(outObj, uiObj, dictcolumndata, dictbeamdata, filename, reportsumma
 
     myfile.write('table{width= 100%; border-collapse:collapse; border:1px solid black collapse}')
     myfile.write('th,td {padding:3px}')
-#     Provides light green background color(#D5DF93), font-weight bold, font-size 20 and font-family
+#   Provides light green background color(#D5DF93), font-weight bold, font-size 20 and font-family
     myfile.write('td.detail{background-color:#D5DF93; font-size:20; font-family:Helvetica, Arial, Sans Serif; font-weight:bold}')
-#     Provides font-weight bold, font-size 20 and font-family
+#   Provides font-weight bold, font-size 20 and font-family
     myfile.write('td.detail1{font-size:20; font-family:Helvetica, Arial, Sans Serif; font-weight:bold}')
-#     Provides font-size 20 and font-family
+#   Provides font-size 20 and font-family
     myfile.write('td.detail2{font-size:20; font-family:Helvetica, Arial, Sans Serif}')
-#     Provides dark green background color(#8FAC3A), font-weight bold, font-size 20 and font-family
+#   Provides dark green background color(#8FAC3A), font-weight bold, font-size 20 and font-family
     myfile.write('td.header0{background-color:#8fac3a; font-size:20; font-family:Helvetica, Arial, Sans Serif; font-weight:bold}')
-#     Provides grey background color(#E6E6E6), font-weight bold, font-size 20 and font-family
+#   Provides grey background color(#E6E6E6), font-weight bold, font-size 20 and font-family
     myfile.write('td.header1{background-color:#E6E6E6; font-size:20; font-family:Helvetica, Arial, Sans Serif; font-weight:bold}')
-#     Provides only font-size 20 and width of the images box
+#   Provides only font-size 20 and width of the images box
     myfile.write('td.header2{font-size:20; width:50%}')
     myfile.write(t('/style'))
 

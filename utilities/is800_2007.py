@@ -5,6 +5,7 @@ Started on 01 - Nov - 2018
 @author: ajmalbabums
 """
 import math
+from Connections.connection_calculations import ConnectionCalculations
 
 
 class IS800_2007(object):
@@ -227,12 +228,12 @@ class IS800_2007(object):
 
     # cl. 10.2.1 Clearances for Holes for Fasteners
     @staticmethod
-    def cl_10_2_1_bolt_hole_size(d, bolt_hole_type='standard'):
+    def cl_10_2_1_bolt_hole_size(d, bolt_hole_type='Standard'):
         """Calculate bolt hole diameter as per Table 19 of IS 800:2007
 
         Args:
              d - Nominal diameter of fastener in mm (float)
-             bolt_hole_type - Either 'standard' or 'over_size' or 'short_slot' or 'long_slot' (str)
+             bolt_hole_type - Either 'Standard' or "Over-sized" or 'short_slot' or 'long_slot' (str)
 
         Returns:
             bolt_hole_size -  Diameter of the bolt hole in mm (float)
@@ -243,10 +244,10 @@ class IS800_2007(object):
 
         """
         table_19 = {
-            "12-14": {'standard': 1.0, 'over_size': 3.0, 'short_slot': 4.0, 'long_slot': 2.5},
-            "16-22": {'standard': 2.0, 'over_size': 4.0, 'short_slot': 6.0, 'long_slot': 2.5},
-            "24"   : {'standard': 2.0, 'over_size': 6.0, 'short_slot': 8.0, 'long_slot': 2.5},
-            "24+"  : {'standard': 3.0, 'over_size': 8.0, 'short_slot': 10.0, 'long_slot': 2.5}
+            "12-14": {'Standard': 1.0, "Over-sized": 3.0, 'short_slot': 4.0, 'long_slot': 2.5},
+            "16-22": {'Standard': 2.0, "Over-sized": 4.0, 'short_slot': 6.0, 'long_slot': 2.5},
+            "24"   : {'Standard': 2.0, "Over-sized": 6.0, 'short_slot': 8.0, 'long_slot': 2.5},
+            "24+"  : {'Standard': 3.0, "Over-sized": 8.0, 'short_slot': 10.0, 'long_slot': 2.5}
         }
 
         if d < 12:
@@ -331,7 +332,7 @@ class IS800_2007(object):
 
     # cl. 10.2.4.2  Minimum Edge and End Distances
     @staticmethod
-    def cl_10_2_4_2_min_edge_end_dist(d, bolt_hole_type='standard', edge_type='hand_flame_cut'):
+    def cl_10_2_4_2_min_edge_end_dist(d, bolt_hole_type='Standard', edge_type='hand_flame_cut'):
         """Calculate minimum end and edge distance
 
         Args:
@@ -483,7 +484,7 @@ class IS800_2007(object):
 
     # cl. 10.3.4 Bearing Capacity of the Bolt
     @staticmethod
-    def cl_10_3_4_bolt_bearing_capacity(f_u, f_ub, t, d, e, p, bolt_hole_type='standard', safety_factor_parameter='field'):
+    def cl_10_3_4_bolt_bearing_capacity(f_u, f_ub, t, d, e, p, bolt_hole_type='Standard', safety_factor_parameter='field'):
 
         """Calculate design bearing strength of a bolt on any plate.
 
@@ -494,7 +495,7 @@ class IS800_2007(object):
             d       - Diameter of the bolt in mm (float)
             e       - End distance of the fastener along bearing direction in mm (float)
             p       - Pitch distance of the fastener along bearing direction in mm (float)
-            bolt_hole_type - Either 'standard' or 'over_size' or 'short_slot' or 'long_slot' (str)
+            bolt_hole_type - Either 'Standard' or "Over-sized" or 'short_slot' or 'long_slot' (str)
             safety_factor_parameter - Either 'field' or 'shop' (str)
 
         return:
@@ -510,11 +511,49 @@ class IS800_2007(object):
         V_npb = 2.5 * k_b * d * t * f_u
         gamma_mb = IS800_2007.cl_5_4_1_Table_5['gamma_mb'][safety_factor_parameter]
         V_dpb = V_npb/gamma_mb
-        if bolt_hole_type == 'over_size' or 'short_slot':
+        if bolt_hole_type == "Over-sized" or 'short_slot':
             V_dpb *= 0.7
         elif bolt_hole_type == 'long_slot':
             V_dpb *= 0.5
         return V_dpb
+
+    @staticmethod
+    def bolt_shear_friction_grip_bolt(bolt_diameter, bolt_fu, mu_f, n_e, bolt_hole_type):
+        """ Calculate design shear capacity of a single Friction Grip Bolt bolt(s) based on Cl 10.4.3
+        Args:
+             bolt_diameter (int)
+             bolt_fu (int) - ultimate stress of bolt Fu
+             mu_f(float) - coefficient of friction/ slip factor
+             n_e (int) - number of effective interfaces offering resistance to slip
+             bolt_hole_type (string) - "Standard" or "Over-sized"
+
+        Returns:
+
+            v_db - Factored shear capacity of Friction Grip Bolt bolt as float
+
+        Note:
+            Assumptions:
+            1) slip is not allowed at ultimate load
+            2) there is no tension acting on bolt
+            3) area of bolt at threaded portion (mm^2) is taken from DSS- N. Subramanian table 5.9 (pg 348)
+            4) the provision of long joints is applicable - Cl 10.4.3.1 and is calculated according to Cl 10.3.3.1
+            5) Minimum bolt tension (proof load) at installation assumed as bolt_area_threads*proof_stress
+            6) Reduction factor for long joints not calculated in this function
+
+        """
+        gamma_mf = 1.25  # factor of safety at ultimate load
+        # F_0 - minimum bolt tension (proof load) at bolt installation
+        # proof load (Kn)(minimum bolt tension)
+        # F_0 = bolt_area_threads * proof_stress / 1000  # (Kn)
+        # k_h = {
+        #     "Standard": 1.0,
+        #     "Over-sized": 0.85
+        # }[bolt_hole_type]
+        F_0 = ConnectionCalculations.proof_load_F_0(int(bolt_diameter), bolt_fu)
+        k_h = ConnectionCalculations.calculate_k_h(bolt_hole_type)
+        v_nsf = mu_f * n_e * k_h * F_0  # nominal shear capacity of bolt
+        v_dsf = v_nsf / gamma_mf
+        return v_dsf
 
     # cl. 10.3.5 Tension Capacity
     @staticmethod
@@ -565,7 +604,7 @@ class IS800_2007(object):
 
     # cl. 10.4.3 Slip Resistance
     @staticmethod
-    def cl_10_4_3_bolt_slip_resistance(f_ub, A_nb, n_e, mu_f, bolt_hole_type='standard', slip_resistance='service_load'):
+    def cl_10_4_3_bolt_slip_resistance(f_ub, A_nb, n_e, mu_f, bolt_hole_type='Standard', slip_resistance='service_load'):
         # TODO : Ensure default slip_resistance = 'service_load' or ultimate_load'
         """Calculate design shear strength of friction grip bolt as governed by slip
 
@@ -574,7 +613,7 @@ class IS800_2007(object):
             A_nb - Net area of the bolt at threads in sq. mm  (float)
             n_e - Number of  effective interfaces offering  frictional resistance to slip (int)
             mu_f - coefficient of friction (slip factor) as specified in Table 20
-            bolt_hole_type - Either 'standard' or 'over_size' or 'short_slot' or 'long_slot' (str)
+            bolt_hole_type - Either 'Standard' or "Over-sized" or 'short_slot' or 'long_slot' (str)
             slip_resistance - whether slip resistance is required at service load or ultimate load
                               Either 'service_load' or 'ultimate_load' (str)
 
@@ -594,9 +633,9 @@ class IS800_2007(object):
         else:
             # TODO : slip _resistance for 'ultimate_load' is given in else
             gamma_mf = 1.25
-        if bolt_hole_type == 'standard':
+        if bolt_hole_type == 'Standard':
             K_h = 1.0
-        elif bolt_hole_type == 'over_size' or 'short_slot' or 'long_slot':
+        elif bolt_hole_type == "Over-sized" or 'short_slot' or 'long_slot':
             K_h = 0.85
         else:
             # TODO : long_slot bolt loaded parallel to slot is given in else
