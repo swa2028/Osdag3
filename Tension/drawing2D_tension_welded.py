@@ -1192,15 +1192,15 @@ class Front_View(object):
 			dwg.add(dwg.line(self.A14, self.A16).stroke('blue', width=2.5, linecap='square'))
 			dwg.add(dwg.line(self.A15, self.A16).stroke('blue', width=2.5, linecap='square'))
 			dwg.add(dwg.line(self.A13, self.A15).stroke('blue', width=2.5, linecap='square'))
-			# pattern = dwg.defs.add(dwg.pattern(id="diagonalHatch", size=(12, 12), patternUnits="userSpaceOnUse",
-			# 								   patternTransform="rotate(45 2 2)"))
-			# pattern.add(dwg.path(d="M 0,1 l 8,0", stroke='#000000', stroke_width=2.5))
-			# dwg.add(dwg.rect(insert=(self.A1 - self.data_object.weld_size * np.array([0, 1])), size=(self.data_object.weld_length1, self.data_object.weld_size),
-			# 				 fill="url(#diagonalHatch)", stroke='red', stroke_width=1.0))
-			# dwg.add(dwg.rect(insert=(self.A1 - self.data_object.weld_size * np.array([1, 0])), size=(self.data_object.weld_size, self.data_object.weld_length2), fill="url(#diagonalHatch)",
-			# 			 stroke='red', stroke_width=1.0))
-			# dwg.add(dwg.rect(insert=(self.A4 + self.data_object.weld_size * np.array([0, 1])),size=(self.data_object.weld_length1, self.data_object.weld_size),
-			# 			 fill="url(#diagonalHatch)", stroke='red', stroke_width=1.0))
+			pattern = dwg.defs.add(dwg.pattern(id="diagonalHatch", size=(12, 12), patternUnits="userSpaceOnUse",
+											   patternTransform="rotate(45 2 2)"))
+			pattern.add(dwg.path(d="M 0,1 l 8,0", stroke='#000000', stroke_width=2.5))
+			dwg.add(dwg.rect(insert=(self.A1 - self.data_object.weld_size * np.array([0, 1])), size=(self.data_object.weld_length1, self.data_object.weld_size),
+							 fill="url(#diagonalHatch)", stroke='red', stroke_width=1.0))
+			dwg.add(dwg.rect(insert=(self.A1 - self.data_object.weld_size * np.array([1, 0])), size=(self.data_object.weld_size, self.data_object.weld_length2), fill="url(#diagonalHatch)",
+						 stroke='red', stroke_width=1.0))
+			dwg.add(dwg.rect(insert=(self.A4 + self.data_object.weld_size * np.array([0, 1])),size=(self.data_object.weld_length1, self.data_object.weld_size),
+						 fill="url(#diagonalHatch)", stroke='red', stroke_width=1.0))
 				# if self.data_object.conn_loc == "Back to Back Web":
 				# 	dwg.add(dwg.rect(insert=(self.A1 - self.data_object.plate_thickness * np.array([1, 0])), size=(self.data_object.plate_thickness , self.data_object.weld_oppline/2),
 				# 					 fill="url(#diagonalHatch)", stroke='white', stroke_width=1.0))

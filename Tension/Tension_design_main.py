@@ -59,7 +59,8 @@ import subprocess
 
 from Connections.Component.quarterCone import QuarterCone
 from OCC.Core.Quantity import Quantity_NOC_SADDLEBROWN
-from OCC.Core import IGESControl, BRepTools
+import OCC.Core.IGESControl
+import OCC.Core.BRepTools
 from OCC.Core.BRepAlgoAPI import BRepAlgoAPI_Fuse
 from OCC.Core.Interface import Interface_Static_SetCVal
 from OCC.Core.IFSelect import IFSelect_RetDone
