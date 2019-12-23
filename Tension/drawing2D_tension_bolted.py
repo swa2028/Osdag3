@@ -53,7 +53,7 @@ class Tension_bolted_drawing(object):
 		self.plate_width = float(output_dict['Plate']['Width'])
 		self.plate_thickness = float(output_dict['Plate']['Thickness'])
 		self.beam_designation = memb_data['Designation']
-		self.member_length = 5 *float(output_dict['Plate']['Length'])
+		self.member_length = 10 *float(output_dict['Plate']['Length'])
 
 		if input_dict["Member"]["SectionType"] == "Angles":
 			self.member_leg = memb_data["AXB"]
@@ -617,7 +617,7 @@ class Tension_bolted_drawing(object):
 			cairosvg.svg2png(file_obj=open(filename,'rb'), write_to=os.path.join(str(self.folder), "images_html", "Top.png"))
 		elif view == "Side":
 			side_2d.call_Side_View(filename)
-			filename = os.path.join(str(self.folder), 'images_html', 'Top.svg')
+			filename = os.path.join(str(self.folder), 'images_html', 'Side.svg')
 			side_2d.call_Side_View(filename)
 			cairosvg.svg2png(file_obj=open(filename,'rb'), write_to=os.path.join(str(self.folder), "images_html", "Side.png"))
 		else:
@@ -1180,10 +1180,10 @@ class Front_View(object):
 
 		# ======================================= Channels =======================================
 		if self.data_object.section_type == "Back to Back Channels" or self.data_object.section_type == "Channels":
-			wd = int((self.data_object.member_length) + 1000)
-			ht = int(self.data_object.member_d + 800)
+			wd = int((self.data_object.member_length) + 800)
+			ht = int((self.data_object.member_d + (2 * self.data_object.total_plate_length * 0.58)) + 1000)
 			dwg = svgwrite.Drawing(filename, size=('100%', '100%'), viewBox=(
-				'-600 -400 {} {}').format(wd, ht))
+				'-400 -500 {} {}').format(wd, ht))
 			dwg.add(dwg.polyline(points=[self.A1, self.A2, self.A3, self.A4, self.A1], stroke='blue', fill='none',
 								 stroke_width=2.5))
 			dwg.add(dwg.line(self.A5, self.A6).stroke('blue', width=2.5, linecap='square'))
@@ -1415,12 +1415,15 @@ class Front_View(object):
 		# 											params)
 
 		# ------------------------------------------  View details-------------------------------------------
-		ptx = self.A4 + ((self.data_object.member_length/2)-300)* np.array([1, 0]) + 250 * np.array([0, 1])
+		ptx = self.A4 + (self.data_object.member_length / 2 - (len('Front view (Sec C-C)') * 10)) * np.array(
+			[1, 0]) + 250 * np.array([0, 1])
 		dwg.add(dwg.text('Front view (Sec C-C) ', insert=ptx, fill='black', font_family="sans-serif", font_size=35))
 		ptx1 = ptx + 40 * np.array([0, 1])
 
-		dwg.add(dwg.text('(All dimensions are in "mm")', insert=ptx1, fill='black', font_family="sans-serif", font_size=35))
+		dwg.add(
+			dwg.text('(All dimensions are in "mm")', insert=ptx1, fill='black', font_family="sans-serif", font_size=35))
 
+		dwg.save()
 		# filename = 'Front.svg'
 		#
 		# myfile = open(filename, "w")
@@ -1466,20 +1469,7 @@ class Front_View(object):
 		# dwg.append("th")
 		# dwg.html
 
-		dwg.save()
-
-def space(n):
-	rstr = "&nbsp;" * 4 * n
-	return rstr
-
-def t(n):
-	return '<' + n + '/>'
-
-def w(n):
-	return '{' + n + '}'
-
-def quote(m):
-	return '"' + m + '"'
+		# dwg.save()
 
 class Side_View (object):
 	"""
@@ -2308,13 +2298,18 @@ class Side_View (object):
 		# 	dwg.add(dwg.polyline(points=[self.B14, self.B15, self.B16, self.B14], stroke='black', fill='red',
 		# 						 stroke_width=1))
 
+
 		if self.data_object.section_type == "Channels" or self.data_object.section_type == "Back to Back Channels":
 			# wd = int((self.data_object.member_length) + 1000)
 
-			ht = int(self.data_object.member_d + 1000)
-			wd = int(self.data_object.member_B + 1000)
+			ht = int(self.data_object.member_d + 750)
+			# if self.data_object.section_type == "Back to Back Channels":
+			# 	wd = int(2*self.data_object.member_B + 750)
+			# else:
+			wd = int(self.data_object.member_B + 750)
+
 			dwg = svgwrite.Drawing(filename, size=('100%', '100%'), viewBox=(
-				'-500 -500 {} {}').format(wd, ht))
+				'-375 -375 {} {}').format(wd, ht))
 			dwg.add(dwg.polyline(points=[self.A1, self.A2, self.A3, self.A4, self.A5, self.A6,self.A7,self.A8,self.A1],
 				stroke='blue', fill="none", stroke_width=1))
 			# if self.data_object.conn_loc == "Back to Back Web" or self.data_object.conn_loc == "Web":
@@ -3144,50 +3139,49 @@ class Top_View(object):
 		# 					 size=(self.data_object.weld_inline / 4, self.data_object.t),
 		# 					 fill="url(#diagonalHatch)", stroke='white', stroke_width=1.0))
 
-		if self.data_object.section_type == "Channels" or self.data_object.section_type == "Back to Back Channels":
-			if self.data_object.conn_loc == "Back to Back Channels":
-				wd = int((self.data_object.member_length) + 750)
-				ht = int(self.data_object.member_d + 500)
-				dwg = svgwrite.Drawing(filename, size=('100%', '100%'), viewBox=(
-					'-375 -300 {} {}').format(wd, ht))
-			else:
-				wd = int((self.data_object.member_length) + 1000)
-				ht = int(self.data_object.member_d + 800)
-				dwg = svgwrite.Drawing(filename, size=('100%', '100%'), viewBox=(
-					'-600 -400 {} {}').format(wd, ht))
+		if self.data_object.conn_loc == "Back to Back Channels":
+			wd = int((self.data_object.member_length + (self.data_object.total_plate_length * 0.58)) + 750)
+			ht = int((2 * self.data_object.member_B) + 750)
+			dwg = svgwrite.Drawing(filename, size=('100%', '100%'), viewBox=(
+				'-375 -375 {} {}').format(wd, ht))
+		else:
+			wd = int((self.data_object.member_length + (self.data_object.total_plate_length * 0.58)) + 750)
+			ht = int((2 * self.data_object.member_B) + 750)
+			dwg = svgwrite.Drawing(filename, size=('100%', '100%'), viewBox=(
+				'-375 -375 {} {}').format(wd, ht))
 
-			dwg.add(dwg.polyline(points=[self.A1, self.A2, self.A3, self.A4, self.A1], stroke='blue', fill='none',
-								 stroke_width=2.5))
+		dwg.add(dwg.polyline(points=[self.A1, self.A2, self.A3, self.A4, self.A1], stroke='blue', fill='none',
+							 stroke_width=2.5))
 
-			dwg.add(dwg.line(self.A5, self.A6).stroke('blue', width=2.5, linecap='square').dasharray(dasharray=[5, 5]))
-			# if self.data_object.section_type == "Columns" or self.data_object.section_type == "Beams":
-			# 	dwg.add(dwg.line(self.A7, self.A8).stroke('blue', width=2.5, linecap='square').dasharray(dasharray=[5, 5]))
-			# 	dwg.add(dwg.line(self.A13, self.A8).stroke('blue', width=2.5, linecap='square'))
-			# 	dwg.add(dwg.line(self.A9, self.A10).stroke('blue', width=2.5, linecap='square').dasharray(dasharray=[5, 5]))
-			# 	dwg.add(dwg.line(self.A10, self.A11).stroke('blue', width=2.5, linecap='square').dasharray(dasharray=[5, 5]))
-			# 	dwg.add(dwg.line(self.A12, self.A13).stroke('blue', width=2.5, linecap='square'))
-			# 	dwg.add(dwg.line(self.A11, self.A12).stroke('blue', width=2.5, linecap='square'))
-			# else:
-				# dwg.add(dwg.line(self.A13, self.A5).stroke('blue', width=2.5, linecap='square'))
-			dwg.add(dwg.line(self.A9, self.A10).stroke('blue', width=2.5, linecap='square'))
-			dwg.add(dwg.line(self.A10, self.A11).stroke('blue', width=2.5, linecap='square'))
-			dwg.add(dwg.line(self.A11, self.A12).stroke('blue', width=2.5, linecap='square'))
-			dwg.add(dwg.line(self.A1, self.A12).stroke('blue', width=2.5, linecap='square'))
-			dwg.add(dwg.line(self.A20, self.A21).stroke('blue', width=2.5, linecap='square'))
-			dwg.add(dwg.line(self.A21, self.A22).stroke('blue', width=2.5, linecap='square'))
-			dwg.add(dwg.line(self.A22, self.A23).stroke('blue', width=2.5, linecap='square'))
-			dwg.add(dwg.line(self.A23, self.A24).stroke('blue', width=2.5, linecap='square'))
-			if self.data_object.section_type == "Back to Back Channels":
-				dwg.add(dwg.line(self.A14, self.A15).stroke('blue', width=2.5, linecap='square'))
-				dwg.add(dwg.line(self.A15, self.A16).stroke('blue', width=2.5, linecap='square'))
-				dwg.add(dwg.line(self.A16, self.A17).stroke('blue', width=2.5, linecap='square'))
-				dwg.add(dwg.line(self.A17, self.A14).stroke('blue', width=2.5, linecap='square'))
-				dwg.add(dwg.line(self.A18, self.A19).stroke('blue', width=2.5, linecap='square').dasharray(
-					dasharray=[5, 5]))
+		dwg.add(dwg.line(self.A5, self.A6).stroke('blue', width=2.5, linecap='square').dasharray(dasharray=[5, 5]))
+		# if self.data_object.section_type == "Columns" or self.data_object.section_type == "Beams":
+		# 	dwg.add(dwg.line(self.A7, self.A8).stroke('blue', width=2.5, linecap='square').dasharray(dasharray=[5, 5]))
+		# 	dwg.add(dwg.line(self.A13, self.A8).stroke('blue', width=2.5, linecap='square'))
+		# 	dwg.add(dwg.line(self.A9, self.A10).stroke('blue', width=2.5, linecap='square').dasharray(dasharray=[5, 5]))
+		# 	dwg.add(dwg.line(self.A10, self.A11).stroke('blue', width=2.5, linecap='square').dasharray(dasharray=[5, 5]))
+		# 	dwg.add(dwg.line(self.A12, self.A13).stroke('blue', width=2.5, linecap='square'))
+		# 	dwg.add(dwg.line(self.A11, self.A12).stroke('blue', width=2.5, linecap='square'))
+		# else:
+			# dwg.add(dwg.line(self.A13, self.A5).stroke('blue', width=2.5, linecap='square'))
+		dwg.add(dwg.line(self.A9, self.A10).stroke('blue', width=2.5, linecap='square'))
+		dwg.add(dwg.line(self.A10, self.A11).stroke('blue', width=2.5, linecap='square'))
+		dwg.add(dwg.line(self.A11, self.A12).stroke('blue', width=2.5, linecap='square'))
+		dwg.add(dwg.line(self.A1, self.A12).stroke('blue', width=2.5, linecap='square'))
+		dwg.add(dwg.line(self.A20, self.A21).stroke('blue', width=2.5, linecap='square'))
+		dwg.add(dwg.line(self.A21, self.A22).stroke('blue', width=2.5, linecap='square'))
+		dwg.add(dwg.line(self.A22, self.A23).stroke('blue', width=2.5, linecap='square'))
+		dwg.add(dwg.line(self.A23, self.A24).stroke('blue', width=2.5, linecap='square'))
+		if self.data_object.section_type == "Back to Back Channels":
+			dwg.add(dwg.line(self.A14, self.A15).stroke('blue', width=2.5, linecap='square'))
+			dwg.add(dwg.line(self.A15, self.A16).stroke('blue', width=2.5, linecap='square'))
+			dwg.add(dwg.line(self.A16, self.A17).stroke('blue', width=2.5, linecap='square'))
+			dwg.add(dwg.line(self.A17, self.A14).stroke('blue', width=2.5, linecap='square'))
+			dwg.add(dwg.line(self.A18, self.A19).stroke('blue', width=2.5, linecap='square').dasharray(
+				dasharray=[5, 5]))
 
 
-			else:
-				pass
+		else:
+			pass
 
 		nc = int(self.data_object.no_of_columns_bolts)
 		bolt_r = self.data_object.hole_dia/2
