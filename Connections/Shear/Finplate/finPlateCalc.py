@@ -232,6 +232,7 @@ def finConn(uiObj):
     global logger
     global design_status
     design_status = True
+    print(uiObj)
     beam_sec = uiObj['Member']['BeamSection']
     column_sec = uiObj['Member']['ColumSection']
     connectivity = uiObj['Member']['Connectivity']
@@ -1196,6 +1197,7 @@ def finConn(uiObj):
     else:
         logger.error(": Design is not safe \n ")
         logger.debug(" :=========End Of design===========")
-    
+
+    print (outputObj)
     return outputObj
 
