@@ -74,6 +74,7 @@ a4  X                   XXXXXXXXXXXXXXXXX  a1
         self.a5 = self.getPoint(240)
         self.a6 = self.getPoint(300)
         self.points = [self.a1, self.a2, self.a3, self.a4, self.a5, self.a6]
+        print (self.points)
 
     def create_model(self):
 

@@ -27,6 +27,8 @@ from cad.BBCad.nutBoltPlacement_AF import NutBoltArray_AF
 from cad.BBCad.nutBoltPlacement_BF import NutBoltArray_BF
 from cad.BBCad.nutBoltPlacement_Web import NutBoltArray_Web
 from  cad.BBCad.BBCoverPlateBoltedCAD import BBCoverPlateBoltedCAD
+from utils.common.common_calculation import round_up
+from utils.common.common_calculation import round_down
 
 from cad.nutBoltPlacement import NutBoltArray
 from design_type.connection import cleat_angle_connection
@@ -284,8 +286,10 @@ class CommonDesignLogic(object):
         nut_T = self.nutThick_Calculation(bolt_dia)  # bolt_dia = nut_dia
         nut_Ht = bolt_dia
         gap = A.plate.gap
+
         # notch_height = self.get_notch_ht(A.supporting_section.flange_width, A.supporting_section.flange_thickness, A.supported_section.flange_thickness, A.supported_section.root_radius)
-        notch_height = 2 * A.supporting_section.flange_thickness
+
+        notch_height = round_up((2 * A.supporting_section.flange_thickness),5,25)
         notch_R1 = max([A.supporting_section.root_radius, A.supported_section.root_radius, 10])
 
         if self.connection == "cleatAngle":
@@ -410,6 +414,7 @@ class CommonDesignLogic(object):
         nut_T = self.nutThick_Calculation(bolt_dia)  # bolt_dia = nut_dia
         nut_Ht = bolt_dia
         gap = A.plate.gap
+
 
         if self.connection == "cleatAngle":
             pass
