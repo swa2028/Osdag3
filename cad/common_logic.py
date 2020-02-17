@@ -726,7 +726,7 @@ class CommonDesignLogic(object):
         else:
             self.display.set_bg_gradient_color([255, 255, 255], [255, 255, 255])
 
-        if self.mainmodule  == "Shear Connection":
+        if self.mainmodule == "Shear Connection":
 
             if self.connection == "Fin Plate":
                 A = FinPlateConnection()
@@ -805,6 +805,7 @@ class CommonDesignLogic(object):
             #     pass
             #
             # self.loc = A.connectivity
+            B = BeamCoverPlate()
             self.CPBoltedObj = self.createBBCoverPlateBoltedCAD()  # CPBoltedObj is an object which gets all the calculated values of CAD models
 
             if component == "Beam":
@@ -817,7 +818,7 @@ class CommonDesignLogic(object):
                 osdag_display_shape(self.display, self.CPBoltedObj.get_plateAbvFlangeModel(), update=True, color='Blue')
                 osdag_display_shape(self.display, self.CPBoltedObj.get_plateBelwFlangeModel(), update=True,
                                     color='Blue')
-                if self.ui.combo_flange_preference.currentText() != 'Outside':
+                if B.preference != 'Outside':
                     osdag_display_shape(self.display, self.CPBoltedObj.get_innerplateAbvFlangeFront(), update=True,
                                         color='Blue')
                     osdag_display_shape(self.display, self.CPBoltedObj.get_innerplateAbvFlangeBack(), update=True,
@@ -828,8 +829,8 @@ class CommonDesignLogic(object):
                                         color='Blue')
 
                 # Displays the Web Plates
-                osdag_display_shape(self.display, self.CPBoltedObj.get_WebPlateLeftModel(), update=True, color='Blue')
-                osdag_display_shape(self.display, self.CPBoltedObj.get_WebPlateRightModel(), update=True, color='Blue')
+                # osdag_display_shape(self.display, self.CPBoltedObj.get_WebPlateLeftModel(), update=True, color='Blue')
+                # osdag_display_shape(self.display, self.CPBoltedObj.get_WebPlateRightModel(), update=True, color='Blue')
 
                 # Displays the bolts which are above the Flange Plate, debugging will give more clarity
                 nutboltlistAF = self.CPBoltedObj.nut_bolt_array_AF.get_modelsAF()
@@ -856,7 +857,7 @@ class CommonDesignLogic(object):
                 osdag_display_shape(self.display, self.CPBoltedObj.get_plateAbvFlangeModel(), update=True, color='Blue')
                 osdag_display_shape(self.display, self.CPBoltedObj.get_plateBelwFlangeModel(), update=True,
                                     color='Blue')
-                if self.ui.combo_flange_preference.currentText() != 'Outside':
+                if B.preference != 'Outside':
                     osdag_display_shape(self.display, self.CPBoltedObj.get_innerplateAbvFlangeFront(), update=True,
                                         color='Blue')
                     osdag_display_shape(self.display, self.CPBoltedObj.get_innerplateAbvFlangeBack(), update=True,
@@ -867,8 +868,8 @@ class CommonDesignLogic(object):
                                         color='Blue')
 
                 # Displays the Web Plates
-                osdag_display_shape(self.display, self.CPBoltedObj.get_WebPlateLeftModel(), update=True, color='Blue')
-                osdag_display_shape(self.display, self.CPBoltedObj.get_WebPlateRightModel(), update=True, color='Blue')
+                # osdag_display_shape(self.display, self.CPBoltedObj.get_WebPlateLeftModel(), update=True, color='Blue')
+                # osdag_display_shape(self.display, self.CPBoltedObj.get_WebPlateRightModel(), update=True, color='Blue')
 
                 # Displays the bolts which are above the Flange Plate, debugging will give more clarity
                 nutboltlistAF = self.CPBoltedObj.nut_bolt_array_AF.get_modelsAF()

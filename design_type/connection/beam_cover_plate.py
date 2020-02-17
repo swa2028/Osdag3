@@ -270,11 +270,11 @@ class BeamCoverPlate(MomentConnection):
         out_list.append(t4)
 
         t5 = (KEY_WEB_PLATE_HEIGHT, KEY_DISP_WEB_PLATE_HEIGHT, TYPE_TEXTBOX,
-              self.web_plate.height if flag else '' )
+              (self.web_plate.height ) if flag else '' )
         out_list.append(t5)
 
         t6 = (KEY_WEB_PLATE_LENGTH, KEY_DISP_WEB_PLATE_LENGTH, TYPE_TEXTBOX,
-              self.web_plate.length if flag else '')
+              (self.web_plate.length) if flag else '')
         out_list.append(t6)
 
         t7 = (KEY_WEBPLATE_THICKNESS, KEY_DISP_WEBPLATE_THICKNESS, TYPE_TEXTBOX,
@@ -291,12 +291,12 @@ class BeamCoverPlate(MomentConnection):
         out_list.append(t17)
 
         t18 = (KEY_FLANGE_PLATE_HEIGHT, KEY_DISP_FLANGE_PLATE_HEIGHT, TYPE_TEXTBOX,
-               self.flange_plate.height if flag else '')
+               (self.flange_plate.height) if flag else '')
         out_list.append(t18)
 
         t19 = (
             KEY_FLANGE_PLATE_LENGTH, KEY_DISP_FLANGE_PLATE_LENGTH, TYPE_TEXTBOX,
-            self.flange_plate.length if flag else '')
+            (self.flange_plate.length) if flag else '')
         out_list.append(t19)
 
         t20 = (KEY_FLANGEPLATE_THICKNESS, KEY_DISP_FLANGESPLATE_THICKNESS, TYPE_TEXTBOX,
@@ -1150,12 +1150,20 @@ class BeamCoverPlate(MomentConnection):
         else:
             pass
         # print(600, design_status)
-
+        # self.flange_plate.height = self.flange_plate.height * 2
+        # self.web_plate.height = self.web_plate.height * 2
+        self.flange_plate.bolts_required =self.flange_plate.bolts_required *2
+        self.web_plate.bolts_required = self.web_plate.bolts_required * 2
+        self.flange_plate.length =  self.flange_plate.length *2
+        print(self.flange_plate.length)
+        self.web_plate.length = self.web_plate.length * 2
+        self.web_plate.bolt_line =self.web_plate.bolt_line *2
+        self.flange_plate.bolt_line = self.flange_plate.bolt_line * 2
         print(self.section)
         print(self.load)
-        # print(self.flange_bolt)
-        # print(self.flange_plate)
-        # print(self.web_bolt)
+        print(self.flange_bolt)
+        print(self.flange_plate)
+        print(self.web_bolt)
         print(self.web_plate)
         print(self.web_plate.thickness_provided)
         print(self.flange_plate.thickness_provided)

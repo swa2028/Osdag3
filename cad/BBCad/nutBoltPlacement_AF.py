@@ -78,7 +78,7 @@ class NutBoltArray_AF():
         self.pitch_AF = outputobj.flange_plate.pitch_provided
         self.gauge_AF = outputobj.flange_plate.gauge_provided   # Revised gauge distance
         self.row_AF = outputobj.flange_plate.bolts_one_line
-        self.col_AF = outputobj.flange_plate.bolt_line
+        self.col_AF = outputobj.flange_plate.bolt_line *2
         self.gap = 5
 
     def calculatePositions_AF(self):
@@ -101,6 +101,7 @@ class NutBoltArray_AF():
                     pos_AF = pos_AF + rw_AF * self.pitch_AF * self.pitchDirAF
                     pos_AF = pos_AF + cl_AF * self.gauge_AF * self.gaugeDirAF
                     self.positions_AF.append(pos_AF)
+        # print(self.positions_AF, "sfs")
 
     def placeAF(self, originAF, gaugeDirAF, pitchDirAF, boltDirAF, plateAbvFlangeL):
         self.originAF = originAF
@@ -110,8 +111,10 @@ class NutBoltArray_AF():
         self.plateAbvFlangeL = plateAbvFlangeL
 
         self.calculatePositions_AF()
-
+        print(self.positions_AF, "sfs")
         for index, pos in enumerate(self.positions_AF):
+            print(index,"index")
+            print(pos, "pos")
             self.bolts_AF[index].place(pos, gaugeDirAF, boltDirAF)
             self.nuts_AF[index].place((pos + self.nutSpaceF * boltDirAF), gaugeDirAF, boltDirAF)
 
