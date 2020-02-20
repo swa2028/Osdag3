@@ -1557,7 +1557,7 @@ class Ui_ModuleWindow(QMainWindow):
             #     self.commLogicObj = cadconnection.commonfile(cadconnection, main.mainmodule, self.display, self.folder,
             #                                                  main.module)
             # if status is True and main.module=='Beam Coverplate Connection':
-            if status is True and main.module == 'Fin Plate':
+            if status is True and (main.module == KEY_DISP_FINPLATE or main.module == KEY_DISP_BEAMCOVERPLATE) :
 
                 self.commLogicObj = CommonDesignLogic(self.display, self.folder, main.module, main.mainmodule)
                 status = main.design_status
