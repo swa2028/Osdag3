@@ -1176,8 +1176,8 @@ class Ui_ModuleWindow(QMainWindow):
         from OCC.Display.qtDisplay import qtViewer3d
         self.modelTab = qtViewer3d(self)
 
-        print(main.module,"uu")
-        self.setWindowTitle(("Osdag {}").format(main.module(main)))
+
+        self.setWindowTitle(("Osdag {}").format(main.module_name(main)))
 
 
         # self.setWindowTitle("Osdag Fin Plate")
