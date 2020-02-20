@@ -14,8 +14,11 @@ class Bolt(Material):
         super(Bolt, self).__init__(material_grade)
         if grade is not None:
             self.bolt_grade = list(np.float_(grade))
+            self.bolt_grade.sort(key=float)
         if diameter is not None:
             self.bolt_diameter = list(np.float_(diameter))
+            self.bolt_diameter.sort(key=float)
+
         self.bolt_type = bolt_type
         self.bolt_hole_type = bolt_hole_type
         self.edge_type = edge_type
@@ -120,8 +123,29 @@ class Bolt(Material):
         elif self.bolt_type == "Friction Grip Bolt":
             self.bolt_shear_capacity = IS800_2007.cl_10_4_3_bolt_slip_resistance(
                 f_ub=self.bolt_fu, A_nb=self.bolt_net_area, n_e=n_planes, mu_f=self.mu_f, bolt_hole_type=self.bolt_hole_type)
-            self.bolt_bearing_capacity = 'N/A'
+            self.bolt_bearing_capacity = VALUE_NOT_APPLICABLE
             self.bolt_capacity = self.bolt_shear_capacity
+
+
+    def calculate_bolt_tension_capacity(self, bolt_diameter_provided, bolt_grade_provided):
+        """
+        :param bolt_grade: grade of bolt
+        :param member_fu: ultimate strength of member
+        :param bolt_dia: diameter of bolt
+
+        :return: capacity of bolt (tension), bolt_grade
+        """
+        self.bolt_diameter_provided = bolt_diameter_provided
+        self.bolt_grade_provided = bolt_grade_provided
+
+
+        [self.bolt_shank_area, self.bolt_net_area] = IS1367_Part3_2002.bolt_area(self.bolt_diameter_provided)
+        [self.bolt_fu, self.bolt_fy] = IS1367_Part3_2002.get_bolt_fu_fy(self.bolt_grade_provided)
+
+        self.bolt_tension_capacity = IS800_2007.cl_10_3_5_bolt_tensile_capacity(
+            f_ub=self.bolt_fu, f_yb=self.bolt_fy, A_nb=self.bolt_net_area, A_sb=self.bolt_shank_area)
+
+
 
     def calculate_bolt_spacing_limits(self, bolt_diameter_provided, connecting_plates_tk):
         self.connecting_plates_tk = list(np.float_(connecting_plates_tk))
@@ -164,6 +188,9 @@ class Section(Material):
         super(Section, self).__init__(material_grade)
         self.designation = designation
         self.type = "Rolled"
+        self.type2 = "generally"
+        self.notch_ht = 0.0
+
         self.mass = 0.0
         self.area = 0.0
         self.depth = 0.0
@@ -184,8 +211,13 @@ class Section(Material):
         self.source = 0.0
         self.tension_yielding_capacity = 0.0
         self.tension_rupture_capacity = 0.0
-        self.shear_yielding_capacity = 0.0
-        self.shear_rupture_capacity = 0.0
+        # self.shear_yielding_capacity = 0.0
+        # self.shear_rupture_capacity = 0.0
+
+        self.tension_capacity_flange = 0.0
+        self.tension_capacity_web = 0.0
+        self.shear_capacity_flange = 0.0
+        self.shear_capacity_web = 0.0
 
         self.block_shear_capacity_axial = 0.0
         self.block_shear_capacity_shear = 0.0
@@ -267,8 +299,13 @@ class Section(Material):
         repr += "Designation: {}\n".format(self.designation)
         repr += "fy: {}\n".format(self.fy)
         repr += "fu: {}\n".format(self.fu)
-        repr += "shear yielding capacity: {}\n".format(self.shear_yielding_capacity)
+        # repr += "shear yielding capacity: {}\n".format(self.shear_yielding_capacity)
         repr += "tension yielding capacity: {}\n".format(self.tension_yielding_capacity)
+
+        repr += "tension_capacity_flange: {}\n".format(self.tension_capacity_flange)
+        repr += "tension_capacity_web: {}\n".format( self.tension_capacity_web)
+        repr += "shear_capacity_flange: {}\n".format( self.shear_capacity_flange)
+        repr += "shear_capacity_web: {}\n".format(self.shear_capacity_web)
         return repr
 
 class Beam(Section):
@@ -280,9 +317,11 @@ class Beam(Section):
     def min_plate_height(self):
         return 0.6 * self.depth
 
-    def max_plate_height(self):
-
-        clear_depth = self.depth - 2*self.flange_thickness - 2*self.root_radius
+    def max_plate_height(self, connectivity=None, notch_height = 0.0):
+        if connectivity in VALUES_CONN_1 or None:
+            clear_depth = self.depth - 2*self.flange_thickness - 2*self.root_radius
+        else:
+            clear_depth = self.depth - notch_height
         return clear_depth
 
 class Column(Section):
@@ -302,17 +341,38 @@ class Column(Section):
 
 class Weld(Material):
 
-    def __init__(self, size=0.0, length=0.0, material_grade=""):
-        self.size = size
-        self.length = length
+    def __init__(self, material_grade="", fabrication=KEY_DP_WELD_TYPE_SHOP):
+        self.design_status = True
+        self.size = 0.0
+        self.length = 0.0
+        self.strength = 0.0
+        self.stress = 0.0
+        self.fabrication = fabrication
         super(Weld, self).__init__(material_grade)
 
     def __repr__(self):
         repr = "Weld\n"
         repr += "Size: {}\n".format(self.size)
         repr += "Length: {}\n".format(self.length)
+        repr += "Stress: {}\n".format(self.stress)
+        repr += "Strength: {}\n".format(self.strength)
         return repr
 
+    def get_weld_strength(self,connecting_fu, weld_fabrication, t_weld, weld_angle):
+        f_wd = IS800_2007.cl_10_5_7_1_1_fillet_weld_design_stress(connecting_fu, weld_fabrication)
+        throat_tk = \
+            IS800_2007.cl_10_5_3_2_fillet_weld_effective_throat_thickness\
+                (t_weld, weld_angle)
+        weld_strength = f_wd * throat_tk
+        return weld_strength
+
+    def get_weld_stress(self,weld_shear, weld_axial, weld_twist, Ip_weld, y_max, x_max, l_weld):
+        T_wh = weld_twist * y_max/Ip_weld
+        T_wv = weld_twist * x_max/Ip_weld
+        V_wv = weld_shear/l_weld
+        A_wh = weld_axial/l_weld
+        weld_stress = math.sqrt((T_wh+A_wh)**2 + (T_wv+V_wv)**2)
+        return weld_stress
 
 class Plate(Material):
 
@@ -321,6 +381,7 @@ class Plate(Material):
         self.design_status = True
         self.reason = ""
         self.thickness = list(np.float_(thickness))
+        self.thickness.sort(key=float)
         self.thickness_provided = 0.0
         self.height = height
         self.length = length
@@ -340,10 +401,16 @@ class Plate(Material):
         self.end_dist_provided = 0.0
 
         self.block_shear_capacity = 0.0
-        self.shear_yielding_capacity = 0.0
-        self.shear_rupture_capacity = 0.0
         self.tension_yielding_capacity = 0.0
         self.tension_rupture_capacity = 0.0
+
+        self.shear_yielding_capacity = 0.0
+        self.shear_rupture_capacity = 0.0
+
+
+        self.shear_capacity_web_plate=0.0
+        self.tension_capacity_web_plate = 0.0
+        self.tension_capacity_flange_plate = 0.0
         self.moment_capacity = 0.0
 
         # self.moment_demand_disp = round(self.moment_demand/1000000, 2)
@@ -473,7 +540,7 @@ class Plate(Material):
         if bolts_one_line == 1:
             self.design_status = False
             self.reason = "Can't fit two bolts in one line. Select lower diameter"
-        if bolt_line > bolt_line_limit:
+        elif bolt_line > bolt_line_limit:
             self.design_status = False
             self.reason = "Bolt line limit is reached. Select higher grade/Diameter or choose different connection"
         else:
@@ -500,7 +567,8 @@ class Plate(Material):
                                                       gauge, bolt_capacity,
                                                       bolt_dia)
                 print(3, vres, bolt_capacity_red)
-                while bolt_line < bolt_line_limit and vres > bolt_capacity_red:
+
+                while bolt_line <= bolt_line_limit and vres > bolt_capacity_red and web_plate_h <= web_plate_h_max:
                     # Length of plate is increased for calculated bolts in one line.
                     # This increases spacing which decreases resultant force
                     print(4, web_plate_h, web_plate_h_max)
@@ -527,6 +595,11 @@ class Plate(Material):
                                                                                    min_edge_dist, max_spacing,
                                                                                    max_edge_dist)
 
+                    if bolt_line == 1:
+                        pitch = 0.0
+                    else:
+                        pitch = min_gauge
+                    ecc = (pitch * max((bolt_line - 1.5), 0)) + end_dist + gap
                     vres = self.get_vres(bolts_one_line, pitch,
                                          gauge, bolt_line, shear_load, axial_load, ecc)
                     bolt_capacity_red = self.get_bolt_red(bolts_one_line,
@@ -549,6 +622,8 @@ class Plate(Material):
             if vres > bolt_capacity_red:
                 self.design_status = False
                 self.reason = "Bolt line limit is reached. Select higher grade/Diameter or choose different connection"
+            else:
+                self.design_status = True
 
             self.length = gap + end_dist * 2 + pitch * (bolt_line - 1)
             self.height = web_plate_h
@@ -638,7 +713,7 @@ class Plate(Material):
         self.shear_rupture_capacity = R_n
 
     def get_moment_cacacity(self, fy, plate_tk, plate_len):
-        self.moment_capacity = 1.2 * (fy / 1.1) * (plate_tk * plate_len ** 2) / 6 * 10 ** -6
+        self.moment_capacity = 1.2 * (fy / 1.1) * (plate_tk * plate_len ** 2) / 6
 
     def __repr__(self):
         repr = "Plate\n"
@@ -660,6 +735,11 @@ class Plate(Material):
         repr += "Block Shear Capacity: {}\n".format(self.block_shear_capacity)
         repr += "Shear Yielding Capacity: {}\n".format(self.shear_yielding_capacity)
         repr += "Shear Rupture Capacity: {}\n".format(self.shear_rupture_capacity)
+
+        repr += "shear_capacity_web_plate: {}\n".format(self.shear_capacity_web_plate)
+        repr += "tension_capacity_web plate: {}\n".format( self.tension_capacity_web_plate)
+        repr += "tension_capacity_flange_plate: {}\n".format( self.tension_capacity_flange_plate)
+
         repr += "Moment Capacity: {}\n".format(self.moment_capacity)
         return repr
 
