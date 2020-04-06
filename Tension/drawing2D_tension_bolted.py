@@ -85,7 +85,7 @@ class Tension_bolted_drawing(object):
 
 		"""
 		smarker = dwg.marker(insert=(8, 3), size=(30, 30), orient="auto")
-		smarker.add(dwg.path(d=" M0,0 L3,3 L0,8 L8,3 L0,0", fill="black"))
+		smarker.add(dwg.path(d="M0,0 L3,3 L0,8 L8,3 L0,0", fill="black"))
 		dwg.defs.add(smarker)
 		return smarker
 
@@ -115,7 +115,7 @@ class Tension_bolted_drawing(object):
 
 		"""
 		emarker = dwg.marker(insert=(0, 3), size=(30, 20), orient="auto")
-		emarker.add(dwg.path(d=" M0,3 L8,8 L5,3 L8,0 L0,3", fill="black"))
+		emarker.add(dwg.path(d="M0,3 L8,8 L5,3 L8,0 L0,3", fill="black"))
 		dwg.defs.add(emarker)
 		return emarker
 
