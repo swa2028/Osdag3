@@ -121,7 +121,7 @@ def connectdb(table_name, call_type="dropdown"):
 
     elif table_name == "Channels":
         cursor = conn.execute("SELECT Designation FROM Channels")
-       
+
     elif table_name == "Beams":
         cursor = conn.execute("SELECT Designation FROM Beams")
 
@@ -134,10 +134,10 @@ def connectdb(table_name, call_type="dropdown"):
     else:
         cursor = conn.execute("SELECT Designation FROM Columns")
     rows = cursor.fetchall()
-     
+
     for row in rows:
         lst.append(row)
-   
+
     final_lst = tuple_to_str(lst,call_type)
     return final_lst
 
@@ -491,7 +491,7 @@ KEY_BOLT_FU = 'Bolt.fu'
 KEY_BOLT_FY = 'Bolt.fy'
 # Key for storing Diameter sub-key of Bolt
 KEY_D = 'Bolt.Diameter'
-KEY_DISP_D = 'Diameter(mm)*'
+KEY_DISP_D = 'Diameter (mm)*'
 VALUES_D = ['All', 'Customized']
 
 # Key for storing Type sub-key of Bolt
@@ -538,7 +538,7 @@ VALUES_LOCATION_2 = ["Web"]
 KEY_IMAGE = 'Image'
 
 KEY_LENGTH = 'Length(mm)'
-KEY_DISP_LENGTH = 'Length(mm) *'
+KEY_DISP_LENGTH = 'Length (mm) *'
 
 KEY_SLENDER = "Member.Slenderness"
 KEY_DISP_SLENDER = 'Slenderness'
@@ -623,15 +623,15 @@ KEY_DISP_DESIGNATION = "Designation"
 KEY_TENSION_YIELDCAPACITY = "Member.tension_yielding"
 KEY_DISP_TENSION_YIELDCAPACITY = 'Tension Yielding Capacity (kN)'
 KEY_TENSION_RUPTURECAPACITY = "Member.tension_rupture"
-KEY_DISP_TENSION_RUPTURECAPACITY = 'Tension Rupture Capacity(kN)'
+KEY_DISP_TENSION_RUPTURECAPACITY = 'Tension Rupture Capacity (kN)'
 KEY_TENSION_BLOCKSHEARCAPACITY = "Member.tension_blockshear"
-KEY_DISP_TENSION_BLOCKSHEARCAPACITY = 'Block Shear Capacity (KN)'
+KEY_DISP_TENSION_BLOCKSHEARCAPACITY = 'Block Shear Capacity (kN)'
 
 KEY_TENSION_CAPACITY = "Member.tension_capacity"
 KEY_DISP_TENSION_CAPACITY = "Tension Capacity (kN)"
 
 KEY_EFFICIENCY = "Member.efficiency"
-KEY_DISP_EFFICIENCY = "Efficiency"
+KEY_DISP_EFFICIENCY = "Utilization Ratio"
 
 DISP_TITLE_BOLTDETAILS ='Bolt Details'
 KEY_BOLT_DETAILS ="Bolt.Details"
@@ -1048,10 +1048,10 @@ KEY_OUT_BOLT_BEARING = 'Bolt.Bearing'
 KEY_OUT_DISP_BOLT_BEARING = 'Bearing Capacity (kN)'
 KEY_OUT_DISP_BOLT_SLIP= 'Slip Resistance'
 KEY_OUT_BOLT_CAPACITY = 'Bolt.Capacity'
-KEY_OUT_DISP_BOLT_CAPACITY = 'Capacity (KN)'
+KEY_OUT_DISP_BOLT_CAPACITY = 'Capacity (kN)'
 KEY_OUT_DISP_BOLT_VALUE = 'Bolt Value (kN)'
 KEY_OUT_BOLT_FORCE = 'Bolt.Force'
-KEY_OUT_DISP_BOLT_FORCE = 'Bolt Force (KN)'
+KEY_OUT_DISP_BOLT_FORCE = 'Bolt Force (kN)'
 KEY_OUT_DISP_BOLT_SHEAR_FORCE = 'Bolt Shear Force (kN)'
 KEY_OUT_BOLT_TENSION_FORCE = 'Bolt.TensionForce'
 KEY_OUT_DISP_BOLT_TENSION_FORCE = 'Bolt Tension Force (kN)'
@@ -1162,11 +1162,11 @@ KEY_OUT_DISP_MEMB_BLK_SHEAR = 'Block Shear Capacity'
 
 DISP_TITLE_WELD = 'Weld'
 KEY_OUT_WELD_SIZE = 'Weld.Size'
-KEY_OUT_DISP_WELD_SIZE = 'Size(mm)'
+KEY_OUT_DISP_WELD_SIZE = 'Size (mm)'
 KEY_OUT_WELD_STRENGTH = 'Weld.Strength'
-KEY_OUT_DISP_WELD_STRENGTH = 'Strength(N/mm)'
+KEY_OUT_DISP_WELD_STRENGTH = 'Strength (N/mm)'
 KEY_OUT_WELD_STRESS = 'Weld.Stress'
-KEY_OUT_DISP_WELD_STRESS = 'Stress(N/mm)'
+KEY_OUT_DISP_WELD_STRESS = 'Stress (N/mm)'
 KEY_OUT_WELD_LENGTH = 'Weld.Length'
 KEY_OUT_DISP_WELD_LENGTH = 'Length (mm)'
 KEY_OUT_WELD_LENGTH_EFF = 'Weld.EffLength'
@@ -1376,7 +1376,7 @@ BOLT_DESCRIPTION = str("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"htt
                 "<td width=\"383\">\n"
                 "<p align=\"justify\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">Treatment of Surfaces</span></p></td>\n"
                 "<td width=\"78\">\n"
-                "<p align=\"justify\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">  µ_f</span></p></td></tr>\n"
+                "<p align=\"justify\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">  µ_f</span></p></td></tr>\n"
                 "<tr>\n"
                 "<td>\n"
                 "<p align=\"justify\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">i)</span></p></td>\n"
@@ -1481,7 +1481,3 @@ DETAILING_DESCRIPTION = str("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" 
                "<p align=\"justify\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Calibri\'; font-size:8pt;\"><br /></p>\n"
                "<p align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">Specifying whether the members are exposed to corrosive influences, here, only affects the calculation of the maximum edge distance as per cl. 10.2.4.3</span></p>\n"
                "<p align=\"justify\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:8pt;\"><br /></p></body></html>")
-
-
-
-

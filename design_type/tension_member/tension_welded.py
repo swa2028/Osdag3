@@ -63,10 +63,11 @@ class Tension_welded(Main):
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 
-        handler = OurLog(key)
-        formatter = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
+        if key is not None:
+            handler = OurLog(key)
+            formatter = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
 
     def module_name(self):
 
@@ -881,6 +882,7 @@ class Tension_welded(Main):
 
     def func_for_validation(self, window, design_dictionary):
 
+        all_errors = []
         "check valid inputs and empty inputs in input dock"
 
         self.design_status = False
@@ -898,8 +900,8 @@ class Tension_welded(Main):
                     missing_fields_list.append(option[1])
 
         if len(missing_fields_list) > 0:
-            QMessageBox.information(window, "Information",
-                                    self.generate_missing_fields_error_string(self, missing_fields_list))
+            error = self.generate_missing_fields_error_string(self, missing_fields_list)
+            all_errors.append(error)
             # flag = False
         else:
             flag = True
@@ -908,7 +910,7 @@ class Tension_welded(Main):
             self.set_input_values(self, design_dictionary)
             print(design_dictionary)
         else:
-            pass
+            return all_errors
 
 
 
@@ -937,7 +939,7 @@ class Tension_welded(Main):
         return information
 
     def warn_text(self):
-      
+
         """
         Function to give logger warning when any old value is selected from Column and Beams table.
         """
@@ -1164,8 +1166,8 @@ class Tension_welded(Main):
                 elif (self.load.axial_force *1000> max_force) :
                     self.design_status = False
                     logger.error(" : Tension force exceeds tension capacity of maximum available member size.")
-                    logger.error(": Design is not safe. \n ")
-                    logger.debug(" :=========End Of design===========")
+                    # logger.error(": Design is not safe. \n ")
+                    # logger.debug(" :=========End Of design===========")
                     break
 
                     "condition to limit loop based on max length derived from max available size"
@@ -1173,8 +1175,8 @@ class Tension_welded(Main):
                 elif self.length > length:
                     self.design_status = False
                     logger.error(" : Member fails in slenderness.")
-                    logger.error(": Design is not safe. \n ")
-                    logger.debug(" :=========End Of design===========")
+                    # logger.error(": Design is not safe. \n ")
+                    # logger.debug(" :=========End Of design===========")
                     break
 
                 else:
@@ -1182,7 +1184,7 @@ class Tension_welded(Main):
 
 
         if member_design == False:
-            logger.info(" : Tension force or Slenderness value exceeds the limit for maximum available member size.")
+            logger.error(" : Tension force or Slenderness value exceeds the limit for maximum available member size.")
             logger.error(": Design is not safe. \n ")
             logger.debug(" :=========End Of design===========")
 
@@ -1418,7 +1420,7 @@ class Tension_welded(Main):
             shear_lag = w
             L_c = (self.plate.length - max((2 * self.weld.size),15))
             A_go = self.section_size_1.min_leg * self.section_size_1.thickness
-            A_nc = (self.section_size_1.max_leg * self.section_size_1.thickness)
+            A_nc = ((self.section_size_1.max_leg- self.section_size_1.thickness) * self.section_size_1.thickness)
             t = self.section_size_1.thickness
 
         elif design_dictionary[KEY_LOCATION] == 'Short Leg':
@@ -1426,7 +1428,7 @@ class Tension_welded(Main):
             shear_lag = w
             L_c = (self.plate.length - max((2 * self.weld.size),15))
             A_go = self.section_size_1.max_leg * self.section_size_1.thickness
-            A_nc = (self.section_size_1.min_leg * self.section_size_1.thickness)
+            A_nc = ((self.section_size_1.min_leg - self.section_size_1.thickness) * self.section_size_1.thickness)
             t = self.section_size_1.thickness
 
         elif design_dictionary[KEY_SEC_PROFILE] in ["Channels", 'Back to Back Channels']:
@@ -1434,7 +1436,7 @@ class Tension_welded(Main):
             shear_lag = w
             L_c = (self.plate.length - max((2 * self.weld.size),15))
             A_go = self.section_size_1.flange_width * self.section_size_1.flange_thickness*2
-            A_nc = (self.section_size_1.depth * self.section_size_1.web_thickness)
+            A_nc = ((self.section_size_1.depth - 2*self.section_size_1.flange_thickness) * self.section_size_1.web_thickness)
             t = self.section_size_1.web_thickness
 
         self.section_size_1.tension_member_design_due_to_rupture_of_critical_section( A_nc = A_nc , A_go = A_go, F_u = self.section_size_1.fu, F_y = self.section_size_1.fy, L_c = L_c, w = w, b_s = shear_lag, t = t)
@@ -1617,13 +1619,13 @@ class Tension_welded(Main):
                                       't(mm)': self.section_size_1.thickness,
                                       'R1(mm)': self.section_size_1.root_radius,
                                       'R2(mm)': self.section_size_1.toe_radius,
-                                      'Cy(mm)': self.section_size_1.Cy,
+                                      'Cy(mm)': round(self.section_size_1.Cy,2),
                                       'Cz(mm)': self.section_size_1.Cz,
                                       'Iz(mm4)': self.section_size_1.mom_inertia_z,
                                       'Iy(mm4)': self.section_size_1.mom_inertia_y,
                                       'Iu(mm4)': self.section_size_1.mom_inertia_u,
                                       'Iv(mm4)': self.section_size_1.mom_inertia_v,
-                                      'rz(mm)': self.section_size_1.rad_of_gy_z,
+                                      'rz(mm)': round(self.section_size_1.rad_of_gy_z,2),
                                       'ry(mm)': round((self.section_size_1.rad_of_gy_y),2),
                                       'ru(mm)': round((self.section_size_1.rad_of_gy_u),2),
                                       'rv(mm)': round((self.section_size_1.rad_of_gy_v),2),
@@ -1769,7 +1771,6 @@ class Tension_welded(Main):
                       tension_rupture_welded_prov(self.section_size_1.max_leg, self.plate.thickness_provided,
                                                   self.plate.fu, gamma_m1, plate_rupture_kn), '')
 
-
             else:
                 t3 = (KEY_OUT_DISP_PLATE_HEIGHT,'',gusset_ht_prov(self.section_size_1.min_leg, self.clearance,self.plate.height,1),"")
                 t2 = (KEY_DISP_TENSION_YIELDCAPACITY, '',
@@ -1824,20 +1825,13 @@ class Tension_welded(Main):
         #              KEY_DISP_TOP: "Top",
         #              KEY_DISP_SIDE: "Side"}
 
+
         print(sys.path[0])
         rel_path = str(sys.path[0])
         rel_path = rel_path.replace("\\", "/")
 
-        file_type = "PDF (*.pdf)"
-        filename = QFileDialog.getSaveFileName(QFileDialog(), "Save File As",
-                                               os.path.join(str(' '), "untitled.pdf"), file_type)
-        print(filename, "hhhhhhhhhhhhhhhhhhhhhhhhhhh")
-        print(self.plate.thickness_provided, self.thick)
-        # filename = os.path.join(str(folder), "images_html", "TexReport")
-        file_name = str(filename)
-        print(file_name, "hhhhhhhhhhhhhhhhhhhhhhhhhhh")
-        fname_no_ext = filename[0].split(".")[0]
-        print(fname_no_ext, "hhhhhhhhhhhhhhhhhhhhhhhhhhh")
+        fname_no_ext = popup_summary['filename']
+
         CreateLatex.save_latex(CreateLatex(), self.report_input, self.report_check, popup_summary, fname_no_ext,
                                rel_path, Disp_3D_image)
 #     def save_design(self,ui,popup_summary):
